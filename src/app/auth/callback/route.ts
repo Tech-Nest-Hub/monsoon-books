@@ -16,7 +16,7 @@ export async function GET(request: Request) {
 
       if (user) {
         // Upsert into your Prisma User table
-        await prisma.user.upsert({
+         const dbUser =  await prisma.user.upsert({
           where: { authId: user.id },
           update: {
             email: user.email!,
@@ -40,9 +40,12 @@ export async function GET(request: Request) {
             provider: user.app_metadata?.provider ?? "email",
           },
         })
-      }
-
-      return NextResponse.redirect(`${origin}/dashboard`)
+        if (dbUser?.role === "ADMIN") {
+            return NextResponse.redirect(`${origin}/dashboard`)
+        } else {
+            return NextResponse.redirect(`${origin}/`) // Redirect to homepage or user dashboard
+        }
+    }
     }
   }
 
