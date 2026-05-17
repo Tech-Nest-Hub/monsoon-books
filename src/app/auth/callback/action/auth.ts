@@ -60,3 +60,10 @@ export async function signUpWithEmail(email: string, password: string) {
 
   return { success: true }
 }
+
+export async function signOut() {
+  "use server"
+  const supabase = await createClient()
+  await supabase.auth.signOut()
+  redirect("/login")
+}
