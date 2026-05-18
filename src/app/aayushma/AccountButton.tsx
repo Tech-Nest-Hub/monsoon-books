@@ -6,7 +6,7 @@ import {
   DialogContent,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { LoginForm } from '../login/LoginDialogForm'
+import { LoginForm } from '@/app/(client)/login/LoginDialogForm'
 import { BoxIcon, HeartIcon, SettingsIcon, UserIcon } from 'lucide-react'
 
 type Props = {

@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { createClient } from "@/utils/supabase/server"
-import { signInWithEmail, signInWithFacebook, signInWithGoogle, signUpWithEmail } from "../auth/callback/action/auth"
+import { signInWithEmail, signInWithFacebook, signInWithGoogle, signUpWithEmail } from "../../auth/callback/action/auth"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 

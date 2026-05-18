@@ -1,7 +1,7 @@
-// layout.tsx
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import DashboardLayoutClient from "../DashboardLayout"
+import { prisma } from "@/lib/prisma"
 
 export default async function Layout({
   children,
@@ -16,6 +16,20 @@ export default async function Layout({
 
   if (!user) {
     redirect("/login")
+  }
+
+  if (user.user_metadata.role !== "ADMIN") {
+    redirect("/")
+  }
+
+  const dbUser = await prisma.user.findUnique({
+    where: {
+      authId: user.id,
+    },
+  })
+
+  if (dbUser?.role !== "ADMIN") {
+    redirect("/")
   }
 
   return <DashboardLayoutClient>{children}</DashboardLayoutClient>
