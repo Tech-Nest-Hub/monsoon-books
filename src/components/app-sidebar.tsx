@@ -36,7 +36,7 @@ const navItems = [
     },
     {
         title: "Books",
-        url: "/books",
+        url: "/dashboard/books",
         icon: BookOpen,
     },
     {

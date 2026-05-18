@@ -8,10 +8,8 @@ const DashboardPage = async () => {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) redirect("/login")
-
   const dbUser = await prisma.user.findUnique({
-    where: { authId: user.id },
+    where: { authId: user?.id },
   })
 
   return (
