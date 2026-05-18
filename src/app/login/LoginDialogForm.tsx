@@ -18,6 +18,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { createClient } from "@/utils/supabase/server"
 import { signInWithEmail, signInWithFacebook, signInWithGoogle, signUpWithEmail } from "../auth/callback/action/auth"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 type AuthMode = "login" | "signup"
 
@@ -29,6 +31,7 @@ export function LoginForm({
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isAnimating, setIsAnimating] = useState(false)
+  const router = useRouter();
 
 const handleGoogleLogin = async () => {
   await signInWithGoogle()
@@ -46,8 +49,17 @@ const handleSubmit = async (e: React.FormEvent) => {
     : await signUpWithEmail(email, password)
 
   if (result?.error) {
-    console.error(result.error) // show this in UI
+    toast.error(result.error);
+  } else {
+    toast.success(
+      mode === "login"
+        ? "Logged in successfully"
+        : "Account created successfully"
+    )
   }
+  
+
+  router.push("/")
 }
   const toggleMode = () => {
     setIsAnimating(true)

@@ -49,7 +49,12 @@ export async function signInWithEmail(email: string, password: string) {
     })
   }
 
-  return { success: true }
+  if (!error) {
+    return {
+      success : true,
+      redirect : "/"
+    }
+}
 }
 
 export async function signUpWithEmail(email: string, password: string) {
@@ -58,7 +63,9 @@ export async function signUpWithEmail(email: string, password: string) {
   const { data, error } = await supabase.auth.signUp({ email, password })
   if (error) return { error: error.message }
 
-  return { success: true }
+ if (!error) {
+  redirect("/")
+}
 }
 
 export async function signOut() {
