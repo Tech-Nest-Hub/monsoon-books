@@ -41,8 +41,8 @@ const MENU_ITEMS = [
 ]
 
 // Shared trigger button UI
-const TriggerButton = ({ onClick }: { onClick?: () => void }) => (
-  <button
+const TriggerButton1 = ({ onClick }: { onClick?: () => void }) => (
+  <div
     onClick={onClick}
     className="flex flex-col items-center gap-0.5 px-3 py-2 rounded-md hover:bg-red-50 hover:text-red-700 text-gray-600 transition-colors group"
   >
@@ -50,7 +50,7 @@ const TriggerButton = ({ onClick }: { onClick?: () => void }) => (
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
     </svg>
     <span className="text-[10px] font-medium">Account</span>
-  </button>
+  </div>
 )
 
 export const AccountButton = ({ user }: Props) => {
@@ -72,7 +72,7 @@ export const AccountButton = ({ user }: Props) => {
     return (
       <Dialog>
         <DialogTrigger>
-          <TriggerButton />
+          <TriggerButton1 />
         </DialogTrigger>
         <DialogContent className="rounded-2xl p-0 ring-0 border-0 shadow-2xl">
           <LoginForm />
@@ -90,14 +90,14 @@ export const AccountButton = ({ user }: Props) => {
 
   return (
     <div className="relative hidden sm:block" ref={dropdownRef}>
-      <TriggerButton onClick={() => setIsOpen((v) => !v)} />
+      <TriggerButton1 onClick={() => setIsOpen((v) => !v)} />
 
       {isOpen && (
         <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
 
           {/* Header */}
           <div className="flex items-center gap-3 px-4 py-3 bg-red-50 border-b border-red-100">
-            <div className="w-8 h-8 rounded-full bg-red-700 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 rounded-full bg-red-700 text-white text-xs font-bold flex items-center justify-center shrink-0">
               {initials}
             </div>
             <div className="min-w-0">
@@ -117,7 +117,7 @@ export const AccountButton = ({ user }: Props) => {
               >
                 {(() => {
                   const Icon = item.icon
-                  return <Icon className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                  return <Icon className="w-4 h-4 text-gray-400 shrink-0" />
                 })()}
                 <span>{item.label}</span>
               </a>

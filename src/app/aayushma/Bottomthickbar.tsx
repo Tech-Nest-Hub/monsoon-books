@@ -20,7 +20,7 @@ const Bottomthickbar = ({ user }: Props) => {
         <div className="flex items-center gap-4 lg:gap-6">
 
           {/* Logo */}
-          <div className="flex items-center gap-1.5 flex-shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
             <span className="text-red-700 text-2xl font-extrabold tracking-tight leading-none">Monsoon</span>
             <span className="text-gray-500 text-sm font-medium leading-none mt-1">Books</span>
           </div>
@@ -37,7 +37,7 @@ const Bottomthickbar = ({ user }: Props) => {
             />
             <button
               onClick={() => console.log('search:', searchQuery)}
-              className="bg-red-700 hover:bg-red-800 text-white px-5 py-2.5 text-sm font-semibold flex items-center gap-2 transition-colors flex-shrink-0"
+              className="bg-red-700 hover:bg-red-800 text-white px-5 py-2.5 text-sm font-semibold flex items-center gap-2 transition-colors shrink-0"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />

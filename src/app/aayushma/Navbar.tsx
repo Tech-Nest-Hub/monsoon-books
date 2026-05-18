@@ -1,26 +1,31 @@
-// Navbar.tsx (Combined)
-'use client'
-import React, { useState, useEffect } from 'react'
+// Navbar.tsx
 import Topthinbar from "./Topthinbar"
 import Bottomthickbar from "./Bottomthickbar"
+import NavbarWrapper from "./NavbarWrapper"
+import { createClient } from "@/utils/supabase/server"
+import { prisma } from "@/lib/prisma"
 
-const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  
+const Navbar = async () => {
+  const supabase = await createClient()
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+
+let userData = null
+
+if (user) {
+  userData = await prisma.user.findUnique({
+    where: { authId: user.id },
+  })
+}
 
   return (
-    <div className={`sticky bg-red-700 top-0 z-50 transition-shadow duration-300 ${isScrolled ? 'shadow-2xl' : 'shadow-md'}`}>
+    <NavbarWrapper>
       <Topthinbar />
-      <Bottomthickbar user={{ firstName: "Aakash", lastName: "Sharma", email: "aakash@example.com" }} />
-    </div>
+      <Bottomthickbar user={userData} />
+    </NavbarWrapper>
   )
 }
 
