@@ -11,12 +11,7 @@ const BooksCRUD = () => {
     }, [])
   return (
     <div>
-      {books.map((book: any) => (
-        <div key={book.id}>
-          <h2>{book.title}</h2>
-          <p>{book.author}</p>
-        </div>
-      ))}
+     Books
     </div>
   )
 }

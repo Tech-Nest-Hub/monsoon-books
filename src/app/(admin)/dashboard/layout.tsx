@@ -18,9 +18,6 @@ export default async function Layout({
     redirect("/login")
   }
 
-  if (user.user_metadata.role !== "ADMIN") {
-    redirect("/")
-  }
 
   const dbUser = await prisma.user.findUnique({
     where: {

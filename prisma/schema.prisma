@@ -4,60 +4,165 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
+// ───── ENUMS ─────
 
-enum Role { 
-  USER 
-  ADMIN 
-} 
-model User { 
-  id    Int    @id @default(autoincrement()) 
-  authId    String @unique  // Supabase auth user ID
+enum Role {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING    // just placed
+  CONFIRMED  // admin confirmed
+  DELIVERED  // physically delivered
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH_ON_DELIVERY
+  KHALTI
+  ESEWA
+}
+
+// ───── USER ─────
+
+model User {
+  id        Int     @id @default(autoincrement())
+  authId    String  @unique       // Supabase auth user ID
   firstName String
-  lastName  String 
-  email String @unique 
-  role  Role   @default(USER) 
-  provider  String?  // "google", "facebook", or "email"
+  lastName  String
+  email     String  @unique
+  role      Role    @default(USER)
+  provider  String?               // "google", "facebook", or "email"
 
-  orders Order[]
-  carts Cart[]
+  cart      Cart?                 // one cart per user
+  orders    Order[]
+  wishlists Wishlist[]
+
+  @@map("users")
 }
 
-model Books {
-  id          Int      @id @default(autoincrement())
-  title       String
-  author      String
-  publishedAt DateTime
+// ───── BOOK ─────
+
+model Book {
+  id            Int      @id @default(autoincrement())
+  title         String
+  description   String
+  coverImage    String            // Cloudinary URL
+  author        String
+  language      String   @default("Nepali")
+  price         Float
+  stock         Int      @default(0)
+  publisher     String?
+  publishedYear Int?
+
+  categoryId    Int
+  category      Category @relation(fields: [categoryId], references: [id])
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+
+
+  images      BookImage[] 
+  cartItems     CartItem[]
+  orderItems    OrderItem[]
+  wishlists     Wishlist[]
+
+  @@map("books")
 }
 
+model BookImage {
+  id        Int      @id @default(autoincrement())
+  url       String
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId    Int
+  order     Int      @default(0)  // for sorting thumbnails
 
-model Category { 
-  id    Int    @id @default(autoincrement()) 
-  name  String
-  tags Tags[]
+  @@map("book_images")
+}
+// ───── CATEGORY ─────
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String @unique             // "Fiction", "Loksewa", "Academic", etc.
+  books Book[]
+
   @@map("categories")
 }
 
-model Tags{
-  id    Int    @id @default(autoincrement()) 
-  name  String 
-  category Category @relation(fields: [categoryId], references: [id])
-  categoryId Int
-  @@map("tags")
+// ───── CART ─────
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  user      User       @relation(fields: [userId], references: [id])
+  userId    Int        @unique     // one cart per user
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("carts")
 }
 
-model Order { 
-  id    Int    @id @default(autoincrement()) 
-  user  User   @relation(fields: [userId], references: [id]) 
-  userId Int
-  total Float
+model CartItem {
+  id         Int   @id @default(autoincrement())
+  cart       Cart  @relation(fields: [cartId], references: [id])
+  cartId     Int
+  book       Book  @relation(fields: [bookId], references: [id])
+  bookId     Int
+  quantity   Int   @default(1)
+  priceAtAdd Float // snapshot of Book.price when added to cart
+
+  @@unique([cartId, bookId]) // same book can't appear twice; update quantity instead
+  @@map("cart_items")
 }
 
-model Cart { 
-  id    Int    @id @default(autoincrement()) 
-  user  User   @relation(fields: [userId], references: [id]) 
-  userId Int
-  total Float
+// ───── ORDER ─────
+
+model Order {
+  id              Int           @id @default(autoincrement())
+  user            User          @relation(fields: [userId], references: [id])
+  userId          Int
+  items           OrderItem[]
+  status          OrderStatus   @default(PENDING)
+  paymentMethod   PaymentMethod @default(CASH_ON_DELIVERY)
+  total           Float
+
+  // delivery info
+  deliveryAddress String
+  phone           String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id         Int   @id @default(autoincrement())
+  order      Order @relation(fields: [orderId], references: [id])
+  orderId    Int
+  book       Book  @relation(fields: [bookId], references: [id])
+  bookId     Int
+  quantity   Int
+  priceAtBuy Float // snapshot of Book.price when order was placed
+
+  @@map("order_items")
+}
+
+// ───── WISHLIST ─────
+
+model Wishlist {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  book      Book     @relation(fields: [bookId], references: [id])
+  bookId    Int
+  createdAt DateTime @default(now())
+
+  @@unique([userId, bookId]) // can't wishlist the same book twice
+  @@map("wishlists")
 }
