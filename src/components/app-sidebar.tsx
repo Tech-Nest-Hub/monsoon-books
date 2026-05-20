@@ -41,8 +41,8 @@ const navItems = [
     },
     {
         title: "Categories",
-        url: "/categories",
-        icon: FolderKanban,
+        url: "/dashboard/categories",
+        icon: FolderKanban, 
     },
     {
         title: "Tags",
