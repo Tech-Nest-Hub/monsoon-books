@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import Navbar from "./aayushma/Navbar";
 
 export default function Home() {
