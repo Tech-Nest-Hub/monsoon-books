@@ -13,6 +13,8 @@ import {
     User,
     Menu,
     X,
+    Notebook,
+    Gamepad2,
 } from "lucide-react"
 
 import {
@@ -38,6 +40,16 @@ const navItems = [
         title: "Books",
         url: "/dashboard/books",
         icon: BookOpen,
+    },
+    {
+        title: "Stationery",
+        url: "/dashboard/stationery",
+        icon: Notebook,
+    },
+    {
+        title: "Sports",
+        url: "/dashboard/sports",
+        icon: Gamepad2,
     },
     {
         title: "Categories",
