@@ -111,7 +111,7 @@ export default function AdminBooksPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
             {Array.from({ length: 10 }).map((_, i) => (
               <div key={i} className="animate-pulse space-y-2">
-                <div className="aspect-[3/4] bg-neutral-200 rounded-xl" />
+                <div className="aspect-3/4 bg-neutral-200 rounded-xl" />
                 <div className="h-3 bg-neutral-200 rounded w-3/4" />
                 <div className="h-3 bg-neutral-200 rounded w-1/2" />
               </div>
@@ -146,11 +146,12 @@ export default function AdminBooksPage() {
               <div key={book.id} className="group flex flex-col gap-2">
 
                 {/* Cover */}
-                <div className="relative aspect-[3/4] rounded-xl overflow-hidden bg-neutral-100 border border-neutral-200">
+                <div className="relative aspect-3/4 rounded-xl overflow-hidden bg-neutral-100 border border-neutral-200">
                   <Image
                     src={book.coverImage}
                     alt={book.title}
                     fill
+                    sizes="100%"
                     className="object-cover transition group-hover:scale-105 duration-300"
                   />
 

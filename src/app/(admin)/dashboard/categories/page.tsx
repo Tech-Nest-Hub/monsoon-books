@@ -175,7 +175,7 @@ const BooksPage = () => {
                     backgroundImage: `url(${book.coverImage || "https://placehold.co/600x360?text=Book+Cover"})`,
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
                 <button
                   className="absolute top-3 right-3 bg-white/90 rounded-full w-8 h-8 flex items-center justify-center cursor-pointer border border-slate-200"
                   onClick={(e) => {
@@ -463,7 +463,7 @@ function AddBookForm({
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-full border px-3 py-2 rounded min-h-[120px]"
+          className="w-full border px-3 py-2 rounded min-h-30"
           placeholder="Short book description"
         />
       </div>
