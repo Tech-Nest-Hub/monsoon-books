@@ -1,5 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -14,9 +14,9 @@ enum Role {
 }
 
 enum OrderStatus {
-  PENDING    // just placed
-  CONFIRMED  // admin confirmed
-  DELIVERED  // physically delivered
+  PENDING // just placed
+  CONFIRMED // admin confirmed
+  DELIVERED // physically delivered
   CANCELLED
 }
 
@@ -26,20 +26,27 @@ enum PaymentMethod {
   ESEWA
 }
 
+enum BookStatus {
+  AVAILABLE
+  OUT_OF_STOCK
+  DISCONTINUED
+}
+
 // ───── USER ─────
 
 model User {
   id        Int     @id @default(autoincrement())
-  authId    String  @unique       // Supabase auth user ID
+  authId    String  @unique // Supabase auth user ID
   firstName String
   lastName  String
   email     String  @unique
   role      Role    @default(USER)
-  provider  String?               // "google", "facebook", or "email"
+  provider  String? // "google", "facebook", or "email"
 
-  cart      Cart?                 // one cart per user
+  cart      Cart? // one cart per user
   orders    Order[]
   wishlists Wishlist[]
+  reviews   Review[]
 
   @@map("users")
 }
@@ -47,50 +54,51 @@ model User {
 // ───── BOOK ─────
 
 model Book {
-  id            Int      @id @default(autoincrement())
+  id            Int        @id @default(autoincrement())
   title         String
   description   String
-  coverImage    String            // Cloudinary URL
+  coverImage    String // Cloudinary URL
   author        String
-  language      String   @default("Nepali")
+  language      String     @default("Nepali")
   price         Float
-  originalPrice  Float?  // for discounts; null if no discount
-  stock         Int      @default(0)
+  originalPrice Float? // for discounts; null if no discount
+  stock         Int        @default(0)
   publisher     String?
-  edition       String? 
-  status       String   @default("available") // "available", "out_of_stock", "discontinued"
-  isActive     Boolean  @default(true) // for soft deletes
+  edition       String?
+  status        BookStatus @default(AVAILABLE)
+  isActive      Boolean    @default(true) // for soft deletes
 
-  categoryId    Int
+  categoryId Int
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
+  review Review[]
 
-
-  images      BookImage[] 
-  category      Category @relation(fields: [categoryId], references: [id])
-  cartItems     CartItem[]
-  orderItems    OrderItem[]
-  wishlists     Wishlist[]
+  images     BookImage[]
+  category   Category    @relation(fields: [categoryId], references: [id])
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+  wishlists  Wishlist[]
 
   @@map("books")
 }
 
 model BookImage {
-  id        Int      @id @default(autoincrement())
-  url       String
-  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
-  bookId    Int
-  order     Int      @default(0)  // for sorting thumbnails
+  id     Int    @id @default(autoincrement())
+  url    String
+  book   Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId Int
+  order  Int    @default(0) // for sorting thumbnails
 
   @@map("book_images")
 }
+
 // ───── CATEGORY ─────
 
 model Category {
   id    Int    @id @default(autoincrement())
-  name  String @unique             // "Fiction", "Loksewa", "Academic", etc.
+  name  String @unique // "Fiction", "Loksewa", "Academic", etc.
   books Book[]
 
   @@map("categories")
@@ -101,7 +109,7 @@ model Category {
 model Cart {
   id        Int        @id @default(autoincrement())
   user      User       @relation(fields: [userId], references: [id])
-  userId    Int        @unique     // one cart per user
+  userId    Int        @unique // one cart per user
   items     CartItem[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
@@ -125,13 +133,13 @@ model CartItem {
 // ───── ORDER ─────
 
 model Order {
-  id              Int           @id @default(autoincrement())
-  user            User          @relation(fields: [userId], references: [id])
-  userId          Int
-  items           OrderItem[]
-  status          OrderStatus   @default(PENDING)
-  paymentMethod   PaymentMethod @default(CASH_ON_DELIVERY)
-  total           Float
+  id            Int           @id @default(autoincrement())
+  user          User          @relation(fields: [userId], references: [id])
+  userId        Int
+  items         OrderItem[]
+  status        OrderStatus   @default(PENDING)
+  paymentMethod PaymentMethod @default(CASH_ON_DELIVERY)
+  total         Float
 
   // delivery info
   deliveryAddress String
@@ -167,4 +175,20 @@ model Wishlist {
 
   @@unique([userId, bookId]) // can't wishlist the same book twice
   @@map("wishlists")
+}
+
+model Review {
+  id      Int     @id @default(autoincrement())
+  rating  Int // 1-5
+  comment String? // optional written review
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+  book   Book @relation(fields: [bookId], references: [id])
+  bookId Int
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, bookId]) // one review per user per book
+  @@map("reviews")
 }

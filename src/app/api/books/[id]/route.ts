@@ -17,6 +17,7 @@ export async function PATCH(
       price,
       originalPrice,
       stock,
+      status,
       publisher,
       edition,
       categoryId,
@@ -40,6 +41,7 @@ export async function PATCH(
         }),
         ...(categoryId && { categoryId: parseInt(categoryId) }),
         ...(coverImage && { coverImage }),
+        ...(status && { status }),
 
         // Replace all gallery images on edit
         ...(images && {

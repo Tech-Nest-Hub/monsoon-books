@@ -69,6 +69,8 @@ export default function BookForm({ initialData, categories }: BookFormProps) {
         language,
         price,
         stock,
+        originalPrice: price,
+        status: "AVAILABLE",
         publisher: publisher || null,
         edition: edition || null,
         categoryId,
@@ -100,7 +102,7 @@ export default function BookForm({ initialData, categories }: BookFormProps) {
   };
 
   return (
-    <form onSubmit={onSubmit} className="max-w-3xl mx-auto py-10 px-4 space-y-10">
+    <form onSubmit={onSubmit} className="max-w-7xl mx-auto py-10 px-4 space-y-10">
 
       {/* Header */}
       <div className="space-y-1">

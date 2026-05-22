@@ -13,6 +13,7 @@ export async function POST(req: NextRequest) {
       price,
       originalPrice,
       stock,
+      status,
       publisher,
       edition,
       categoryId,
@@ -40,6 +41,7 @@ export async function POST(req: NextRequest) {
         edition: edition || null,
         categoryId: parseInt(categoryId),
         coverImage,
+        status: status || "AVAILABLE",
         images: {
           create: (images ?? []).map((url: string, i: number) => ({
             url,
