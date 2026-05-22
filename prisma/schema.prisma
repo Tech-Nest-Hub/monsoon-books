@@ -55,12 +55,14 @@ model Book {
   author        String
   language      String   @default("Nepali")
   price         Float
+  originalPrice  Float?  // for discounts; null if no discount
   stock         Int      @default(0)
   publisher     String?
-  publishedYear Int?
+  edition       String? 
+  status       String   @default("available") // "available", "out_of_stock", "discontinued"
+  isActive     Boolean  @default(true) // for soft deletes
 
   categoryId    Int
-  category      Category @relation(fields: [categoryId], references: [id])
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -68,6 +70,7 @@ model Book {
 
 
   images      BookImage[] 
+  category      Category @relation(fields: [categoryId], references: [id])
   cartItems     CartItem[]
   orderItems    OrderItem[]
   wishlists     Wishlist[]

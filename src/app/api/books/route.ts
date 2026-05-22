@@ -1,7 +1,7 @@
 const seed = [
   {
     id: 1,
-    title: 'HAHAHA',
+    title: 'Manish',
     author: 'Aayushma Panduu',
     category: 'City Tour',
     pages: 320,
