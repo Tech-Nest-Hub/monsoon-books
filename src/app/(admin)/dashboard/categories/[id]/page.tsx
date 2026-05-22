@@ -1,39 +1,26 @@
 "use client";
+import { Book, Category } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-interface Book {
-  id: number;
-  title: string;
-  author: string;
-  category: string;
-  pages: number;
-  price: number;
-  originalPrice: number;
-  status: "active" | "draft";
-  description: string;
-}
+type BookWithCategory = Book & { category: Category };
 
 const EditBookPage = () => {
   const params = useParams<{ id: string }>();
   const router = useRouter();
-  const [book, setBook] = useState<Book | null>(null);
+  const [book, setBook] = useState<BookWithCategory | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setError(null);
-    fetch("/api/books")
+     fetch(`/api/books/${params.id}`)
       .then((res) => {
         if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
         return res.json();
       })
-      .then((data: Book[]) => {
-        if (!Array.isArray(data)) throw new Error("Invalid books response");
-        const id = Number(params?.id);
-        const found = data.find((item) => item.id === id);
-        if (!found) throw new Error("Book not found");
-        setBook(found);
-      })
+       .then((data: BookWithCategory) => {
+      setBook(data);
+    })
       .catch((err) => {
         console.error(err);
         setError("Unable to load book.");
@@ -108,8 +95,8 @@ const EditBookPage = () => {
             <label className="text-sm font-medium">Category *</label>
             <select
               className="w-full border rounded-lg px-3 py-2 mt-1 text-sm bg-white text-black"
-              value={book.category}
-              onChange={(e) => setBook({ ...book, category: e.target.value })}
+              value={book.category.name}
+              onChange={(e) => setBook({ ...book, category: { ...book.category, name: e.target.value } })}
             >
               <option>Fiction</option>
               <option>Non-Fiction</option>

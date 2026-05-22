@@ -1,27 +1,16 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
+import { Book, BookImage, Category } from "@prisma/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 
-interface Book {
-  id: number;
-  title: string;
-  author: string;
-  category: string;
-  pages: number;
-  price: number;
-  originalPrice: number;
-  status: "active" | "draft";
-  description: string;
-  image?: string;
-  createdAt: string;
-}
+type BookWithCategory = Book & { category: Category, images: BookImage[] };
 
 const BooksPage = () => {
   const router = useRouter();
-  const [books, setBooks] = useState<Book[]>([]);
+  const [books, setBooks] = useState<BookWithCategory[]>([]);
   const [activeTab, setActiveTab] = useState<"all" | "active" | "draft">("all");
   const [query, setQuery] = useState<string>("");
   const [categoryFilter, setCategoryFilter] = useState<"all" | string>("all");
@@ -72,7 +61,7 @@ const BooksPage = () => {
   );
   const filtered = statusFiltered
     .filter((b) =>
-      categoryFilter === "all" ? true : b.category === categoryFilter,
+      categoryFilter === "all" ? true : b.category.name === categoryFilter,
     )
     .filter((b) => {
       if (!query) return true;
@@ -80,9 +69,10 @@ const BooksPage = () => {
       return (
         b.title.toLowerCase().includes(q) ||
         b.author.toLowerCase().includes(q) ||
-        b.category.toLowerCase().includes(q)
+        b.category.name.toLowerCase().includes(q)
       );
     });
+    
 
   return (
     <div>
@@ -182,7 +172,7 @@ const BooksPage = () => {
                 <div
                   className="absolute inset-0 bg-cover bg-center"
                   style={{
-                    backgroundImage: `url(${book.image || "https://placehold.co/600x360?text=Book+Cover"})`,
+                    backgroundImage: `url(${book.coverImage || "https://placehold.co/600x360?text=Book+Cover"})`,
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
@@ -255,7 +245,7 @@ const BooksPage = () => {
                 <div className="flex justify-between items-start">
                   <p className="font-semibold text-sm">{book.title}</p>
                   <span className="text-xs bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full">
-                    {book.category}
+                    {book.category.name}
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">

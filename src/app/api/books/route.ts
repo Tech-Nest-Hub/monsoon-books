@@ -1,150 +1,71 @@
-const seed = [
-  {
-    id: 1,
-    title: 'Manish',
-    author: 'Aayushma Panduu',
-    category: 'City Tour',
-    pages: 320,
-    price: 1159,
-    originalPrice: 1200,
-    status: 'active',
-    description: 'Discover Tuscany and the Mediterranean coast on this bucket-list exploration of Italy.',
-    image: 'https://placehold.co/600x360?text=Italy',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 2,
-    title: 'It Ends With Us',
-    author: 'Coolean Hover',
-    category: 'City Tour',
-    pages: 280,
-    price: 893,
-    originalPrice: 905,
-    status: 'active',
-    description: 'Discover folk tales, the Loch Ness monster, local wildlife and medieval castles in Scotland.',
-    image: 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRqXi_7Ov7tV459Zzemgfey0An8e5ZdT5xD6cDdU9FelCHlZgBV',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 3,
-    title: 'Essential Nepal',
-    author: 'Various',
-    category: 'Adventure',
-    pages: 240,
-    price: 349,
-    originalPrice: 386,
-    status: 'active',
-    description: 'Get active in colourful forests, soaring peaks and golden stupas of Nepal.',
-    image: 'https://placehold.co/600x360?text=Nepal',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 4,
-    title: 'Monsoon Tales',
-    author: 'A. Reader',
-    category: 'Fiction',
-    pages: 412,
-    price: 22,
-    originalPrice: 30,
-    status: 'draft',
-    description: 'A collection of short stories inspired by the monsoon season.',
-    image: 'https://placehold.co/600x360?text=Monsoon',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 5,
-    title: 'Echoes of Torment',
-    author: 'Aakash',
-    category: 'Fiction',
-    pages: 210,
-    price: 100,
-    originalPrice: 150,
-    status: 'active',
-    description: 'A dark, emotional novel exploring loss and redemption during stormy seasons.',
-    image: 'https://placehold.co/600x360?text=Torment',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 6,
-    title: 'The River Knows',
-    author: 'Mero Book',
-    category: 'Historical',
-    pages: 340,
-    price: 18,
-    originalPrice: 25,
-    status: 'active',
-    description: 'Historical journeys along the river, following families and changing landscapes.',
-    image: 'https://placehold.co/600x360?text=River',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 7,
-    title: 'Code & Curry',
-    author: 'Dev Chef',
-    category: 'Non-Fiction',
-    pages: 180,
-    price: 14,
-    originalPrice: 20,
-    status: 'draft',
-    description: 'A playful guide blending programming patterns with recipes and travel anecdotes.',
-    image: 'https://placehold.co/600x360?text=Code+%26+Curry',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 8,
-    title: 'Mountain Whispers',
-    author: 'S. Traveler',
-    category: 'Adventure',
-    pages: 260,
-    price: 12,
-    originalPrice: 18,
-    status: 'active',
-    description: 'An outdoor adventure narrative across high passes and hidden valleys.',
-    image: 'https://placehold.co/600x360?text=Mountains',
-    createdAt: new Date().toISOString(),
-  },
-  {
-  id: 9,
-  title: 'Loksewa GK Master',
-  author: 'Nepal Publication',
-  category: 'Loksewa',
-  pages: 450,
-  price: 899,
-  originalPrice: 950,
-  status: 'active',
-  description: 'Complete preparation guide for Nepal Loksewa exams.',
-  image: 'https://placehold.co/600x360?text=Loksewa',
-  createdAt: new Date().toISOString(),
-},
-{
-  id: 10,
-  title: 'Japanese N5 Grammar',
-  author: 'Sakura Academy',
-  category: 'Japanese',
-  pages: 300,
-  price: 1200,
-  originalPrice: 1400,
-  status: 'active',
-  description: 'Beginner Japanese language learning book for JLPT N5.',
-  image: 'https://placehold.co/600x360?text=Japanese',
-  createdAt: new Date().toISOString(),
-}
-];
 
-export async function GET(request: Request) {
-  return new Response(JSON.stringify(seed), { headers: { 'Content-Type': 'application/json' } });
+import { prisma } from "@/lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const {
+      title,
+      description,
+      author,
+      language,
+      price,
+      originalPrice,
+      stock,
+      publisher,
+      edition,
+      categoryId,
+      coverImage,
+      images, // string[]
+    } = body;
+
+    // Basic validation
+    if (!title || !description || !author || !price || !categoryId || !coverImage) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    const book = await prisma.book.create({
+      data: {
+        title,
+        description,
+        author,
+        language: language ?? "Nepali",
+        price: parseFloat(price),
+        stock: parseInt(stock) ?? 0,
+        publisher: publisher || null,
+        edition: edition || null,
+        categoryId: parseInt(categoryId),
+        coverImage,
+        images: {
+          create: (images ?? []).map((url: string, i: number) => ({
+            url,
+            order: i,
+          })),
+        },
+      },
+      include: { images: true, category: true },
+    });
+
+    return NextResponse.json(book, { status: 201 });
+  } catch (error) {
+    console.error("[POST /api/books]", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }
 
-
-export async function POST(request: Request) {
-  const data = await request.json();
-  const nextId = Math.max(...seed.map((book) => book.id)) + 1;
-  const newBook = {
-    id: nextId,
-    createdAt: new Date().toISOString(),
-    image: data.image || 'https://placehold.co/600x360?text=Book+Cover',
-    ...data,
-  };
-  seed.push(newBook as any);
-  return new Response(JSON.stringify(newBook), { headers: { 'Content-Type': 'application/json' } });
+export async function GET() {
+  try {
+    const books = await prisma.book.findMany({
+      include: { category: true, images: { orderBy: { order: "asc" } } },
+      orderBy: { createdAt: "desc" },
+    });
+    return NextResponse.json(books);
+  } catch (error) {
+    console.error("[GET /api/books]", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }
