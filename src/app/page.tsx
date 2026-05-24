@@ -1,14 +1,13 @@
 import { Button } from "@/components/ui/button";
 import Navbar from "./aayushma/Navbar";
+import { CarouselSpacing } from "@/components/landingpage/CarouselHeroSectionComp";
 
 export default function Home() {
   return (
     <div>
            <Navbar/>
       <div className="p-10 text-center">
-        <h1 className="text-3xl font-bold">
-          Welcome to Monsoon Books
-        </h1>
+          <CarouselSpacing/>
       </div>
     </div>
   );
