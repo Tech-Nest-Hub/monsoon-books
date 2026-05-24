@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
         author,
         language: language ?? "Nepali",
         price: parseFloat(price),
+        ...(originalPrice && { originalPrice: parseFloat(originalPrice) }),
         stock: parseInt(stock) ?? 0,
         publisher: publisher || null,
         edition: edition || null,
@@ -59,9 +60,23 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const url = new URL(request.url)
+    const query = url.searchParams.get("q")
+
+    const where = query
+      ? {
+          OR: [
+            { title: { contains: query, mode: "insensitive" as const } },
+            { author: { contains: query, mode: "insensitive" as const } },
+            { description: { contains: query, mode: "insensitive" as const } },
+          ],
+        }
+      : undefined
+
     const books = await prisma.book.findMany({
+      where,
       include: { category: true, images: { orderBy: { order: "asc" } } },
       orderBy: { createdAt: "desc" },
     });

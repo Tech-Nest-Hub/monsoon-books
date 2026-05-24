@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Pencil, Trash2, Plus, Search } from "lucide-react";
-import { Book, Category } from "@prisma/client";
+import type { Book, Category } from "@prisma/client";
 
 type BookWithCategory = Book & { category: Category };
 

@@ -1,5 +1,5 @@
 "use client";
-import { Book, Category } from "@prisma/client";
+import type { Book, Category } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 

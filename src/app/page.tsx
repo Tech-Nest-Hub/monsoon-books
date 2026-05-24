@@ -1,14 +1,11 @@
-import { Button } from "@/components/ui/button";
 import Navbar from "./aayushma/Navbar";
-import { CarouselSpacing } from "@/components/landingpage/CarouselHeroSectionComp";
+import { ClientLandingComp } from "@/components/landingpage/ClientLandingComp";
 
 export default function Home() {
   return (
     <div>
-           <Navbar/>
-      <div className="p-10 text-center">
-          <CarouselSpacing/>
-      </div>
+      <Navbar />
+      <ClientLandingComp />
     </div>
   );
 }

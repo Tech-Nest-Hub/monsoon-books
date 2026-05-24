@@ -1,5 +1,6 @@
-'use client'
+"use client"
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { AccountButton } from './AccountButton'
 
 type Props = {
@@ -13,6 +14,7 @@ type Props = {
 const Bottomthickbar = ({ user }: Props) => {
   const [searchQuery, setSearchQuery] = useState('')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const router = useRouter()
 
   return (
     <div className="bg-white border-b border-gray-200">
@@ -32,11 +34,11 @@ const Bottomthickbar = ({ user }: Props) => {
               placeholder="Search books, authors, ISBN…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && console.log('search:', searchQuery)}
+              onKeyDown={(e) => e.key === 'Enter' && router.push(`/search?q=${encodeURIComponent(searchQuery)}`)}
               className="flex-1 px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 outline-none bg-white"
             />
             <button
-              onClick={() => console.log('search:', searchQuery)}
+              onClick={() => router.push(`/search?q=${encodeURIComponent(searchQuery)}`)}
               className="bg-red-700 hover:bg-red-800 text-white px-5 py-2.5 text-sm font-semibold flex items-center gap-2 transition-colors shrink-0"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,7 +102,7 @@ const Bottomthickbar = ({ user }: Props) => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="flex-1 px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 outline-none"
             />
-            <button className="bg-red-700 text-white px-4 py-2.5">
+            <button className="bg-red-700 text-white px-4 py-2.5" onClick={() => router.push(`/search?q=${encodeURIComponent(searchQuery)}`)}>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
