@@ -10,9 +10,9 @@ import {
 } from "@/components/ui/carousel"
 
 const heroSlides = [
-  { title: "Big Sale — Up to 50% off", description: "Limited time offers on selected titles" },
-  { title: "New Arrivals", description: "Fresh books from top authors" },
-  { title: "Staff Picks", description: "Curated recommendations for you" },
+  { title: "Big Sale — Up to 50% off", image: "https://media.istockphoto.com/id/1411701868/photo/magic-book-with-glitter-open-book-with-lights-glowing-in-dark-background.jpg?s=612x612&w=0&k=20&c=-vGSj8f8tj6Zbj2mDZCABgP50rcLjqWw-KwxgDA2cYc=" },
+  { title: "New Arrivals", image: "https://grey.com.np/cdn/shop/collections/new-arrivals-books_cf34d155-c79f-4712-83fd-9c418fceef1e.png?v=1762939391" },
+  { title: "Staff Picks", image: "https://www.thegoodbook.co.uk/downloads/staffpicks.jpg" },
 ]
 
 export function CarouselSpacing() {
@@ -21,14 +21,8 @@ export function CarouselSpacing() {
       <CarouselContent className="w-full">
         {heroSlides.map((slide, index) => (
           <CarouselItem key={index} className="basis-full">
-            <Card className="min-h-[28rem] overflow-hidden rounded-2xl bg-red-700 text-white shadow-2xl">
-              <CardContent className="flex h-full flex-col justify-between gap-6 p-8 md:p-10">
-                <div className="space-y-3">
-                  <CardTitle className="text-3xl font-semibold leading-tight md:text-4xl">{slide.title}</CardTitle>
-                  <CardDescription className="max-w-sm text-sm text-white/90 md:text-base">{slide.description}</CardDescription>
-                </div>
-                <div className="inline-flex rounded-full bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.22em] text-white/80 shadow-sm">Explore now</div>
-              </CardContent>
+            <Card className="min-h-[28rem] overflow-hidden rounded-2xl shadow-2xl">
+              <img src={slide.image} alt={slide.title} className="object-cover w-full h-full" />
             </Card>
           </CarouselItem>
         ))}
