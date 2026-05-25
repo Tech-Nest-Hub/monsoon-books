@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import {
   Carousel,
   CarouselContent,
@@ -17,16 +17,22 @@ const heroSlides = [
 
 export function CarouselSpacing() {
   return (
-    <Carousel className="w-full">
-      <CarouselContent className="w-full">
+    <Carousel className="w-full max-w-4xl mx-auto">
+      <CarouselContent>
         {heroSlides.map((slide, index) => (
           <CarouselItem key={index} className="basis-full">
-            <Card className="min-h-[28rem] overflow-hidden rounded-2xl shadow-2xl">
-              <img src={slide.image} alt={slide.title} className="object-cover w-full h-full" />
-            </Card>
+            {/* Removed heavy shadow + better styling */}
+            <div className="overflow-hidden rounded-2xl h-[250px] shadow-md hover:shadow-lg transition-shadow">
+              <img
+                src={slide.image}
+                alt={slide.title}
+                className="object-cover w-full h-full"
+              />
+            </div>
           </CarouselItem>
         ))}
       </CarouselContent>
+
       <CarouselPrevious />
       <CarouselNext />
     </Carousel>
