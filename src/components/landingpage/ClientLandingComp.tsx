@@ -183,37 +183,38 @@ export function ClientLandingComp() {
                 ))}
               </div>
             ) : (
-              <Carousel className="w-full">
+              <Carousel key={`carousel-${showMoreTopSelling}`} className="w-full">
                 <CarouselContent>
                   {topSellingBooks.length ? (
                     topSellingBooks.map((book) => (
                       <CarouselItem
                         key={book.id}
-                        className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
+                        className="basis-full xs:basis-1/2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
                       >
-                        <div className="pr-4">
+                        <div className="pr-2 sm:pr-4">
                           <Card
                             onClick={() =>
                               handleBookClick(book.id)
                             }
-                            className="h-full min-h-[18rem] overflow-hidden rounded-xl border border-red-100 bg-gradient-to-br from-white to-red-50 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-red-300 hover:shadow-lg cursor-pointer"
+                            className="h-full min-h-[16rem] sm:min-h-[18rem] overflow-hidden rounded-lg sm:rounded-xl border border-red-100 bg-gradient-to-br from-white to-red-50 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-red-300 hover:shadow-lg cursor-pointer"
                           >
-                            <div className="aspect-[3/4] overflow-hidden bg-slate-100">
+                            <div className="aspect-[3/4] overflow-hidden bg-slate-100 relative">
                               {book.coverImage ? (
                                 <img
                                   src={book.coverImage}
                                   alt={book.title}
                                   className="h-full w-full object-cover transition-transform duration-300 hover:scale-110"
+                                  loading="lazy"
                                 />
                               ) : (
-                                <div className="flex h-full items-center justify-center text-muted-foreground">
+                                <div className="flex h-full items-center justify-center text-xs sm:text-sm text-muted-foreground">
                                   No cover
                                 </div>
                               )}
                             </div>
 
-                            <CardContent className="space-y-2 pt-3">
-                              <CardTitle className="line-clamp-2 text-sm font-semibold">
+                            <CardContent className="space-y-1 sm:space-y-2 pt-2 sm:pt-3 px-3 sm:px-4">
+                              <CardTitle className="line-clamp-2 text-xs sm:text-sm font-semibold">
                                 {book.title}
                               </CardTitle>
 
@@ -222,11 +223,11 @@ export function ClientLandingComp() {
                               </CardDescription>
 
                               <div className="flex items-center justify-between pt-1 text-xs text-muted-foreground">
-                                <span>
+                                <span className="truncate">
                                   {book.category?.name ?? "General"}
                                 </span>
 
-                                <span className="font-bold text-red-700">
+                                <span className="font-bold text-red-700 whitespace-nowrap ml-1">
                                   ₹{book.price ?? "--"}
                                 </span>
                               </div>
@@ -264,17 +265,17 @@ export function ClientLandingComp() {
           </div>
 
           {loading ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            <div className="grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {Array.from({ length: 10 }).map((_, index) => (
                 <Skeleton
                   key={index}
-                  className="h-64 rounded-xl"
+                  className="h-56 sm:h-64 rounded-lg sm:rounded-xl"
                 />
               ))}
             </div>
           ) : (
             <>
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+              <div className="grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                 {productBooks.length ? (
                   productBooks.map((book) => (
                     <Card
@@ -282,25 +283,26 @@ export function ClientLandingComp() {
                       onClick={() =>
                         handleBookClick(book.id)
                       }
-                      className="overflow-hidden rounded-xl border border-red-100 bg-gradient-to-br from-white to-red-50 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-red-300 hover:shadow-lg cursor-pointer"
+                      className="overflow-hidden rounded-lg sm:rounded-xl border border-red-100 bg-gradient-to-br from-white to-red-50 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-red-300 hover:shadow-lg cursor-pointer"
                     >
                       <div className="flex h-full flex-col overflow-hidden">
-                        <div className="aspect-[3/4] overflow-hidden bg-slate-100">
+                        <div className="aspect-[3/4] overflow-hidden bg-slate-100 relative">
                           {book.coverImage ? (
                             <img
                               src={book.coverImage}
                               alt={book.title}
                               className="h-full w-full object-cover transition-transform duration-300 hover:scale-110"
+                              loading="lazy"
                             />
                           ) : (
-                            <div className="flex h-full items-center justify-center text-muted-foreground">
+                            <div className="flex h-full items-center justify-center text-xs sm:text-sm text-muted-foreground">
                               No cover
                             </div>
                           )}
                         </div>
 
-                        <CardContent className="flex flex-1 flex-col space-y-2 pt-3">
-                          <CardTitle className="line-clamp-2 text-sm font-semibold">
+                        <CardContent className="flex flex-1 flex-col space-y-1 sm:space-y-2 pt-2 sm:pt-3 px-2 sm:px-4">
+                          <CardTitle className="line-clamp-2 text-xs sm:text-sm font-semibold">
                             {book.title}
                           </CardTitle>
 
@@ -309,11 +311,11 @@ export function ClientLandingComp() {
                           </CardDescription>
 
                           <div className="flex items-center justify-between border-t border-red-100 pt-2 text-xs text-muted-foreground">
-                            <span>
+                            <span className="truncate">
                               {book.category?.name ?? "General"}
                             </span>
 
-                            <span className="font-bold text-red-700">
+                            <span className="font-bold text-red-700 whitespace-nowrap ml-1">
                               ₹{book.price ?? "--"}
                             </span>
                           </div>

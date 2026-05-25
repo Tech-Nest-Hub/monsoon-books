@@ -240,3 +240,45 @@ export {
   CarouselNext,
   useCarousel,
 }
+
+function CarouselIndicators({ className }: { className?: string }) {
+  const { api } = useCarousel()
+  const [selected, setSelected] = React.useState(0)
+  const [count, setCount] = React.useState(0)
+
+  React.useEffect(() => {
+    if (!api) return
+
+    const onSelect = () => setSelected(api.selectedScrollSnap())
+
+    setCount(api.scrollSnapList().length)
+    onSelect()
+
+    api.on("reInit", () => setCount(api.scrollSnapList().length))
+    api.on("select", onSelect)
+
+    return () => {
+      api?.off("select", onSelect)
+    }
+  }, [api])
+
+  if (!count) return null
+
+  return (
+    <div className={cn("absolute left-1/2 -translate-x-1/2 bottom-4 z-20 flex gap-2", className)}>
+      {Array.from({ length: count }).map((_, i) => (
+        <button
+          key={i}
+          aria-label={`Go to slide ${i + 1}`}
+          className={cn(
+            "h-2 w-2 rounded-full transition-colors",
+            selected === i ? "bg-white" : "bg-white/50"
+          )}
+          onClick={() => api?.scrollTo(i)}
+        />
+      ))}
+    </div>
+  )
+}
+
+export { CarouselIndicators }
