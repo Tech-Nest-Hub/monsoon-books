@@ -144,6 +144,8 @@ export function ClientLandingComp() {
                             className="h-full min-h-[18rem] overflow-hidden rounded-xl border border-red-100 bg-gradient-to-br from-white to-red-50 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-2 cursor-pointer hover:border-red-300"
                           >
                             <div className="aspect-[3/4] bg-slate-100 overflow-hidden">
+                          <Card className="h-full min-h-72 overflow-hidden rounded-xl border border-border bg-slate-50">
+                            <div className="aspect-4/3 bg-slate-100">
                               {book.coverImage ? (
                                 <img src={book.coverImage} alt={book.title} className="h-full w-full object-cover transition-transform duration-300 hover:scale-110" />
                               ) : (
@@ -216,6 +218,25 @@ export function ClientLandingComp() {
                             <span className="font-bold text-red-700">₹{book.price ?? "--"}</span>
                           </div>
                         </CardContent>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {productBooks.length ? (
+                productBooks.map((book) => (
+                  <Card key={book.id} className="rounded-xl border border-border bg-white shadow-sm transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
+                    <div className="overflow-hidden rounded-xl">
+                      <div className="aspect-4/3 bg-slate-100 transition-transform duration-200 hover:scale-105">
+                        {book.coverImage ? (
+                          <img src={book.coverImage} alt={book.title} className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="flex h-full items-center justify-center text-muted-foreground">No cover</div>
+                        )}
+                      </div>
+                    </div>
+                    <CardContent className="space-y-3">
+                      <CardTitle className="line-clamp-2">{book.title}</CardTitle>
+                      <CardDescription className="line-clamp-1">{book.author}</CardDescription>
+                      <div className="flex items-center justify-between text-sm text-muted-foreground">
+                        <span className="text-xs">{book.category?.name ?? "General"}</span>
+                        <span className="font-semibold">₹{book.price ?? "--"}</span>
                       </div>
                     </Card>
                   ))
