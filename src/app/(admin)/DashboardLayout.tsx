@@ -4,6 +4,8 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { DashboardBreadcrumb } from "./DashboardBreadcrumb"
+import { Bell, HomeIcon } from "lucide-react"
+import Link from "next/link"
 
 export default function DashboardLayoutClient({
   children,
@@ -19,9 +21,19 @@ export default function DashboardLayoutClient({
 
         <main className="flex-1 overflow-x-hidden">
           <div className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur">
-            <div className="flex items-center gap-3 px-4 py-4">
-              {!isMobile && <SidebarTrigger />}
-               <DashboardBreadcrumb />
+            <div className="flex items-center gap-3 px-4 py-4 justify-between">
+              <div className="flex items-center gap-3">
+                {!isMobile && <SidebarTrigger />}
+                <DashboardBreadcrumb />
+              </div>
+              <div className="flex items-center gap-3">
+                <Link href="/" className="rounded-md p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900">
+                  <HomeIcon className="h-5 w-5" />
+                </Link>
+                <Link href="/" className="rounded-md p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900">
+                  <Bell className="h-5 w-5" />
+                </Link>
+              </div>
             </div>
           </div>
 

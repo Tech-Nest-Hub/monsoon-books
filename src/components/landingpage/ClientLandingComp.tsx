@@ -113,8 +113,8 @@ export function ClientLandingComp() {
                     topSellingBooks.map((book) => (
                       <CarouselItem key={book.id} className="basis-1/1 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
                         <div className="pr-4">
-                          <Card className="h-full min-h-[18rem] overflow-hidden rounded-xl border border-border bg-slate-50">
-                            <div className="aspect-[4/3] bg-slate-100">
+                          <Card className="h-full min-h-72 overflow-hidden rounded-xl border border-border bg-slate-50">
+                            <div className="aspect-4/3 bg-slate-100">
                               {book.coverImage ? (
                                 <img src={book.coverImage} alt={book.title} className="h-full w-full object-cover" />
                               ) : (
@@ -170,7 +170,7 @@ export function ClientLandingComp() {
                 productBooks.map((book) => (
                   <Card key={book.id} className="rounded-xl border border-border bg-white shadow-sm transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
                     <div className="overflow-hidden rounded-xl">
-                      <div className="aspect-[4/3] bg-slate-100 transition-transform duration-200 hover:scale-105">
+                      <div className="aspect-4/3 bg-slate-100 transition-transform duration-200 hover:scale-105">
                         {book.coverImage ? (
                           <img src={book.coverImage} alt={book.title} className="h-full w-full object-cover" />
                         ) : (
