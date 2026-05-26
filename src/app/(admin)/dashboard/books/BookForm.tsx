@@ -192,7 +192,7 @@ export default function BookForm({ initialData, categories }: BookFormProps) {
             />
           </Field>
 
-          <Field label="Published year">
+          <Field label="Edition">
             <input
               type="number"
               value={edition}
