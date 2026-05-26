@@ -122,7 +122,7 @@ export default function AdminCategoriesPage() {
               >
                 <div className="flex items-start justify-between gap-3">
                   {/* Category Icon */}
-                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-neutral-100 flex items-center justify-center">
+                  <div className="shrink-0 w-12 h-12 rounded-xl bg-neutral-100 flex items-center justify-center">
                     <BookOpen className="w-6 h-6 text-neutral-600" />
                   </div>
 

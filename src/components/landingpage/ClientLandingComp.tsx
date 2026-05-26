@@ -187,9 +187,9 @@ export function ClientLandingComp() {
                             onClick={() =>
                               handleBookClick(book.id)
                             }
-                            className="h-full min-h-[16rem] sm:min-h-[18rem] overflow-hidden rounded-lg sm:rounded-xl border border-red-100 bg-gradient-to-br from-white to-red-50 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-red-300 hover:shadow-lg cursor-pointer"
+                            className="h-full min-h-64 sm:min-h-72 overflow-hidden rounded-lg sm:rounded-xl border border-red-100 bg-linear-to-br from-white to-red-50 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-red-300 hover:shadow-lg cursor-pointer"
                           >
-                            <div className="aspect-[3/4] overflow-hidden bg-slate-100 relative">
+                            <div className="aspect-3/4 overflow-hidden bg-slate-100 relative">
                               {book.coverImage ? (
                                 <img
                                   src={book.coverImage}
@@ -274,10 +274,10 @@ export function ClientLandingComp() {
                       onClick={() =>
                         handleBookClick(book.id)
                       }
-                      className="overflow-hidden rounded-lg sm:rounded-xl border border-red-100 bg-gradient-to-br from-white to-red-50 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-red-300 hover:shadow-lg cursor-pointer"
+                      className="overflow-hidden rounded-lg sm:rounded-xl border border-red-100 bg-linear-to-br from-white to-red-50 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-red-300 hover:shadow-lg cursor-pointer"
                     >
                       <div className="flex h-full flex-col overflow-hidden">
-                        <div className="aspect-[3/4] overflow-hidden bg-slate-100 relative">
+                        <div className="aspect-3/4 overflow-hidden bg-slate-100 relative">
                           {book.coverImage ? (
                             <img
                               src={book.coverImage}
@@ -329,7 +329,7 @@ export function ClientLandingComp() {
                     disabled={isLoadingMore}
                     className="group relative overflow-hidden rounded-lg px-8 py-3 font-semibold text-white transition-all duration-300 disabled:opacity-50"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-orange-600 transition-all duration-300 group-hover:from-red-700 group-hover:to-orange-700"></div>
+                    <div className="absolute inset-0 bg-linear-to-r from-red-600 to-orange-600 transition-all duration-300 group-hover:from-red-700 group-hover:to-orange-700"></div>
 
                     <div className="relative flex items-center gap-2">
                       {isLoadingMore ? (

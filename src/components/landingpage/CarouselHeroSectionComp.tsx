@@ -69,13 +69,13 @@ export function CarouselSpacing() {
         <CarouselContent>
           {heroSlides.map((slide, index) => (
             <CarouselItem key={index} className="basis-full">
-              <div className="relative overflow-hidden rounded-2xl h-[250px] md:h-[400px] lg:h-[500px]">
+              <div className="relative overflow-hidden rounded-2xl h-62.5 md:h-100 lg:h-125">
                 <img
                   src={slide.image}
                   alt={slide.title}
                   className="absolute inset-0 w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-r from-black/70 via-black/40 to-transparent" />
                 
                 <div className="relative h-full flex flex-col justify-center px-6 md:px-12 lg:px-16">
                   <div className="max-w-2xl space-y-4 md:space-y-6">
