@@ -1,5 +1,7 @@
 'use client'
 import { useRef, useState, useEffect } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { signOut } from '@/app/auth/callback/action/auth'
 import {
   Dialog,
@@ -56,6 +58,13 @@ const TriggerButton1 = ({ onClick }: { onClick?: () => void }) => (
 export const AccountButton = ({ user }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const pathname = usePathname()
+  const router = useRouter()
+
+  // Close dropdown when route changes (navigation occurs)
+  useEffect(() => {
+    setIsOpen(false)
+  }, [pathname])
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -88,6 +97,11 @@ export const AccountButton = ({ user }: Props) => {
   const displayName =
     [user.firstName, user.lastName].filter(Boolean).join(' ') || user.email
 
+  const handleNavigation = (href: string) => {
+    setIsOpen(false)
+    router.push(href)
+  }
+
   return (
     <div className="relative hidden sm:block" ref={dropdownRef}>
       <TriggerButton1 onClick={() => setIsOpen((v) => !v)} />
@@ -108,20 +122,19 @@ export const AccountButton = ({ user }: Props) => {
 
           {/* Menu items */}
           <div className="py-1">
-            {MENU_ITEMS.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition-colors"
-              >
-                {(() => {
-                  const Icon = item.icon
-                  return <Icon className="w-4 h-4 text-gray-400 shrink-0" />
-                })()}
-                <span>{item.label}</span>
-              </a>
-            ))}
+            {MENU_ITEMS.map((item) => {
+              const Icon = item.icon
+              return (
+                <button
+                  key={item.label}
+                  onClick={() => handleNavigation(item.href)}
+                  className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition-colors"
+                >
+                  <Icon className="w-4 h-4 text-gray-400 shrink-0" />
+                  <span>{item.label}</span>
+                </button>
+              )
+            })}
           </div>
 
           {/* Sign out */}

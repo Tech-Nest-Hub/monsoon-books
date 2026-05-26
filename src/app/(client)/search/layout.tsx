@@ -4,8 +4,7 @@ export default function SearchLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return <>
-  
-  <Navbar/>
-  {children}
+    <Navbar />
+    {children}
   </>;
 }

@@ -2,6 +2,8 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AccountButton } from './AccountButton'
+import { WishlistButton } from '../(client)/wishlist/WishlistButton'
+import { CartButton } from '../(client)/cart/CartButton'
 
 type Props = {
   user: {
@@ -52,28 +54,13 @@ const Bottomthickbar = ({ user }: Props) => {
           <div className="flex items-center gap-1 ml-auto lg:ml-0">
 
             {/* Wishlist */}
-            <button className="hidden sm:flex flex-col items-center gap-0.5 px-3 py-2 rounded-md hover:bg-red-50 hover:text-red-700 text-gray-600 transition-colors group">
-              <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-              <span className="text-[10px] font-medium">Wishlist</span>
-            </button>
+            <WishlistButton user={user} />
 
             {/* Account */}
             <AccountButton user={user} />
 
             {/* Cart */}
-            <button className="flex flex-col items-center gap-0.5 px-3 py-2 rounded-md hover:bg-red-50 hover:text-red-700 text-gray-600 transition-colors relative group">
-              <span className="relative">
-                <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 21h6M12 21v-6" />
-                </svg>
-                <span className="absolute -top-2 -right-2.5 bg-red-600 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center leading-none">
-                  2
-                </span>
-              </span>
-              <span className="text-[10px] font-medium">Cart</span>
-            </button>
+            <CartButton user={user} />
 
             {/* Mobile menu toggle */}
             <button
