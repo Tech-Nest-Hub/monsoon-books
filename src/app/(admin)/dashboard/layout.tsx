@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
-import DashboardLayoutClient from "../DashboardLayout"
 import { prisma } from "@/lib/prisma"
+import DashboardLayoutClient from "../DashboardLayout"
 
 export default async function Layout({
   children,

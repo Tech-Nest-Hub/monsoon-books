@@ -1,501 +1,165 @@
 "use client";
-import { Card, CardContent } from "@/components/ui/card";
-import { Book, BookImage, Category } from "@prisma/client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
+import { Pencil, Trash2, Plus, Search, BookOpen } from "lucide-react";
+import type { Category } from "@prisma/client";
 
-type BookWithCategory = Book & { category: Category, images: BookImage[] };
-
-const BooksPage = () => {
-  const router = useRouter();
-  const [books, setBooks] = useState<BookWithCategory[]>([]);
-  const [activeTab, setActiveTab] = useState<"all" | "active" | "draft">("all");
-  const [query, setQuery] = useState<string>("");
-  const [categoryFilter, setCategoryFilter] = useState<"all" | string>("all");
-  const [showAdd, setShowAdd] = useState(false);
-  const [menuOpenId, setMenuOpenId] = useState<number | null>(null);
+export default function AdminCategoriesPage() {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   useEffect(() => {
-    fetchBooks();
+    fetch("/api/categories")
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) setCategories(data);
+        else console.error("API error:", data);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => {
-    if (typeof document === "undefined") return;
-    const originalOverflow = document.body.style.overflow;
-    if (showAdd) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = originalOverflow;
+  const handleDelete = async (id: number) => {
+    if (!confirm("Delete this category? This will also delete all books in this category. This cannot be undone.")) return;
+    setDeletingId(id);
+    try {
+      await fetch(`/api/categories/${id}`, { method: "DELETE" });
+      setCategories((prev) => prev.filter((c) => c.id !== id));
+    } finally {
+      setDeletingId(null);
     }
-    return () => {
-      document.body.style.overflow = originalOverflow;
-    };
-  }, [showAdd]);
-
-  const fetchBooks = () => {
-    fetch("/api/books")
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch books");
-        return res.json();
-      })
-      .then((data) => {
-        if (!Array.isArray(data)) {
-          console.error("Books response not array", data);
-          setBooks([]);
-        } else {
-          setBooks(data);
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        setBooks([]);
-      });
   };
 
-  const activeCount = books.filter((b) => b.status === "active").length;
-  const draftCount = books.filter((b) => b.status === "draft").length;
-  const statusFiltered = books.filter((b) =>
-    activeTab === "all" ? true : b.status === activeTab,
+  // Filtered categories
+  const filtered = categories.filter((c) =>
+    c.name.toLowerCase().includes(search.toLowerCase())
   );
-  const filtered = statusFiltered
-    .filter((b) =>
-      categoryFilter === "all" ? true : b.category.name === categoryFilter,
-    )
-    .filter((b) => {
-      if (!query) return true;
-      const q = query.toLowerCase();
-      return (
-        b.title.toLowerCase().includes(q) ||
-        b.author.toLowerCase().includes(q) ||
-        b.category.name.toLowerCase().includes(q)
-      );
-    });
-    
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">Books</h1>
-          <p className="text-muted-foreground">Manage your book catalogue</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <input
-            type="search"
-            placeholder="Search title, author, category..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="border px-3 py-2 rounded-lg text-sm w-72 ml-8"
-          />
-          <button
-            onClick={() => setShowAdd(true)}
-            className="bg-black text-white px-4 py-2 rounded-lg text-sm"
+    <div className="min-h-screen bg-neutral-50">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <h1 className="text-2xl font-bold tracking-tight text-neutral-900">Categories</h1>
+            <p className="text-xs font-semibold tracking-widest uppercase text-neutral-400">
+              Admin
+            </p>
+          </div>
+          <Link
+            href="/dashboard/categories/new"
+            className="flex items-center gap-2 px-4 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-lg hover:bg-neutral-700 transition"
           >
-            + Add Item
-          </button>
+            <Plus className="w-4 h-4" />
+            Add category
+          </Link>
         </div>
-      </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <Card>
-          <CardContent className="pt-4">
-            <p className="text-sm text-muted-foreground">Active</p>
-            <p className="text-3xl font-semibold">{activeCount}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-4">
-            <p className="text-sm text-muted-foreground">Drafts</p>
-            <p className="text-3xl font-semibold">{draftCount}</p>
-          </CardContent>
-        </Card>
-      </div>
+        {/* Search bar */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search categories..."
+              className="w-full pl-9 pr-4 py-2.5 text-sm border border-neutral-200 rounded-lg bg-white text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 transition"
+            />
+          </div>
+        </div>
 
-      {/* Tabs */}
-      <div className="flex gap-6 border-b mb-4">
-        {(["all", "active", "draft"] as const).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`pb-2 text-sm capitalize border-b-2 -mb-px transition-colors ${
-              activeTab === tab
-                ? "border-black font-medium text-black"
-                : "border-transparent text-muted-foreground"
-            }`}
-          >
-            {tab}{" "}
-            {tab !== "all" && (
-              <span className="ml-1 text-xs bg-gray-100 px-1.5 py-0.5 rounded-full">
-                {books.filter((b) => b.status === tab).length}
-              </span>
+        {/* Stats row */}
+        {!loading && (
+          <p className="text-sm text-neutral-400">
+            {filtered.length} {filtered.length === 1 ? "category" : "categories"}
+            {search ? ` matching "${search}"` : " total"}
+          </p>
+        )}
+
+        {/* Loading */}
+        {loading && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="animate-pulse">
+                <div className="bg-neutral-200 rounded-xl p-6 space-y-3">
+                  <div className="h-5 bg-neutral-300 rounded w-3/4" />
+                  <div className="h-3 bg-neutral-300 rounded w-1/2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!loading && filtered.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-24 text-center space-y-3">
+            <div className="w-16 h-16 rounded-2xl bg-neutral-100 flex items-center justify-center text-2xl">
+              📁
+            </div>
+            <p className="text-neutral-500 font-medium">
+              {categories.length === 0 ? "No categories yet" : "No categories match your search"}
+            </p>
+            {categories.length === 0 && (
+              <Link
+                href="/dashboard/categories/new"
+                className="text-sm text-neutral-900 underline underline-offset-4"
+              >
+                Add your first category
+              </Link>
             )}
-          </button>
-        ))}
-      </div>
+          </div>
+        )}
 
-      {/* Genre filters */}
-      <div className="flex flex-wrap gap-3 mb-6">
-        {[
-          "all",
-          "Fiction",
-          "Non-Fiction",
-          "Adventure",
-          "City Tour",
-          "Historical",
-          "Romance",
-          "Loksewa",
-          "Japanese",
-        ].map((category) => (
-          <button
-            key={category}
-            onClick={() => setCategoryFilter(category)}
-            className={`rounded-full px-4 py-2 text-sm transition ${
-              categoryFilter === category
-                ? "bg-black text-white border border-black"
-                : "bg-white text-slate-900 border border-slate-200 hover:bg-slate-950 hover:text-white"
-            }`}
-          >
-            {category === "all" ? "All Categories" : category}
-          </button>
-        ))}
-      </div>
+        {/* Categories Grid */}
+        {!loading && filtered.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filtered.map((category) => (
+              <div
+                key={category.id}
+                className="group bg-white border border-neutral-200 rounded-xl p-5 hover:shadow-md transition-all duration-200"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  {/* Category Icon */}
+                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-neutral-100 flex items-center justify-center">
+                    <BookOpen className="w-6 h-6 text-neutral-600" />
+                  </div>
 
-      {/* Book grid */}
-      <div className="grid grid-cols-3 gap-4">
-        {filtered.map((book) => (
-          <Link href={`/dashboard/categories/${book.id}`} key={book.id}>
-            <Card className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
-              <div className="relative h-44 overflow-hidden rounded-t-lg">
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{
-                    backgroundImage: `url(${book.coverImage || "https://placehold.co/600x360?text=Book+Cover"})`,
-                  }}
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
-                <button
-                  className="absolute top-3 right-3 bg-white/90 rounded-full w-8 h-8 flex items-center justify-center cursor-pointer border border-slate-200"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setMenuOpenId(book.id === menuOpenId ? null : book.id);
-                  }}
-                  type="button"
-                >
-                  ⋮
-                </button>
-                {menuOpenId === book.id && (
-                  <div className="absolute top-12 right-3 z-30 w-44 rounded-xl bg-white border border-slate-200 shadow-lg py-2 text-sm">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setMenuOpenId(null);
-                        router.push(`/dashboard/categories/${book.id}`);
-                      }}
-                      className="w-full text-left px-4 py-2 hover:bg-slate-100"
+                  {/* Category Info */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-semibold text-neutral-900 truncate">
+                      {category.name}
+                    </h3>
+                    <p className="text-xs text-neutral-400 mt-1">
+                      ID: {category.id}
+                    </p>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <Link
+                      href={`/dashboard/categories/${category.id}`}
+                      className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 transition"
+                      title="Edit"
                     >
-                      Edit
-                    </button>
+                      <Pencil className="w-4 h-4 text-neutral-700" />
+                    </Link>
                     <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setMenuOpenId(null);
-                        setBooks((prev) =>
-                          prev.filter((item) => item.id !== book.id),
-                        );
-                      }}
-                      className="w-full text-left px-4 py-2 text-red-600 hover:bg-slate-100"
+                      onClick={() => handleDelete(category.id)}
+                      disabled={deletingId === category.id}
+                      className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center hover:bg-red-50 transition disabled:opacity-50"
+                      title="Delete"
                     >
-                      Delete
-                    </button>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setMenuOpenId(null);
-                        if (
-                          typeof navigator !== "undefined" &&
-                          navigator.clipboard
-                        ) {
-                          navigator.clipboard.writeText(
-                            window.location.origin +
-                              `/dashboard/categories/${book.id}`,
-                          );
-                        }
-                      }}
-                      className="w-full text-left px-4 py-2 hover:bg-slate-100"
-                    >
-                      Copy Link
+                      <Trash2 className="w-4 h-4 text-red-500" />
                     </button>
                   </div>
-                )}
-                <span className="absolute bottom-3 left-3 text-xs bg-black text-white px-2 py-0.5 rounded-full capitalize">
-                  {book.status}
-                </span>
-              </div>
-              <CardContent className="pt-3">
-                <div className="flex justify-between items-start">
-                  <p className="font-semibold text-sm">{book.title}</p>
-                  <span className="text-xs bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full">
-                    {book.category.name}
-                  </span>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  by {book.author}
-                </p>
-                <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
-                  {book.description}
-                </p>
-                <div className="flex items-baseline gap-2 mt-2">
-                  <span className="font-semibold text-sm">Rs.{book.price}</span>
-                  <span className="text-xs text-muted-foreground line-through">
-                    Rs.{book.originalPrice}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
-
-      {/* Add modal (in-page) */}
-      {showAdd &&
-        typeof document !== "undefined" &&
-        ReactDOM.createPortal(
-          <div className="fixed inset-0 bg-black/40 z-50 flex items-start justify-center p-6">
-            <div className="bg-white rounded-xl shadow-lg w-full max-w-lg p-4 z-60 mx-6 overflow-hidden">
-              <div className="flex justify-between items-center mb-4">
-                <div>
-                  <button
-                    onClick={() => setShowAdd(false)}
-                    className="text-sm text-slate-500 mr-3"
-                  >
-                    ← Back
-                  </button>
-                  <h3 className="text-xl font-bold">Add Book</h3>
-                  <p className="text-sm text-slate-500">
-                    Add a new book to the catalogue
-                  </p>
-                </div>
-                <button
-                  onClick={() => setShowAdd(false)}
-                  className="text-sm px-3 py-2 border rounded"
-                >
-                  Cancel
-                </button>
               </div>
-
-              <div className="max-h-[75vh] overflow-y-auto pr-2">
-                <AddBookForm
-                  onCreated={() => {
-                    setShowAdd(false);
-                    fetchBooks();
-                  }}
-                  onCancel={() => setShowAdd(false)}
-                />
-              </div>
-            </div>
-          </div>,
-          document.body,
+            ))}
+          </div>
         )}
+      </div>
     </div>
-  );
-};
-
-export default BooksPage;
-
-function AddBookForm({
-  onCreated,
-  onCancel,
-}: {
-  onCreated: () => void;
-  onCancel: () => void;
-}) {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [category, setCategory] = useState("Fiction");
-  const [pages, setPages] = useState<number | "">("");
-  const [price, setPrice] = useState<number | "">("");
-  const [originalPrice, setOriginalPrice] = useState<number | "">("");
-  const [status, setStatus] = useState<"active" | "draft">("draft");
-  const [description, setDescription] = useState("");
-  const [image, setImage] = useState("");
-  const [saving, setSaving] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    const payload = {
-      title,
-      author,
-      category,
-      pages: typeof pages === "number" ? pages : Number(pages || 0),
-      price: typeof price === "number" ? price : Number(price || 0),
-      originalPrice:
-        typeof originalPrice === "number"
-          ? originalPrice
-          : Number(originalPrice || 0),
-      status,
-      description,
-      image,
-      createdAt: new Date().toISOString(),
-    };
-
-    try {
-      const res = await fetch("/api/books", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error("Failed to create");
-      onCreated();
-    } catch (err) {
-      console.error(err);
-      alert("Failed to create book");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium mb-1">Title *</label>
-        <input
-          required
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full border px-3 py-2 rounded"
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Author *</label>
-          <input
-            required
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Category *</label>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
-          >
-            <option>Fiction</option>
-            <option>Non-Fiction</option>
-            <option>Adventure</option>
-            <option>City Tour</option>
-            <option>Historical</option>
-            <option>Romance</option>
-            <option>Loksewa</option>
-            <option>Japanese</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 gap-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Pages</label>
-          <input
-            type="number"
-            value={pages as any}
-            onChange={(e) =>
-              setPages(e.target.value === "" ? "" : Number(e.target.value))
-            }
-            className="w-full border px-3 py-2 rounded"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Price</label>
-          <input
-            type="number"
-            value={price as any}
-            onChange={(e) =>
-              setPrice(e.target.value === "" ? "" : Number(e.target.value))
-            }
-            className="w-full border px-3 py-2 rounded"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Original Price
-          </label>
-          <input
-            type="number"
-            value={originalPrice as any}
-            onChange={(e) =>
-              setOriginalPrice(
-                e.target.value === "" ? "" : Number(e.target.value),
-              )
-            }
-            className="w-full border px-3 py-2 rounded"
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium mb-1">
-          Cover Image URL
-        </label>
-        <input
-          value={image}
-          onChange={(e) => setImage(e.target.value)}
-          className="w-full border px-3 py-2 rounded"
-          placeholder="Paste image URL here"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium mb-1">Description</label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full border px-3 py-2 rounded min-h-30"
-          placeholder="Short book description"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium mb-1">Status</label>
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value as "active" | "draft")}
-          className="w-full border px-3 py-2 rounded"
-        >
-          <option value="active">Active</option>
-          <option value="draft">Draft</option>
-        </select>
-      </div>
-
-      <div className="flex justify-end gap-3 pt-2">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="rounded-lg border px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          disabled={saving}
-          className="rounded-lg bg-black px-4 py-2 text-sm text-white hover:bg-slate-900 disabled:opacity-50"
-        >
-          {saving ? "Saving..." : "Save Book"}
-        </button>
-      </div>
-    </form>
   );
 }
