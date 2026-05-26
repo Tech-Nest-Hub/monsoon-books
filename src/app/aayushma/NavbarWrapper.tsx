@@ -20,13 +20,19 @@ export default function NavbarWrapper({
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Extract children to show/hide Topthinbar based on scroll
+  const childrenArray = React.Children.toArray(children)
+  
   return (
     <div
       className={`sticky bg-red-700 top-0 z-50 transition-shadow duration-300 ${
         isScrolled ? 'shadow-2xl' : 'shadow-md'
       }`}
     >
-      {children}
+      {/* Hide Topthinbar when scrolled */}
+      {!isScrolled && childrenArray[0]}
+      {/* Always show Bottomthickbar */}
+      {childrenArray[1]}
     </div>
   )
 }

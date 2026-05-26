@@ -14,7 +14,7 @@ export default async function BookDetailPage({ params }: { params: Promise<{ id:
   const { id: bookId } = await params
 
   try {
-    // Fetch book from database directly (not API)
+    // 1. Fetch the main book details
     const book = await prisma.book.findUnique({
       where: { id: parseInt(bookId) },
       include: {
@@ -42,7 +42,21 @@ export default async function BookDetailPage({ params }: { params: Promise<{ id:
       )
     }
 
-    // Get user data if logged in
+    // 2. FIX: Fetch similar books in the same category, excluding the current book
+    const similarBooks = await prisma.book.findMany({
+      where: {
+        categoryId: book.categoryId, 
+        id: { not: book.id }, // Avoid recommending the same book
+      },
+      take: 4, // Limits results to fill up your 4-column layout nicely
+      include: {
+        images: {
+          orderBy: { order: "asc" },
+        },
+      },
+    })
+
+    // 3. Get user data if logged in
     const supabase = await createClient()
     const { data: { user: authUser } } = await supabase.auth.getUser()
     
@@ -62,7 +76,8 @@ export default async function BookDetailPage({ params }: { params: Promise<{ id:
     return (
       <div>
         <Navbar />
-        <BookDetailClient book={book} user={userData} />
+        {/* 4. FIX: Pass the newly fetched similarBooks array here */}
+        <BookDetailClient book={book} similarBooks={similarBooks} user={userData} />
       </div>
     )
   } catch (error) {

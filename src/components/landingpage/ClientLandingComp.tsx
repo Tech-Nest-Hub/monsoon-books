@@ -81,27 +81,10 @@ export function ClientLandingComp() {
     }
   }, [])
 
-  React.useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (
-          entries[0].isIntersecting &&
-          !loading &&
-          !isLoadingMore &&
-          books.length > productLimit
-        ) {
-          handleLoadMoreProducts()
-        }
-      },
-      { threshold: 0.1 }
-    )
-
-    if (observerTarget.current) {
-      observer.observe(observerTarget.current)
-    }
-
-    return () => observer.disconnect()
-  }, [productLimit, books.length, loading, isLoadingMore])
+  // Removed auto-load observer - load more is now manual button only
+  // React.useEffect(() => {
+  //   const observer = new IntersectionObserver(...)
+  // }, [...])
 
   const topSellingBooks = books.slice(
     0,

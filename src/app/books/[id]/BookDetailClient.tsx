@@ -1,17 +1,22 @@
-"use client"
+"use client";
 
 import React, { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import type { Book, BookImage, Category } from "@prisma/client"
 import { AddWishlistButton } from "@/app/(client)/wishlist/AddWishlistButton"
-import { Share2 } from "lucide-react"
+import { Share2, ShoppingCart } from "lucide-react"
+
+type SimilarBook = Book & {
+  images?: BookImage[]
+}
 
 type BookDetailClientProps = {
   book: Book & {
     category: Category
     images: BookImage[]
   }
+  similarBooks?: SimilarBook[]
   user?: {
     id?: number
     firstName: string | null
@@ -20,9 +25,10 @@ type BookDetailClientProps = {
   } | null
 }
 
-export default function BookDetailClient({ book, user }: BookDetailClientProps) {
+export default function BookDetailClient({ book, similarBooks = [], user }: BookDetailClientProps) {
   const router = useRouter()
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const [quantity, setQuantity] = useState(1)
   const [isAddedToCart, setIsAddedToCart] = useState(false)
   const [isBuyingNow, setIsBuyingNow] = useState(false)
   const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({})
@@ -38,6 +44,10 @@ export default function BookDetailClient({ book, user }: BookDetailClientProps) 
     setImageErrors(prev => ({ ...prev, [idx]: true }))
   }
 
+  const adjustQuantity = (amount: number) => {
+    setQuantity(prev => Math.max(1, prev + amount))
+  }
+
   const handleAddToCart = async () => {
     if (!user) {
       router.push('/login')
@@ -49,7 +59,7 @@ export default function BookDetailClient({ book, user }: BookDetailClientProps) 
       const response = await fetch('/api/cart', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bookId: book.id, quantity: 1 }),
+        body: JSON.stringify({ bookId: book.id, quantity }),
       })
       
       if (response.ok) {
@@ -73,15 +83,13 @@ export default function BookDetailClient({ book, user }: BookDetailClientProps) 
 
     setIsBuyingNow(true)
     try {
-      // First add to cart
       const response = await fetch('/api/cart', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bookId: book.id, quantity: 1 }),
+        body: JSON.stringify({ bookId: book.id, quantity }),
       })
       
       if (response.ok) {
-        // Then proceed to checkout
         router.push('/checkout')
       } else {
         setIsBuyingNow(false)
@@ -110,7 +118,6 @@ export default function BookDetailClient({ book, user }: BookDetailClientProps) 
         console.log('Error sharing:', error)
       }
     } else {
-      // Fallback: copy to clipboard
       await navigator.clipboard.writeText(shareUrl)
       setShowShareTooltip(true)
       setTimeout(() => setShowShareTooltip(false), 2000)
@@ -118,272 +125,223 @@ export default function BookDetailClient({ book, user }: BookDetailClientProps) 
   }
 
   return (
-    <div className="bg-gradient-to-br from-slate-50 via-white to-red-50 min-h-screen">
-      <div className="mx-auto max-w-7xl px-3 py-8 sm:px-6 sm:py-12 lg:px-8">
-        {/* Breadcrumb */}
-        <div className="mb-6 sm:mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 overflow-x-auto">
-            <Link href="/" className="hover:text-red-700 hover:underline transition-colors whitespace-nowrap">
-              Home
-            </Link>
-            <span className="text-slate-400">/</span>
-            <span className="text-slate-900 font-medium truncate">{book.title}</span>
+    <div className="bg-[#F4F5F8] min-h-screen text-gray-900 selection:bg-red-200">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-10">
+        
+        {/* Top Minimalist Action Bar */}
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between text-xs tracking-wider uppercase text-gray-400">
+          <div className="flex items-center gap-2">
+            <Link href="/" className="hover:text-red-700 transition-colors">Home</Link>
+            <span>/</span>
+            <span className="text-gray-600 font-medium truncate max-w-[180px] sm:max-w-none">
+              {book.title}
+            </span>
           </div>
           
-          {/* Top Right Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             <AddWishlistButton bookId={book.id} userId={user?.id} />
-            
             <div className="relative">
-              <button
-                onClick={handleShare}
-                className="p-3 rounded-full bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-500 transition-all duration-300"
-              >
-                <Share2 className="w-5 h-5" />
+              <button onClick={handleShare} className="hover:text-red-700 transition-colors" title="Share">
+                <Share2 className="w-4 h-4" />
               </button>
               {showShareTooltip && (
-                <div className="absolute top-full right-0 mt-2 px-3 py-1 bg-gray-800 text-white text-xs rounded-lg whitespace-nowrap z-10">
-                  Link copied to clipboard!
+                <div className="absolute right-0 top-full mt-2 z-20 px-2 py-1 bg-black text-white text-[10px] rounded shadow-md whitespace-nowrap normal-case">
+                  Link copied!
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        <div className="grid gap-6 sm:gap-8 lg:gap-12 lg:grid-cols-2 items-start">
-          {/* Images Section */}
-          <div className="space-y-3 sm:space-y-4 sticky top-8">
-            {/* Main Image */}
-            <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 aspect-[3/4] shadow-2xl relative group">
+        {/* Core Detail Segment Grid */}
+        <div className="grid gap-12 lg:grid-cols-12 items-start bg-white p-6 sm:p-10 rounded-2xl border border-gray-100 shadow-xs">
+          
+          {/* Left Column: Image Media Box */}
+          <div className="lg:col-span-6 space-y-4 lg:sticky lg:top-6">
+            <div className="bg-white aspect-[3/4] relative overflow-hidden flex items-center justify-center">
               {mainImage && !imageErrors[selectedImageIndex] ? (
-                <div className="relative h-full w-full">
-                  <img
-                    src={mainImage}
-                    alt={book.title}
-                    onError={() => handleImageError(selectedImageIndex)}
-                    className="h-full w-full object-cover hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
+                <img
+                  src={mainImage}
+                  alt={book.title}
+                  onError={() => handleImageError(selectedImageIndex)}
+                  className="h-full w-full object-contain mix-blend-multiply"
+                />
               ) : (
-                <div className="flex h-full items-center justify-center text-slate-400 text-sm sm:text-lg">
-                  <div className="text-center space-y-2">
-                    <svg className="w-16 h-16 mx-auto opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <p>No image</p>
-                  </div>
-                </div>
-              )}
-
-              {/* Badge */}
-              {book.stock && book.stock > 0 && (
-                <div className="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs sm:text-sm font-bold shadow-lg">
-                  In Stock
+                <div className="text-center p-6 text-gray-300">
+                  <p className="text-xs uppercase tracking-widest">No Image Preview</p>
                 </div>
               )}
             </div>
 
-            {/* Thumbnail Gallery */}
+            {/* Thumbnail Strip Selector */}
             {allImages.length > 1 && (
-              <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+              <div className="flex gap-2 justify-center overflow-x-auto pt-2">
                 {allImages.map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setSelectedImageIndex(idx)}
-                    className={`rounded-lg overflow-hidden bg-slate-100 aspect-square cursor-pointer transition-all duration-200 border-2 ${
-                      selectedImageIndex === idx
-                        ? "ring-2 ring-red-500 shadow-md border-red-500 scale-105"
-                        : "hover:ring-2 hover:ring-red-300 border-transparent"
+                    className={`w-14 h-18 bg-gray-50 p-1 transition-all ${
+                      selectedImageIndex === idx ? "border border-red-700" : "border border-transparent opacity-60"
                     }`}
                   >
-                    <img
-                      src={img.url}
-                      alt={`${book.title} ${idx + 1}`}
-                      onError={() => handleImageError(idx)}
-                      className="h-full w-full object-cover hover:scale-110 transition-transform duration-200"
-                    />
+                    <img src={img.url} alt="" className="w-full h-full object-cover mix-blend-multiply" onError={() => handleImageError(idx)} />
                   </button>
                 ))}
               </div>
             )}
           </div>
 
-          {/* Details Section */}
-          <div className="space-y-4 sm:space-y-6">
-            {/* Title and Author */}
-            <div className="space-y-2 sm:space-y-3">
-              <div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 leading-tight">
-                  {book.title}
-                </h1>
-                <p className="mt-3 text-lg sm:text-xl text-slate-600">
-                  by <span className="font-bold text-slate-900">{book.author}</span>
-                </p>
-              </div>
-
+          {/* Right Column: Checkout Info Stream */}
+          <div className="lg:col-span-6 space-y-6 lg:pl-4">
+            
+            <div className="space-y-1">
               {book.category && (
-                <div className="inline-block">
-                  <span className="px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-red-600 to-orange-600 rounded-full shadow-md">
-                    {book.category.name}
-                  </span>
-                </div>
+                <span className="text-[11px] font-bold tracking-widest text-gray-400 uppercase block">
+                  {book.category.name}
+                </span>
               )}
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-black leading-tight">
+                {book.title} by {book.author}
+              </h1>
             </div>
 
-            {/* Rating Section */}
-            <div className="flex items-center gap-4 pb-4 border-b-2 border-red-200">
-              <div className="flex items-center gap-1 bg-yellow-50 px-3 py-2 rounded-lg">
-                {[...Array(5)].map((_, i) => (
-                  <svg key={i} className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                  </svg>
-                ))}
+            {/* Price Row Block */}
+            <div className="flex items-center gap-3 pt-1">
+              <span className="text-gray-500 line-through text-sm">
+                Rs.{book.originalPrice || book.price}
+              </span>
+              <span className="text-lg font-bold text-black">
+                Rs.{book.price}
+              </span>
+              <span className="bg-black text-white text-[10px] uppercase font-bold px-2 py-0.5 tracking-wider rounded-xs">
+                Sale
+              </span>
+            </div>
+
+            {/* Interactive Quantity Selection Widget */}
+            <div className="space-y-2 pt-2">
+              <label className="text-xs text-gray-500 tracking-wide block">Quantity</label>
+              <div className="inline-flex items-center border border-gray-300 rounded-full bg-white px-2">
+                <button 
+                  onClick={() => adjustQuantity(-1)}
+                  className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-black font-light text-lg transition-colors"
+                >
+                  −
+                </button>
+                <span className="w-10 text-center text-xs font-medium text-black select-none">
+                  {quantity}
+                </span>
+                <button 
+                  onClick={() => adjustQuantity(1)}
+                  className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-black font-light text-lg transition-colors"
+                >
+                  +
+                </button>
               </div>
-              <span className="text-sm text-slate-600 font-medium">(4.8 ratings • 142 reviews)</span>
             </div>
 
-            {/* Price Section */}
-            <div className="space-y-4 bg-gradient-to-br from-red-600 via-red-500 to-orange-600 p-6 sm:p-8 rounded-2xl shadow-2xl text-white">
-              <div>
-                <p className="text-red-100 text-sm font-semibold uppercase tracking-wider mb-2">Special Offer</p>
-                <div className="flex items-baseline gap-3 sm:gap-4 flex-wrap">
-                  <span className="text-4xl sm:text-5xl lg:text-6xl font-black">₹{book.price || "--"}</span>
-                  {book.originalPrice && book.originalPrice > (book.price || 0) && (
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <span className="text-lg sm:text-2xl line-through opacity-75">₹{book.originalPrice}</span>
-                      <span className="px-3 py-1.5 text-xs sm:text-sm font-black text-red-600 bg-yellow-300 rounded-full shadow-lg">
-                        -{Math.round(((book.originalPrice - (book.price || 0)) / book.originalPrice) * 100)}%
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {book.stock !== undefined && (
-                <div className="flex items-center gap-3 pt-3 border-t border-red-400">
-                  <div className={`w-3 h-3 rounded-full ${book.stock > 0 ? "bg-green-300 animate-pulse" : "bg-red-300"}`}></div>
-                  <p className={`font-bold text-sm ${book.stock > 0 ? "text-green-100" : "text-red-100"}`}>
-                    {book.stock > 0 ? `${book.stock} items in stock • Free shipping` : "Out of stock"}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Description */}
-            {book.description && (
-              <div className="space-y-3 bg-white p-4 sm:p-6 rounded-xl border border-red-100 shadow-sm">
-                <h3 className="text-lg sm:text-xl font-bold text-slate-900">About this book</h3>
-                <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
-                  {book.description}
-                </p>
-              </div>
-            )}
-
-            {/* Book Details Grid */}
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 bg-white p-4 sm:p-6 rounded-xl border border-red-100 shadow-sm">
-              {book.language && (
-                <div className="col-span-1 py-2 border-b-2 border-red-100">
-                  <p className="text-xs font-bold text-red-600 uppercase tracking-wider">Language</p>
-                  <p className="text-slate-900 font-semibold mt-1.5 text-sm">{book.language}</p>
-                </div>
-              )}
-              {book.publisher && (
-                <div className="col-span-1 py-2 border-b-2 border-red-100">
-                  <p className="text-xs font-bold text-red-600 uppercase tracking-wider">Publisher</p>
-                  <p className="text-slate-900 font-semibold mt-1.5 text-sm truncate">{book.publisher}</p>
-                </div>
-              )}
-              {book.edition && (
-                <div className="col-span-1 py-2">
-                  <p className="text-xs font-bold text-red-600 uppercase tracking-wider">Edition</p>
-                  <p className="text-slate-900 font-semibold mt-1.5 text-sm">{book.edition}</p>
-                </div>
-              )}
-              {book.status && (
-                <div className="col-span-1 py-2">
-                  <p className="text-xs font-bold text-red-600 uppercase tracking-wider">Status</p>
-                  <p className="text-slate-900 font-semibold mt-1.5 text-sm">{book.status}</p>
-                </div>
-              )}
-            </div>
-
-            {/* Action Buttons - Buy Now & Add to Cart */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-4 sm:pt-6">
-              <button
-                onClick={handleBuyNow}
-                disabled={book.stock === 0 || isBuyingNow}
-                className={`flex-1 py-4 sm:py-5 px-6 rounded-xl font-bold text-base sm:text-lg transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-2xl ${
-                  book.stock === 0
-                    ? "bg-gray-400 cursor-not-allowed opacity-60"
-                    : "bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700"
-                } ${isBuyingNow ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                {isBuyingNow ? (
-                  <>
-                    <svg className="w-5 h-5 animate-spin inline mr-2" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Processing...
-                  </>
-                ) : (
-                  'Buy Now'
-                )}
-              </button>
-
+            {/* Refined CTA Rack Panel */}
+            <div className="space-y-3 pt-2 max-w-md">
               <button
                 onClick={handleAddToCart}
                 disabled={book.stock === 0}
-                className={`flex-1 py-4 sm:py-5 px-6 rounded-xl font-bold text-base sm:text-lg transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-2xl ${
-                  book.stock === 0
-                    ? "bg-gray-400 text-gray-600 cursor-not-allowed opacity-60"
-                    : isAddedToCart
-                      ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white"
-                      : "bg-white text-red-600 border-2 border-red-600 hover:bg-red-50"
-                }`}
+                className="w-full py-3 px-6 rounded-full text-xs font-medium tracking-wider border border-black bg-white text-black hover:bg-gray-50 transition-all text-center"
               >
-                {isAddedToCart ? (
-                  <>
-                    <svg className="w-5 h-5 animate-bounce" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    Added to Cart!
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m10 0h2m-2 0a2 2 0 11-4 0m4 0l2 9" />
-                    </svg>
-                    Add to Cart
-                  </>
-                )}
+                {isAddedToCart ? "Added to cart" : "Add to cart"}
+              </button>
+
+              <button
+                onClick={handleBuyNow}
+                disabled={book.stock === 0 || isBuyingNow}
+                className="w-full py-3 px-6 rounded-full text-xs font-medium tracking-wider bg-red-700 text-white hover:bg-red-800 transition-all text-center shadow-xs"
+              >
+                {isBuyingNow ? "Processing..." : "Buy it now"}
               </button>
             </div>
 
-            {/* Trust Badge */}
-            <div className="flex items-center justify-center gap-4 pt-4 text-xs text-slate-600 bg-blue-50 p-3 rounded-lg">
-              <div className="flex items-center gap-1.5">
-                <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                Authentic
+            {/* Seamless Body Text Container */}
+            {book.description && (
+              <div className="pt-6 border-t border-gray-100 text-gray-600 text-xs sm:text-sm leading-relaxed whitespace-pre-line space-y-4">
+                <p>{book.description}</p>
               </div>
-              <div className="flex items-center gap-1.5">
-                <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                Free Shipping
-              </div>
-              <div className="flex items-center gap-1.5">
-                <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                Easy Returns
-              </div>
+            )}
+
+            {/* Bottom Meta Technical Specs */}
+            <div className="pt-4 border-t border-gray-100 flex flex-wrap gap-x-8 gap-y-2 text-xs text-gray-400">
+              {book.language && (
+                <p>Language: <span className="text-gray-700 font-medium">{book.language}</span></p>
+              )}
+              {book.publisher && (
+                <p>Publisher: <span className="text-gray-700 font-medium">{book.publisher}</span></p>
+              )}
             </div>
+
+            {/* ==========================================================
+                RECOMMENDATIONS SECTION ("You may also like")
+                ========================================================== */}
+            {similarBooks.length > 0 && (
+              <div className="space-y-6 pt-8 border-t border-gray-100">
+                <h2 className="text-base font-bold text-black tracking-tight">You may also like</h2>
+                <p className="text-sm text-gray-500">Scroll through more books you may enjoy.</p>
+
+                <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {similarBooks.map((simBook) => {
+                    const simImage = simBook.images?.[0]?.url || simBook.coverImage || null;
+                    const simDiscount = simBook.originalPrice && simBook.price 
+                      ? Math.round(((simBook.originalPrice - simBook.price) / simBook.originalPrice) * 100)
+                      : 0;
+
+                    return (
+                      <Link 
+                        href={`/books/${simBook.id}`} 
+                        key={simBook.id}
+                        scroll={true}
+                        className="group flex flex-col p-3 rounded-xl border border-gray-200 bg-white hover:border-gray-300 shadow-xs transition-all duration-200 text-left"
+                      >
+                        <div className="aspect-[3/4] mb-3 overflow-hidden relative flex items-center justify-center bg-white rounded-xl">
+                          {simImage ? (
+                            <img 
+                              src={simImage} 
+                              alt={simBook.title}
+                              className="max-h-full max-w-full object-contain mix-blend-multiply transition-transform duration-200 group-hover:scale-105" 
+                              onError={() => {}}
+                            />
+                          ) : (
+                            <span className="text-[10px] text-gray-300 uppercase tracking-widest">No Cover</span>
+                          )}
+
+                          {simDiscount > 0 && (
+                            <span className="absolute top-2 left-2 bg-black text-white text-[9px] font-bold uppercase px-2 py-0.5 tracking-wider rounded-full">
+                              Sale
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="space-y-2 flex-1 flex flex-col justify-between">
+                          <div>
+                            <h3 className="font-semibold text-black text-sm line-clamp-2 leading-snug group-hover:text-red-700 transition-colors">
+                              {simBook.title}
+                            </h3>
+                            <p className="text-[11px] text-gray-400 mt-1">by {simBook.author}</p>
+                          </div>
+
+                          <div className="pt-2 flex items-baseline gap-2 text-xs">
+                            {simBook.originalPrice && simBook.originalPrice > (simBook.price || 0) && (
+                              <span className="text-gray-400 line-through">Rs.{simBook.originalPrice}</span>
+                            )}
+                            <span className="font-bold text-black">Rs.{simBook.price}</span>
+                          </div>
+                        </div>
+                      </Link>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
           </div>
         </div>
+
       </div>
     </div>
   )

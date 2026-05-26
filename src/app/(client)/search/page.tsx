@@ -37,6 +37,7 @@ export default function SearchPage() {
   const query = searchParams?.get("q") || ""
   
   const [books, setBooks] = React.useState<Book[]>([])
+  const [similarBooks, setSimilarBooks] = React.useState<Book[]>([])
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   
@@ -47,6 +48,7 @@ export default function SearchPage() {
   React.useEffect(() => {
     if (!query) {
       setBooks([])
+      setSimilarBooks([])
       setLoading(false)
       return
     }
@@ -63,11 +65,23 @@ export default function SearchPage() {
         if (active) {
           setBooks(data || [])
           setError(null)
+          
+          // If no results, fetch a small set of similar/recommended books
+          if (!data || data.length === 0) {
+            const similarRes = await fetch(`/api/books?limit=6`)
+            if (similarRes.ok) {
+              const similarData = await similarRes.json()
+              setSimilarBooks(similarData || [])
+            }
+          } else {
+            setSimilarBooks([])
+          }
         }
       } catch (err) {
         if (active) {
           setError("Unable to load search results.")
           setBooks([])
+          setSimilarBooks([])
         }
       } finally {
         if (active) {
@@ -108,7 +122,6 @@ export default function SearchPage() {
         {/* Toolbar Controls */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
           <div className="flex flex-wrap items-center gap-2">
-            {/* Elegant Home Action Trigger */}
             <Link 
               href="/"
               className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-full transition-all border border-slate-200/60 shadow-sm mr-2"
@@ -186,10 +199,7 @@ export default function SearchPage() {
                   className="group relative h-full rounded-2xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 cursor-pointer overflow-hidden flex flex-col justify-between"
                 >
                   <div className="flex flex-col h-full">
-                    {/* Image / Thumbnail Section */}
                     <div className="aspect-[3/4] bg-slate-50 relative overflow-hidden group-hover:brightness-95 transition-all duration-300">
-                      
-                      {/* Decorative Badge */}
                       <span className="absolute top-2.5 left-2.5 z-10 bg-white/95 backdrop-blur-sm shadow-sm border border-slate-100 text-[10px] font-bold text-slate-800 px-2 py-0.5 rounded-md flex items-center gap-1">
                         <Tag className="h-2.5 w-2.5 text-red-500" />
                         {book.category?.name ?? "General"}
@@ -209,7 +219,6 @@ export default function SearchPage() {
                         </div>
                       )}
                       
-                      {/* Smooth View Hover Overlay */}
                       <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                         <div className="bg-white/90 backdrop-blur-md text-xs font-semibold px-3 py-2 rounded-xl text-slate-900 shadow-md transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 flex items-center gap-1">
                           View details <ArrowRight className="h-3 w-3" />
@@ -217,7 +226,6 @@ export default function SearchPage() {
                       </div>
                     </div>
 
-                    {/* Metadata Content Card Details */}
                     <CardContent className="p-4 flex-1 flex flex-col justify-between space-y-3">
                       <div className="space-y-1">
                         <h2 className="line-clamp-2 text-sm font-bold text-slate-800 tracking-tight group-hover:text-red-600 transition-colors">
@@ -231,7 +239,6 @@ export default function SearchPage() {
                         </p>
                       </div>
 
-                      {/* Pricing Footer Container */}
                       <div className="flex items-center justify-between pt-3 border-t border-slate-50">
                         <span className="text-[13px] font-extrabold text-slate-900">
                           {book.price ? `₹${book.price}` : "—"}
@@ -248,27 +255,103 @@ export default function SearchPage() {
               ))}
             </div>
           ) : query ? (
-            /* Enhanced Clean Empty States */
-            <div className="rounded-3xl border border-dashed border-slate-200 bg-white/70 backdrop-blur p-12 text-center max-w-xl mx-auto shadow-sm">
-              <div className="mx-auto w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 mb-4">
-                <Search className="h-6 w-6" />
+            /* No results: show message then similar books below */
+            <div className="space-y-12">
+              <div className="rounded-3xl border border-dashed border-slate-200 bg-white/70 backdrop-blur p-12 text-center max-w-xl mx-auto shadow-sm">
+                <div className="mx-auto w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 mb-4">
+                  <Search className="h-6 w-6" />
+                </div>
+                <p className="text-lg font-bold text-slate-800">No books found</p>
+                <p className="mt-1 text-sm text-slate-500 max-w-sm mx-auto">No books found matching your search. Try different keywords or filters.</p>
+                <div className="mt-5 flex items-center justify-center gap-3">
+                  <button 
+                    onClick={() => { setSelectedCategory("All"); setSortBy("none"); }} 
+                    className="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all"
+                  >
+                    Clear active filters
+                  </button>
+                  <Link 
+                    href="/" 
+                    className="px-4 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all shadow-sm shadow-red-100"
+                  >
+                    Back to Home
+                  </Link>
+                </div>
               </div>
-              <p className="text-lg font-bold text-slate-800">No matching books discovered</p>
-              <p className="mt-1 text-sm text-slate-500 max-w-sm mx-auto">We couldn’t find anything matching your search. Check spelling or explore other terms.</p>
-              <div className="mt-5 flex items-center justify-center gap-3">
-                <button 
-                  onClick={() => { setSelectedCategory("All"); setSortBy("none"); }} 
-                  className="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all"
-                >
-                  Clear active filters
-                </button>
-                <Link 
-                  href="/" 
-                  className="px-4 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all shadow-sm shadow-red-100"
-                >
-                  Back to Home
-                </Link>
-              </div>
+
+              {/* Similar books section shown when no results */}
+              {similarBooks.length > 0 && (
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <h3 className="text-2xl font-bold text-slate-900">Similar books you may like</h3>
+                    <p className="text-sm text-slate-600 mt-2">Here are some titles you may enjoy</p>
+                  </div>
+                  
+                  <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                    {similarBooks.map((book) => (
+                      <Card 
+                        key={book.id} 
+                        onClick={() => router.push(`/books/${book.id}`)}
+                        className="group relative h-full rounded-2xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 cursor-pointer overflow-hidden flex flex-col justify-between"
+                      >
+                        <div className="flex flex-col h-full">
+                          <div className="aspect-[3/4] bg-slate-50 relative overflow-hidden group-hover:brightness-95 transition-all duration-300">
+                            <span className="absolute top-2.5 left-2.5 z-10 bg-white/95 backdrop-blur-sm shadow-sm border border-slate-100 text-[10px] font-bold text-slate-800 px-2 py-0.5 rounded-md flex items-center gap-1">
+                              <Tag className="h-2.5 w-2.5 text-orange-500" />
+                              {book.category?.name ?? "General"}
+                            </span>
+
+                            {book.coverImage ? (
+                              <img 
+                                src={book.coverImage} 
+                                alt={book.title} 
+                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                                loading="lazy"
+                              />
+                            ) : (
+                              <div className="flex h-full flex-col items-center justify-center gap-2 text-slate-400 bg-gradient-to-b from-slate-50 to-slate-100">
+                                <BookOpen className="h-8 w-8 stroke-[1.5]" />
+                                <span className="text-xs font-medium">No Cover Art</span>
+                              </div>
+                            )}
+                            
+                            <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                              <div className="bg-white/90 backdrop-blur-md text-xs font-semibold px-3 py-2 rounded-xl text-slate-900 shadow-md transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 flex items-center gap-1">
+                                View details <ArrowRight className="h-3 w-3" />
+                              </div>
+                            </div>
+                          </div>
+
+                          <CardContent className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                            <div className="space-y-1">
+                              <h2 className="line-clamp-2 text-sm font-bold text-slate-800 tracking-tight group-hover:text-red-600 transition-colors">
+                                {book.title}
+                              </h2>
+                              <p className="text-[11px] text-slate-400 font-medium truncate">
+                                by {book.author || "Unknown Author"}
+                              </p>
+                              <p className="line-clamp-2 text-xs text-slate-500 pt-1 leading-relaxed">
+                                {book.description ?? generateDescription(book)}
+                              </p>
+                            </div>
+
+                            <div className="flex items-center justify-between pt-3 border-t border-slate-50">
+                              <span className="text-[13px] font-extrabold text-slate-900">
+                                {book.price ? `₹${book.price}` : "—"}
+                              </span>
+                              {book.price && (
+                                <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">
+                                  In Stock
+                                </span>
+                              )}
+                            </div>
+                          </CardContent>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="rounded-3xl border border-slate-100 bg-gradient-to-tr from-white via-slate-50/50 to-red-50/30 p-16 text-center max-w-2xl mx-auto shadow-sm">
