@@ -43,6 +43,7 @@ export const WishlistButton = ({ user }: Props) => {
       setIsDialogOpen(true)
     }
   }
+
   // If user is logged in, just show the button that navigates
   if (user) {
     return <WishlistTriggerButton onClick={handleWishlistClick} />

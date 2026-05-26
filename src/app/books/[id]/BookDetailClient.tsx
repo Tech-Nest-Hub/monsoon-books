@@ -3,41 +3,64 @@
 import React, { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import Image from "next/image"
-
-type Book = {
-  id: number
-  title: string
-  author: string
-  price?: number
-  originalPrice?: number
-  description?: string
-  coverImage?: string
-  images?: Array<{ url: string; order: number }>
-  category?: { name: string } | null
-  publisher?: string | null
-  edition?: number | null
-  language?: string | null
-  stock?: number
-  status?: string
-}
+import type { Book, BookImage, Category } from "@prisma/client"
+import { AddWishlistButton } from "@/app/(client)/wishlist/AddWishlistButton"
 
 type BookDetailClientProps = {
-  book: Book
+  book: Book & {
+    category: Category
+    images: BookImage[]
+  }
+  user?: {
+    id?: number
+    firstName: string | null
+    lastName: string | null
+    email: string
+  } | null
 }
 
-export default function BookDetailClient({ book }: BookDetailClientProps) {
+export default function BookDetailClient({ book, user }: BookDetailClientProps) {
   const router = useRouter()
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [isAddedToCart, setIsAddedToCart] = useState(false)
   const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({})
 
-  const allImages = book.images && book.images.length > 0 ? book.images : (book.coverImage ? [{ url: book.coverImage, order: 0 }] : [])
+  const allImages = book.images && book.images.length > 0 
+    ? book.images.sort((a, b) => a.order - b.order) 
+    : (book.coverImage ? [{ url: book.coverImage, order: 0, id: 0, bookId: book.id }] : [])
+  
   const mainImage = allImages[selectedImageIndex]?.url || book.coverImage || null
 
   const handleImageError = (idx: number) => {
-    setImageErrors(prev => ({...prev, [idx]: true}))
+    setImageErrors(prev => ({ ...prev, [idx]: true }))
+  }
+
+  const handleAddToCart = async () => {
+    if (!user) {
+      // Redirect to login if not logged in
+      router.push('/login')
+      return
+    }
+
+    setIsAddedToCart(true)
+    try {
+      const response = await fetch('/api/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookId: book.id, quantity: 1 }),
+      })
+      
+      if (response.ok) {
+        setTimeout(() => setIsAddedToCart(false), 2000)
+      } else {
+        setIsAddedToCart(false)
+        const error = await response.json()
+        console.error('Failed to add to cart:', error)
+      }
+    } catch (error) {
+      console.error('Failed to add to cart:', error)
+      setIsAddedToCart(false)
+    }
   }
 
   return (
@@ -77,7 +100,7 @@ export default function BookDetailClient({ book }: BookDetailClientProps) {
                   </div>
                 </div>
               )}
-              
+
               {/* Badge */}
               {book.stock && book.stock > 0 && (
                 <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-xs sm:text-sm font-bold shadow-lg">
@@ -94,8 +117,8 @@ export default function BookDetailClient({ book }: BookDetailClientProps) {
                     key={idx}
                     onClick={() => setSelectedImageIndex(idx)}
                     className={`rounded-lg overflow-hidden bg-slate-100 aspect-square cursor-pointer transition-all duration-200 border-2 ${
-                      selectedImageIndex === idx 
-                        ? "ring-2 ring-red-500 shadow-md border-red-500 scale-105" 
+                      selectedImageIndex === idx
+                        ? "ring-2 ring-red-500 shadow-md border-red-500 scale-105"
                         : "hover:ring-2 hover:ring-red-300 border-transparent"
                     }`}
                   >
@@ -116,10 +139,14 @@ export default function BookDetailClient({ book }: BookDetailClientProps) {
             {/* Title and Author with Animation */}
             <div className="space-y-2 sm:space-y-3 animate-in fade-in slide-in-from-right duration-500">
               <div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 leading-tight bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">{book.title}</h1>
-                <p className="mt-3 text-lg sm:text-xl text-slate-600">by <span className="font-bold text-slate-900">{book.author}</span></p>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 leading-tight bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">
+                  {book.title}
+                </h1>
+                <p className="mt-3 text-lg sm:text-xl text-slate-600">
+                  by <span className="font-bold text-slate-900">{book.author}</span>
+                </p>
               </div>
-              
+
               {book.category && (
                 <div className="inline-block">
                   <span className="px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-red-600 to-orange-600 rounded-full shadow-md hover:shadow-lg transition-shadow">
@@ -209,13 +236,13 @@ export default function BookDetailClient({ book }: BookDetailClientProps) {
             {/* Action Buttons - Enhanced */}
             <div className="flex flex-col sm:flex-row gap-3 pt-4 sm:pt-6">
               <button
-                onClick={() => {setIsAddedToCart(true); setTimeout(() => setIsAddedToCart(false), 2000)}}
+                onClick={handleAddToCart}
                 className={`flex-1 py-4 sm:py-5 px-6 rounded-xl font-bold text-base sm:text-lg transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-2xl ${
                   book.stock === 0
                     ? "bg-gray-400 text-gray-600 cursor-not-allowed opacity-60"
                     : isAddedToCart
-                    ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white"
-                    : "bg-gradient-to-r from-red-600 to-orange-600 text-white hover:from-red-700 hover:to-orange-700"
+                      ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white"
+                      : "bg-gradient-to-r from-red-600 to-orange-600 text-white hover:from-red-700 hover:to-orange-700"
                 }`}
                 disabled={book.stock === 0}
               >
@@ -235,32 +262,28 @@ export default function BookDetailClient({ book }: BookDetailClientProps) {
                   </>
                 )}
               </button>
-
-              <button className="flex-1 py-4 sm:py-5 px-6 rounded-xl font-bold text-base sm:text-lg border-2 border-red-600 text-red-600 hover:bg-red-50 transition-all duration-300 active:scale-95 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-                Wishlist
-              </button>
+              
+              {/* Wishlist Button */}
+              <AddWishlistButton bookId={book.id} userId={user?.id} />
             </div>
 
             {/* Trust Badge */}
             <div className="flex items-center justify-center gap-4 pt-4 text-xs text-slate-600 bg-blue-50 p-3 rounded-lg">
               <div className="flex items-center gap-1.5">
                 <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5.354 7.146a.5.5 0 010 .708l-3 3a.5.5 0 01-.708 0l-1.5-1.5a.5.5 0 11.708-.708L2 9.293l2.646-2.647a.5.5 0 01.708 0zm0-4a.5.5 0 010 .708l-3 3a.5.5 0 01-.708 0l-1.5-1.5a.5.5 0 01.708-.708L2 5.293l2.646-2.647a.5.5 0 01.708 0z" />
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
                 Authentic
               </div>
               <div className="flex items-center gap-1.5">
                 <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5.354 7.146a.5.5 0 010 .708l-3 3a.5.5 0 01-.708 0l-1.5-1.5a.5.5 0 11.708-.708L2 9.293l2.646-2.647a.5.5 0 01.708 0zm0-4a.5.5 0 010 .708l-3 3a.5.5 0 01-.708 0l-1.5-1.5a.5.5 0 01.708-.708L2 5.293l2.646-2.647a.5.5 0 01.708 0z" />
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
                 Free Shipping
               </div>
               <div className="flex items-center gap-1.5">
                 <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5.354 7.146a.5.5 0 010 .708l-3 3a.5.5 0 01-.708 0l-1.5-1.5a.5.5 0 11.708-.708L2 9.293l2.646-2.647a.5.5 0 01.708 0zm0-4a.5.5 0 010 .708l-3 3a.5.5 0 01-.708 0l-1.5-1.5a.5.5 0 01.708-.708L2 5.293l2.646-2.647a.5.5 0 01.708 0z" />
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
                 Easy Returns
               </div>

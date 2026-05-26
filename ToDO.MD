@@ -25,3 +25,13 @@ This also lets you test your schema properly with real data.
 /cart — cart page
 /checkout — checkout form (address, phone, payment)
 /orders — order history for user
+
+
+
+import WishlistButton from '@/components/WishlistButton'
+
+// On a book card
+<div className="relative">
+  <WishlistButton bookId={book.id} userId={user?.id} />
+  {/* Other book info */}
+</div>
