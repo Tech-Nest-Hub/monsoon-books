@@ -34,7 +34,7 @@ const DashboardPage = async () => {
   })
 
   return (
-    <DashboardLayout>
+   
       <div className="space-y-8">
         {/* Welcome Header */}
         <div className="relative overflow-hidden rounded-2xl bg-linear-to-r from-red-600 to-orange-600 p-8 text-white shadow-2xl">
@@ -242,7 +242,7 @@ const DashboardPage = async () => {
           </form>
         </div>
       </div>
-    </DashboardLayout>
+
   )
 }
 
