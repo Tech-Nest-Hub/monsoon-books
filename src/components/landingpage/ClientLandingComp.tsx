@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/carousel"
 
 import { CarouselSpacing } from "@/components/landingpage/CarouselHeroSectionComp"
-import { LandingFooterComp } from "@/components/landingpage/LandingFooterComp"
 
 type Book = {
   id: number
@@ -132,15 +131,7 @@ export function ClientLandingComp() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-red-50 text-slate-900">
-      <div className="mx-auto max-w-7xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
-
-        {/* HERO CAROUSEL */}
-        <section className="space-y-4">
-          <div className="rounded-2xl bg-gradient-to-r from-red-50 to-orange-50 p-3 shadow-lg sm:p-4">
-            <CarouselSpacing />
-          </div>
-        </section>
+<section id="client-landing" className="mt-12 space-y-12">
 
         {/* ERROR */}
         {error && (
@@ -387,9 +378,6 @@ export function ClientLandingComp() {
             </>
           )}
         </section>
-      </div>
-
-      <LandingFooterComp />
-    </main>
+</section>
   )
 }

@@ -37,7 +37,7 @@ const DashboardPage = async () => {
     <DashboardLayout>
       <div className="space-y-8">
         {/* Welcome Header */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-600 to-orange-600 p-8 text-white shadow-2xl">
+        <div className="relative overflow-hidden rounded-2xl bg-linear-to-r from-red-600 to-orange-600 p-8 text-white shadow-2xl">
           <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
           <div className="absolute -left-20 -bottom-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
           <div className="relative z-10">
@@ -52,7 +52,7 @@ const DashboardPage = async () => {
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {/* Total Books */}
           <div className="group relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-red-100 hover:border-red-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-red-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
+            <div className="absolute inset-0 bg-linear-to-br from-red-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-slate-600 font-semibold">Total Books</h3>
@@ -69,7 +69,7 @@ const DashboardPage = async () => {
 
           {/* Categories */}
           <div className="group relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-orange-100 hover:border-orange-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
+            <div className="absolute inset-0 bg-linear-to-br from-orange-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-slate-600 font-semibold">Categories</h3>
@@ -86,7 +86,7 @@ const DashboardPage = async () => {
 
           {/* Orders */}
           <div className="group relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-blue-100 hover:border-blue-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
+            <div className="absolute inset-0 bg-linear-to-br from-blue-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-slate-600 font-semibold">Orders</h3>
@@ -103,7 +103,7 @@ const DashboardPage = async () => {
 
           {/* Users */}
           <div className="group relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-green-100 hover:border-green-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
+            <div className="absolute inset-0 bg-linear-to-br from-green-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-slate-600 font-semibold">Users</h3>
@@ -121,7 +121,7 @@ const DashboardPage = async () => {
 
         {/* Recent Books */}
         <div className="bg-white rounded-2xl shadow-lg border border-red-100 overflow-hidden">
-          <div className="p-6 border-b border-red-100 bg-gradient-to-r from-red-50 to-orange-50">
+          <div className="p-6 border-b border-red-100 bg-linear-to-r from-red-50 to-orange-50">
             <h2 className="text-xl font-bold text-slate-900">Recent Books</h2>
             <p className="text-sm text-slate-600 mt-1">Latest additions to your catalog</p>
           </div>
@@ -141,7 +141,7 @@ const DashboardPage = async () => {
                   <tr key={book.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-red-100 to-orange-100 rounded-lg flex items-center justify-center">
+                        <div className="w-10 h-10 bg-linear-to-br from-red-100 to-orange-100 rounded-lg flex items-center justify-center">
                           <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" />
                           </svg>
@@ -173,7 +173,7 @@ const DashboardPage = async () => {
 
         {/* Quick Actions */}
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          <a href="/dashboard/books/new" className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-500 to-orange-600 p-6 text-white shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+          <a href="/dashboard/books/new" className="group relative overflow-hidden rounded-2xl bg-linear-to-br from-red-500 to-orange-600 p-6 text-white shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
             <div className="absolute -right-20 -top-20 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform"></div>
             <div className="relative z-10 space-y-2">
               <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
@@ -186,7 +186,7 @@ const DashboardPage = async () => {
             </div>
           </a>
 
-          <a href="/dashboard/categories" className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-600 p-6 text-white shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+          <a href="/dashboard/categories" className="group relative overflow-hidden rounded-2xl bg-linear-to-br from-blue-500 to-cyan-600 p-6 text-white shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
             <div className="absolute -right-20 -top-20 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform"></div>
             <div className="relative z-10 space-y-2">
               <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
@@ -199,7 +199,7 @@ const DashboardPage = async () => {
             </div>
           </a>
 
-          <a href="/dashboard/books" className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 p-6 text-white shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+          <a href="/dashboard/books" className="group relative overflow-hidden rounded-2xl bg-linear-to-br from-purple-500 to-pink-600 p-6 text-white shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
             <div className="absolute -right-20 -top-20 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform"></div>
             <div className="relative z-10 space-y-2">
               <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
@@ -228,7 +228,7 @@ const DashboardPage = async () => {
             <div>
               <p className="text-sm text-slate-600 font-semibold mb-1">Role</p>
               <p className="text-lg">
-                <span className="inline-block px-3 py-1 text-sm font-bold text-white bg-gradient-to-r from-red-600 to-orange-600 rounded-full">
+                <span className="inline-block px-3 py-1 text-sm font-bold text-white bg-linear-to-r from-red-600 to-orange-600 rounded-full">
                   {dbUser?.role}
                 </span>
               </p>
@@ -236,7 +236,7 @@ const DashboardPage = async () => {
           </div>
 
           <form action={signOut}>
-            <button type="submit" className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-lg font-bold hover:from-red-700 hover:to-orange-700 transition-all duration-300 transform hover:scale-105 active:scale-95">
+            <button type="submit" className="w-full sm:w-auto px-6 py-3 bg-linear-to-r from-red-600 to-orange-600 text-white rounded-lg font-bold hover:from-red-700 hover:to-orange-700 transition-all duration-300 transform hover:scale-105 active:scale-95">
               Sign Out
             </button>
           </form>
