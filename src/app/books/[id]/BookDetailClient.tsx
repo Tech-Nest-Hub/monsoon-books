@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import type { Book, BookImage, Category } from "@prisma/client"
 import { AddWishlistButton } from "@/app/(client)/wishlist/AddWishlistButton"
+import { Share2 } from "lucide-react"
 
 type BookDetailClientProps = {
   book: Book & {
@@ -23,7 +24,9 @@ export default function BookDetailClient({ book, user }: BookDetailClientProps) 
   const router = useRouter()
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [isAddedToCart, setIsAddedToCart] = useState(false)
+  const [isBuyingNow, setIsBuyingNow] = useState(false)
   const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({})
+  const [showShareTooltip, setShowShareTooltip] = useState(false)
 
   const allImages = book.images && book.images.length > 0 
     ? book.images.sort((a, b) => a.order - b.order) 
@@ -37,7 +40,6 @@ export default function BookDetailClient({ book, user }: BookDetailClientProps) 
 
   const handleAddToCart = async () => {
     if (!user) {
-      // Redirect to login if not logged in
       router.push('/login')
       return
     }
@@ -63,20 +65,93 @@ export default function BookDetailClient({ book, user }: BookDetailClientProps) 
     }
   }
 
+  const handleBuyNow = async () => {
+    if (!user) {
+      router.push('/login')
+      return
+    }
+
+    setIsBuyingNow(true)
+    try {
+      // First add to cart
+      const response = await fetch('/api/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookId: book.id, quantity: 1 }),
+      })
+      
+      if (response.ok) {
+        // Then proceed to checkout
+        router.push('/checkout')
+      } else {
+        setIsBuyingNow(false)
+        const error = await response.json()
+        console.error('Failed to add to cart:', error)
+      }
+    } catch (error) {
+      console.error('Failed to buy now:', error)
+      setIsBuyingNow(false)
+    }
+  }
+
+  const handleShare = async () => {
+    const shareUrl = window.location.href
+    const shareTitle = book.title
+    const shareText = `Check out this book: ${book.title} by ${book.author}`
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl,
+        })
+      } catch (error) {
+        console.log('Error sharing:', error)
+      }
+    } else {
+      // Fallback: copy to clipboard
+      await navigator.clipboard.writeText(shareUrl)
+      setShowShareTooltip(true)
+      setTimeout(() => setShowShareTooltip(false), 2000)
+    }
+  }
+
   return (
     <div className="bg-gradient-to-br from-slate-50 via-white to-red-50 min-h-screen">
       <div className="mx-auto max-w-7xl px-3 py-8 sm:px-6 sm:py-12 lg:px-8">
         {/* Breadcrumb */}
-        <div className="mb-6 sm:mb-8 flex items-center gap-2 text-xs sm:text-sm text-slate-600 overflow-x-auto">
-          <Link href="/" className="hover:text-red-700 hover:underline transition-colors whitespace-nowrap">
-            Home
-          </Link>
-          <span className="text-slate-400">/</span>
-          <span className="text-slate-900 font-medium truncate">{book.title}</span>
+        <div className="mb-6 sm:mb-8 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 overflow-x-auto">
+            <Link href="/" className="hover:text-red-700 hover:underline transition-colors whitespace-nowrap">
+              Home
+            </Link>
+            <span className="text-slate-400">/</span>
+            <span className="text-slate-900 font-medium truncate">{book.title}</span>
+          </div>
+          
+          {/* Top Right Actions */}
+          <div className="flex items-center gap-2">
+            <AddWishlistButton bookId={book.id} userId={user?.id} />
+            
+            <div className="relative">
+              <button
+                onClick={handleShare}
+                className="p-3 rounded-full bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-500 transition-all duration-300"
+              >
+                <Share2 className="w-5 h-5" />
+              </button>
+              {showShareTooltip && (
+                <div className="absolute top-full right-0 mt-2 px-3 py-1 bg-gray-800 text-white text-xs rounded-lg whitespace-nowrap z-10">
+                  Link copied to clipboard!
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="grid gap-6 sm:gap-8 lg:gap-12 lg:grid-cols-2 items-start">
-          {/* Images Section - Enhanced */}
+          {/* Images Section */}
           <div className="space-y-3 sm:space-y-4 sticky top-8">
             {/* Main Image */}
             <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 aspect-[3/4] shadow-2xl relative group">
@@ -103,7 +178,7 @@ export default function BookDetailClient({ book, user }: BookDetailClientProps) 
 
               {/* Badge */}
               {book.stock && book.stock > 0 && (
-                <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-xs sm:text-sm font-bold shadow-lg">
+                <div className="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs sm:text-sm font-bold shadow-lg">
                   In Stock
                 </div>
               )}
@@ -134,12 +209,12 @@ export default function BookDetailClient({ book, user }: BookDetailClientProps) 
             )}
           </div>
 
-          {/* Details Section - Enhanced */}
+          {/* Details Section */}
           <div className="space-y-4 sm:space-y-6">
-            {/* Title and Author with Animation */}
-            <div className="space-y-2 sm:space-y-3 animate-in fade-in slide-in-from-right duration-500">
+            {/* Title and Author */}
+            <div className="space-y-2 sm:space-y-3">
               <div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 leading-tight bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 leading-tight">
                   {book.title}
                 </h1>
                 <p className="mt-3 text-lg sm:text-xl text-slate-600">
@@ -149,7 +224,7 @@ export default function BookDetailClient({ book, user }: BookDetailClientProps) 
 
               {book.category && (
                 <div className="inline-block">
-                  <span className="px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-red-600 to-orange-600 rounded-full shadow-md hover:shadow-lg transition-shadow">
+                  <span className="px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-red-600 to-orange-600 rounded-full shadow-md">
                     {book.category.name}
                   </span>
                 </div>
@@ -168,8 +243,8 @@ export default function BookDetailClient({ book, user }: BookDetailClientProps) 
               <span className="text-sm text-slate-600 font-medium">(4.8 ratings • 142 reviews)</span>
             </div>
 
-            {/* Price Section - Modern Card */}
-            <div className="space-y-4 bg-gradient-to-br from-red-600 via-red-500 to-orange-600 p-6 sm:p-8 rounded-2xl border-2 border-red-400 shadow-2xl text-white">
+            {/* Price Section */}
+            <div className="space-y-4 bg-gradient-to-br from-red-600 via-red-500 to-orange-600 p-6 sm:p-8 rounded-2xl shadow-2xl text-white">
               <div>
                 <p className="text-red-100 text-sm font-semibold uppercase tracking-wider mb-2">Special Offer</p>
                 <div className="flex items-baseline gap-3 sm:gap-4 flex-wrap">
@@ -187,7 +262,7 @@ export default function BookDetailClient({ book, user }: BookDetailClientProps) 
 
               {book.stock !== undefined && (
                 <div className="flex items-center gap-3 pt-3 border-t border-red-400">
-                  <div className={`w-4 h-4 rounded-full ${book.stock > 0 ? "bg-green-300 animate-pulse" : "bg-red-300"}`}></div>
+                  <div className={`w-3 h-3 rounded-full ${book.stock > 0 ? "bg-green-300 animate-pulse" : "bg-red-300"}`}></div>
                   <p className={`font-bold text-sm ${book.stock > 0 ? "text-green-100" : "text-red-100"}`}>
                     {book.stock > 0 ? `${book.stock} items in stock • Free shipping` : "Out of stock"}
                   </p>
@@ -195,18 +270,18 @@ export default function BookDetailClient({ book, user }: BookDetailClientProps) 
               )}
             </div>
 
-            {/* Description with Expand */}
+            {/* Description */}
             {book.description && (
-              <div className="space-y-3 bg-white p-4 sm:p-6 rounded-xl border border-red-100 hover:shadow-lg transition-shadow">
+              <div className="space-y-3 bg-white p-4 sm:p-6 rounded-xl border border-red-100 shadow-sm">
                 <h3 className="text-lg sm:text-xl font-bold text-slate-900">About this book</h3>
-                <p className="text-sm sm:text-base text-slate-700 leading-relaxed line-clamp-4 hover:line-clamp-none transition-all">
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
                   {book.description}
                 </p>
               </div>
             )}
 
-            {/* Book Details Grid - 2x2 */}
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 bg-white p-4 sm:p-6 rounded-xl border border-red-100 shadow-sm hover:shadow-md transition-shadow">
+            {/* Book Details Grid */}
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 bg-white p-4 sm:p-6 rounded-xl border border-red-100 shadow-sm">
               {book.language && (
                 <div className="col-span-1 py-2 border-b-2 border-red-100">
                   <p className="text-xs font-bold text-red-600 uppercase tracking-wider">Language</p>
@@ -233,18 +308,40 @@ export default function BookDetailClient({ book, user }: BookDetailClientProps) 
               )}
             </div>
 
-            {/* Action Buttons - Enhanced */}
+            {/* Action Buttons - Buy Now & Add to Cart */}
             <div className="flex flex-col sm:flex-row gap-3 pt-4 sm:pt-6">
               <button
+                onClick={handleBuyNow}
+                disabled={book.stock === 0 || isBuyingNow}
+                className={`flex-1 py-4 sm:py-5 px-6 rounded-xl font-bold text-base sm:text-lg transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-2xl ${
+                  book.stock === 0
+                    ? "bg-gray-400 cursor-not-allowed opacity-60"
+                    : "bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700"
+                } ${isBuyingNow ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                {isBuyingNow ? (
+                  <>
+                    <svg className="w-5 h-5 animate-spin inline mr-2" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                  </>
+                ) : (
+                  'Buy Now'
+                )}
+              </button>
+
+              <button
                 onClick={handleAddToCart}
+                disabled={book.stock === 0}
                 className={`flex-1 py-4 sm:py-5 px-6 rounded-xl font-bold text-base sm:text-lg transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-2xl ${
                   book.stock === 0
                     ? "bg-gray-400 text-gray-600 cursor-not-allowed opacity-60"
                     : isAddedToCart
                       ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white"
-                      : "bg-gradient-to-r from-red-600 to-orange-600 text-white hover:from-red-700 hover:to-orange-700"
+                      : "bg-white text-red-600 border-2 border-red-600 hover:bg-red-50"
                 }`}
-                disabled={book.stock === 0}
               >
                 {isAddedToCart ? (
                   <>
@@ -262,9 +359,6 @@ export default function BookDetailClient({ book, user }: BookDetailClientProps) 
                   </>
                 )}
               </button>
-              
-              {/* Wishlist Button */}
-              <AddWishlistButton bookId={book.id} userId={user?.id} />
             </div>
 
             {/* Trust Badge */}

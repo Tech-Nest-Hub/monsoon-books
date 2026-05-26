@@ -41,7 +41,6 @@ export function AddWishlistButton({ bookId, userId }: Props) {
     setLoading(true)
     try {
       if (isInWishlist) {
-        // Remove from wishlist
         const response = await fetch(`/api/wishlist?bookId=${bookId}`, {
           method: 'DELETE',
         })
@@ -49,7 +48,6 @@ export function AddWishlistButton({ bookId, userId }: Props) {
           setIsInWishlist(false)
         }
       } else {
-        // Add to wishlist
         const response = await fetch('/api/wishlist', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -71,14 +69,13 @@ export function AddWishlistButton({ bookId, userId }: Props) {
     <button
       onClick={toggleWishlist}
       disabled={loading}
-      className={`flex items-center justify-center gap-2 py-4 sm:py-5 px-6 rounded-xl font-bold text-base sm:text-lg transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-2xl ${
+      className={`p-3 rounded-full transition-all duration-300 ${
         isInWishlist
           ? 'bg-red-500 text-white hover:bg-red-600'
-          : 'bg-white text-red-600 border-2 border-red-600 hover:bg-red-50'
+          : 'bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-500'
       } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
       <Heart className={`w-5 h-5 ${isInWishlist ? 'fill-current' : ''}`} />
-      {isInWishlist ? 'Saved to Wishlist' : 'Add to Wishlist'}
     </button>
   )
 }
