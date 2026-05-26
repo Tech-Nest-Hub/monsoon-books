@@ -12,6 +12,10 @@ images: {
       protocol: "https",
       hostname: "img.wattpad.com",
     },
+    {
+      protocol: "https",
+      hostname: "via.placeholder.com",
+    },
   ],
 },
 };
