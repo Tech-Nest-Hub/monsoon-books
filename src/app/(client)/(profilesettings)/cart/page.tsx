@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Trash2, ShoppingBag, ArrowLeft, Minus, Plus } from 'lucide-react'
+import { Trash2, ShoppingBag, ArrowLeft, Minus, Plus, ChevronRight } from 'lucide-react'
 import type { CartItem, Book } from '@prisma/client'
 
 type CartItemWithBook = CartItem & {
@@ -24,6 +24,7 @@ export default function CartPage() {
   const [loading, setLoading] = useState(true)
   const [updatingId, setUpdatingId] = useState<number | null>(null)
   const [removingId, setRemovingId] = useState<number | null>(null)
+  const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set())
 
   useEffect(() => {
     fetchCart()
@@ -35,6 +36,10 @@ export default function CartPage() {
       if (response.ok) {
         const data = await response.json()
         setCart(data)
+        // Select all items by default
+        if (data.items?.length) {
+          setSelectedItems(new Set(data.items.map((item: CartItemWithBook) => item.id)))
+        }
       } else if (response.status === 401) {
         router.push('/login')
       }
@@ -82,6 +87,49 @@ export default function CartPage() {
       setRemovingId(null)
     }
   }
+
+  const toggleSelectItem = (itemId: number) => {
+    const newSelected = new Set(selectedItems)
+    if (newSelected.has(itemId)) {
+      newSelected.delete(itemId)
+    } else {
+      newSelected.add(itemId)
+    }
+    setSelectedItems(newSelected)
+  }
+
+  const toggleSelectAll = () => {
+    if (!cart) return
+    
+    if (selectedItems.size === cart.items.length) {
+      setSelectedItems(new Set())
+    } else {
+      setSelectedItems(new Set(cart.items.map(item => item.id)))
+    }
+  }
+
+  const handleCheckout = () => {
+    if (!cart || selectedItems.size === 0) return
+    
+    const selectedItemIds = Array.from(selectedItems)
+    router.push(`/checkout?selectedItems=${selectedItemIds.join(',')}`)
+  }
+
+  const getSelectedTotal = () => {
+    if (!cart) return 0
+    return cart.items
+      .filter(item => selectedItems.has(item.id))
+      .reduce((sum, item) => sum + (item.priceAtAdd * item.quantity), 0)
+  }
+
+  const getSelectedCount = () => {
+    if (!cart) return 0
+    return cart.items
+      .filter(item => selectedItems.has(item.id))
+      .reduce((sum, item) => sum + item.quantity, 0)
+  }
+
+  const isAllSelected = cart && selectedItems.size === cart.items.length && cart.items.length > 0
 
   if (loading) {
     return (
@@ -146,9 +194,37 @@ export default function CartPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
+            {/* Select All Bar */}
+            <div className="bg-white rounded-xl shadow-sm p-4 flex items-center justify-between">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={isAllSelected ?? false}
+                  onChange={toggleSelectAll}
+                  className="w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500"
+                />
+                <span className="text-sm font-medium text-gray-700">
+                  Select All ({cart.items.length} items)
+                </span>
+              </label>
+              <span className="text-sm text-gray-500">
+                Selected: {selectedItems.size} items
+              </span>
+            </div>
+
             {cart.items.map((item) => (
-              <div key={item.id} className="bg-white rounded-xl shadow-sm p-4 sm:p-6 hover:shadow-md transition">
+              <div key={item.id} className="bg-white rounded-xl shadow-sm p-4 sm:p-6 hover:shadow-md transition relative">
                 <div className="flex gap-4 sm:gap-6">
+                  {/* Selection Checkbox */}
+                  <div className="flex items-start pt-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedItems.has(item.id)}
+                      onChange={() => toggleSelectItem(item.id)}
+                      className="w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500 mt-1"
+                    />
+                  </div>
+
                   {/* Book Cover */}
                   <Link href={`/book/${item.book.id}`} className="shrink-0">
                     <div className="relative w-20 h-28 sm:w-24 sm:h-32 bg-gray-100 rounded-lg overflow-hidden">
@@ -228,8 +304,8 @@ export default function CartPage() {
               
               <div className="space-y-3 pb-4 border-b border-gray-200">
                 <div className="flex justify-between text-gray-600">
-                  <span>Subtotal</span>
-                  <span>NPR {cart.totalPrice.toLocaleString()}</span>
+                  <span>Selected Items ({getSelectedCount()})</span>
+                  <span>NPR {getSelectedTotal().toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>Shipping</span>
@@ -240,19 +316,25 @@ export default function CartPage() {
               <div className="flex justify-between pt-4 pb-6">
                 <span className="text-lg font-bold text-gray-900">Total</span>
                 <span className="text-2xl font-bold text-red-600">
-                  NPR {cart.totalPrice.toLocaleString()}
+                  NPR {getSelectedTotal().toLocaleString()}
                 </span>
               </div>
 
               <button
-                onClick={() => router.push('/checkout')}
-                className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg transition transform hover:scale-105 active:scale-95"
+                onClick={handleCheckout}
+                disabled={selectedItems.size === 0}
+                className={`w-full py-3 rounded-lg transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 ${
+                  selectedItems.size > 0
+                    ? 'bg-red-600 hover:bg-red-700 text-white'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
               >
-                Proceed to Checkout
+                Checkout ({selectedItems.size} items)
+                <ChevronRight className="w-4 h-4" />
               </button>
 
               <p className="text-xs text-gray-500 text-center mt-4">
-                Taxes and shipping calculated at checkout
+                Only selected items will be checked out
               </p>
             </div>
           </div>

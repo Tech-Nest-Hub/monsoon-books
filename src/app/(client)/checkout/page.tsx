@@ -1,10 +1,9 @@
-// app/checkout/page.tsx
 'use client'
 
 import { useState, useEffect } from 'react'
 import { useUser } from '@/contexts/UserContext'
 import { EsewaPayment } from './EsewaPayment'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 interface CartItem {
   id: number
@@ -15,20 +14,27 @@ interface CartItem {
     id: number
     title: string
     price: number
+    coverImage?: string
+    author?: string
   }
 }
 
 export default function CheckoutPage() {
   const { user, isLoading: userLoading } = useUser()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [cartItems, setCartItems] = useState<CartItem[]>([])
+  const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set())
   const [loading, setLoading] = useState(true)
   const [paymentMethod, setPaymentMethod] = useState<'CASH_ON_DELIVERY' | 'ESEWA'>('CASH_ON_DELIVERY')
   const [deliveryAddress, setDeliveryAddress] = useState('')
   const [phone, setPhone] = useState('')
   const [notes, setNotes] = useState('')
 
-  // Fetch cart items
+  // Get selected items from URL
+  const selectedItemIds = searchParams.get('selectedItems')
+
+  // Fetch cart items and filter selected ones
   useEffect(() => {
     const fetchCart = async () => {
       try {
@@ -36,6 +42,15 @@ export default function CheckoutPage() {
         const data = await response.json()
         if (data.items) {
           setCartItems(data.items)
+          
+          // Parse selected items from URL
+          if (selectedItemIds) {
+            const ids = selectedItemIds.split(',').map(id => parseInt(id))
+            setSelectedItems(new Set(ids))
+          } else {
+            // If no selection, select all
+            setSelectedItems(new Set(data.items.map((item: CartItem) => item.id)))
+          }
         }
       } catch (error) {
         console.error('Error fetching cart:', error)
@@ -47,11 +62,14 @@ export default function CheckoutPage() {
     if (user) {
       fetchCart()
     }
-  }, [user])
+  }, [user, selectedItemIds])
 
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.priceAtAdd * item.quantity), 0)
-  const tax = 0 // Calculate tax if needed
-  const shippingCost = subtotal > 1000 ? 0 : 100 // Free shipping over 1000
+  // Filter only selected items for checkout
+  const checkoutItems = cartItems.filter(item => selectedItems.has(item.id))
+  
+  const subtotal = checkoutItems.reduce((sum, item) => sum + (item.priceAtAdd * item.quantity), 0)
+  const tax = 0
+  const shippingCost = subtotal > 1000 ? 0 : 100
   const discount = 0
   const total = subtotal + tax + shippingCost - discount
 
@@ -66,6 +84,11 @@ export default function CheckoutPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          items: checkoutItems.map(item => ({
+            bookId: item.bookId,
+            quantity: item.quantity,
+            priceAtBuy: item.priceAtAdd
+          })),
           paymentMethod,
           deliveryAddress,
           phone,
@@ -79,6 +102,13 @@ export default function CheckoutPage() {
       const data = await response.json()
       
       if (data.success) {
+        // Clear selected items from cart
+        await fetch('/api/cart/clear-selected', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ itemIds: checkoutItems.map(item => item.id) }),
+        })
+        
         router.push(`/payment/success?order=${data.order.orderNumber}`)
       } else {
         alert('Failed to create order')
@@ -102,16 +132,16 @@ export default function CheckoutPage() {
     return null
   }
 
-  if (cartItems.length === 0 && !loading) {
+  if (checkoutItems.length === 0 && !loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-500">Your cart is empty</p>
+          <p className="text-gray-500">No items selected for checkout</p>
           <button
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/cart')}
             className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg"
           >
-            Continue Shopping
+            Go to Cart
           </button>
         </div>
       </div>
@@ -195,21 +225,21 @@ export default function CheckoutPage() {
             <h2 className="font-semibold mb-4">Order Summary</h2>
             
             <div className="space-y-3 max-h-96 overflow-y-auto mb-4">
-              {cartItems.map((item) => (
+              {checkoutItems.map((item) => (
                 <div key={item.id} className="flex justify-between text-sm">
                   <div>
                     <span className="font-medium">{item.book.title}</span>
                     <span className="text-gray-500 ml-2">x{item.quantity}</span>
                   </div>
-                  <span>रू {item.priceAtAdd * item.quantity}</span>
+                  <span>रू {(item.priceAtAdd * item.quantity).toLocaleString()}</span>
                 </div>
               ))}
             </div>
             
             <div className="border-t pt-4 space-y-2">
               <div className="flex justify-between text-sm">
-                <span>Subtotal</span>
-                <span>रू {subtotal}</span>
+                <span>Subtotal ({checkoutItems.reduce((sum, item) => sum + item.quantity, 0)} items)</span>
+                <span>रू {subtotal.toLocaleString()}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span>Shipping</span>
@@ -228,7 +258,7 @@ export default function CheckoutPage() {
               <div className="border-t pt-2 mt-2">
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Total</span>
-                  <span>रू {total}</span>
+                  <span>रू {total.toLocaleString()}</span>
                 </div>
               </div>
             </div>
@@ -240,7 +270,7 @@ export default function CheckoutPage() {
                   productId="order-payment"
                   productName="Book Order"
                   onSuccess={() => console.log('Payment initiated')}
-                  onFailure={(error:any) => alert(error)}
+                  onFailure={(error: any) => alert(error)}
                 />
               </div>
             )}
