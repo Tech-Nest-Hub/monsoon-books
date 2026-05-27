@@ -198,7 +198,7 @@ export default function AdminBooksPage() {
                   <p className="text-xs text-neutral-400 line-clamp-1">{book.author}</p>
                   <div className="flex items-center justify-between pt-0.5">
                     <p className="text-sm font-bold text-neutral-900">
-                      NPR {book.price.toLocaleString()}
+                      NPR {book.price.toString()}
                     </p>
                     <span className="text-[10px] text-neutral-400 bg-neutral-100 px-1.5 py-0.5 rounded-md">
                       {book.category.name}

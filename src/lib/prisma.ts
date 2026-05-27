@@ -9,3 +9,21 @@ export const prisma =
   globalForPrisma.prisma ?? new PrismaClient({ adapter })
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
+
+
+export type {
+  User,
+  Book,
+  BookImage,
+  Category,
+  Cart,
+  CartItem,
+  Wishlist,
+  Order,
+  OrderItem,
+  Review,
+  Role,
+  OrderStatus,
+  PaymentMethod,
+  BookStatus,
+} from '@prisma/client'

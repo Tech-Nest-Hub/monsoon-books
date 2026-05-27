@@ -132,7 +132,7 @@ export default function SearchClientComp() {
 
             {books.length > 0 && !loading && (
               <>
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 mr-1 uppercase tracking-wider hidden md:inline-flex">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 mr-1 uppercase tracking-wider md:inline-flex">
                   <SlidersHorizontal className="h-3.5 w-3.5" />
                   Categories:
                 </div>

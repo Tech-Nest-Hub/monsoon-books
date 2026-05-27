@@ -8,25 +8,24 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { LoginForm } from '@/app/(client)/login/LoginDialogForm'
-import { Trash2, ShoppingBag, X } from 'lucide-react'
+import { Trash2, ShoppingBag } from 'lucide-react'
+import type { CartItem, Book } from '@prisma/client'
 
-type CartItem = {
+// Extended types with relations
+type CartItemWithBook = CartItem & {
+  book: Book
+}
+
+type CartWithItems = {
   id: number
-  bookId: number
-  quantity: number
-  price: number
-  book: {
-    id: number
-    title: string
-    coverImage: string
-    author: string
-    price: number
-    stock: number
-  }
+  items: CartItemWithBook[]
+  totalItems: number
+  totalPrice: number
 }
 
 type Props = {
   user: {
+    id?: number
     firstName: string | null
     lastName: string | null
     email: string
@@ -58,7 +57,7 @@ export const CartButton = ({ user }: Props) => {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [cartItems, setCartItems] = useState<CartItem[]>([])
+  const [cartData, setCartData] = useState<CartWithItems | null>(null)
   const [loading, setLoading] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -70,7 +69,7 @@ export const CartButton = ({ user }: Props) => {
       const response = await fetch('/api/cart')
       if (response.ok) {
         const data = await response.json()
-        setCartItems(data.items || [])
+        setCartData(data)
       }
     } catch (error) {
       console.error('Failed to fetch cart:', error)
@@ -98,7 +97,7 @@ export const CartButton = ({ user }: Props) => {
     if (user) {
       fetchCart()
     } else {
-      setCartItems([])
+      setCartData(null)
     }
   }, [user])
 
@@ -113,7 +112,7 @@ export const CartButton = ({ user }: Props) => {
   const handleLoginSuccess = () => {
     setIsDialogOpen(false)
     fetchCart()
-    setIsOpen(true) // Open cart dropdown after login
+    setIsOpen(true)
   }
 
   const updateQuantity = async (itemId: number, newQuantity: number) => {
@@ -128,7 +127,7 @@ export const CartButton = ({ user }: Props) => {
       })
       
       if (response.ok) {
-        await fetchCart() // Refresh cart
+        await fetchCart()
       }
     } catch (error) {
       console.error('Failed to update quantity:', error)
@@ -147,7 +146,7 @@ export const CartButton = ({ user }: Props) => {
       })
       
       if (response.ok) {
-        await fetchCart() // Refresh cart
+        await fetchCart()
       }
     } catch (error) {
       console.error('Failed to remove item:', error)
@@ -156,12 +155,12 @@ export const CartButton = ({ user }: Props) => {
     }
   }
 
-  const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0)
+  const getTotalItems = () => {
+    return cartData?.totalItems || 0
   }
 
-  const getTotalItems = () => {
-    return cartItems.reduce((total, item) => total + item.quantity, 0)
+  const getTotalPrice = () => {
+    return cartData?.totalPrice || 0
   }
 
   // If not logged in, show button that opens login dialog
@@ -169,7 +168,9 @@ export const CartButton = ({ user }: Props) => {
     return (
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger>
-          <CartTriggerButton onClick={handleCartClick} itemCount={0} />
+          <div>
+            <CartTriggerButton onClick={handleCartClick} itemCount={0} />
+          </div>
         </DialogTrigger>
         <DialogContent className="rounded-2xl p-0 ring-0 border-0 shadow-2xl">
           <LoginForm />
@@ -181,6 +182,7 @@ export const CartButton = ({ user }: Props) => {
   // Logged in - show cart button with dropdown
   const itemCount = getTotalItems()
   const totalPrice = getTotalPrice()
+  const cartItems = cartData?.items || []
 
   return (
     <div className="relative hidden sm:block" ref={dropdownRef}>
@@ -238,7 +240,7 @@ export const CartButton = ({ user }: Props) => {
                       </h4>
                       <p className="text-xs text-gray-500 truncate">{item.book.author}</p>
                       <p className="text-sm font-bold text-red-700 mt-1">
-                        NPR {item.price.toLocaleString()}
+                        NPR {(item.priceAtAdd || item.book.price).toLocaleString()}
                       </p>
 
                       {/* Quantity Controls */}

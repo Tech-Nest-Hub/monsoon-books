@@ -171,7 +171,7 @@ export default function WishlistPage() {
                 
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-lg font-bold text-red-600">
-                    NPR {item.book.price.toLocaleString()}
+                    NPR {item.book.price.toString()}
                   </span>
                   <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
                     {item.book.category.name}
