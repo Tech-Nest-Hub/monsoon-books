@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import type { Book, BookImage, Category } from "@prisma/client"
 import { AddWishlistButton } from "@/app/(client)/wishlist/AddWishlistButton"
 import { Share2, ShoppingCart } from "lucide-react"
+import { useCart } from "@/contexts/CardContext";
 
 type SimilarBook = Book & {
   images?: BookImage[]
@@ -33,6 +34,8 @@ export default function BookDetailClient({ book, similarBooks = [], user }: Book
   const [isBuyingNow, setIsBuyingNow] = useState(false)
   const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({})
   const [showShareTooltip, setShowShareTooltip] = useState(false)
+  const { addToCart, refreshCart, totalItems } = useCart()
+
 
   const allImages = book.images && book.images.length > 0 
     ? book.images.sort((a, b) => a.order - b.order) 
@@ -48,59 +51,40 @@ export default function BookDetailClient({ book, similarBooks = [], user }: Book
     setQuantity(prev => Math.max(1, prev + amount))
   }
 
-  const handleAddToCart = async () => {
-    if (!user) {
-      router.push('/login')
-      return
-    }
-
-    setIsAddedToCart(true)
-    try {
-      const response = await fetch('/api/cart', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bookId: book.id, quantity }),
-      })
-      
-      if (response.ok) {
-        setTimeout(() => setIsAddedToCart(false), 2000)
-      } else {
-        setIsAddedToCart(false)
-        const error = await response.json()
-        console.error('Failed to add to cart:', error)
-      }
-    } catch (error) {
-      console.error('Failed to add to cart:', error)
-      setIsAddedToCart(false)
-    }
+const handleAddToCart = async () => {
+  if (!user) {
+    router.push('/login')
+    return
   }
 
-  const handleBuyNow = async () => {
-    if (!user) {
-      router.push('/login')
-      return
-    }
-
-    setIsBuyingNow(true)
-    try {
-      const response = await fetch('/api/cart', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bookId: book.id, quantity }),
-      })
-      
-      if (response.ok) {
-        router.push('/checkout')
-      } else {
-        setIsBuyingNow(false)
-        const error = await response.json()
-        console.error('Failed to add to cart:', error)
-      }
-    } catch (error) {
-      console.error('Failed to buy now:', error)
-      setIsBuyingNow(false)
-    }
+  setIsAddedToCart(true)
+  const success = await addToCart(book.id, quantity)
+  
+  if (success) {
+    setTimeout(() => setIsAddedToCart(false), 2000)
+    // Cart count will automatically update via context
+  } else {
+    setIsAddedToCart(false)
+    console.error('Failed to add to cart')
   }
+}
+
+const handleBuyNow = async () => {
+  if (!user) {
+    router.push('/login')
+    return
+  }
+
+  setIsBuyingNow(true)
+  const success = await addToCart(book.id, quantity)
+  
+  if (success) {
+    router.push('/checkout')
+  } else {
+    setIsBuyingNow(false)
+    console.error('Failed to add to cart')
+  }
+}
 
   const handleShare = async () => {
     const shareUrl = window.location.href

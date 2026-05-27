@@ -9,19 +9,7 @@ import {
 } from '@/components/ui/dialog'
 import { LoginForm } from '@/app/(client)/login/LoginDialogForm'
 import { Trash2, ShoppingBag } from 'lucide-react'
-import type { CartItem, Book } from '@prisma/client'
-
-// Extended types with relations
-type CartItemWithBook = CartItem & {
-  book: Book
-}
-
-type CartWithItems = {
-  id: number
-  items: CartItemWithBook[]
-  totalItems: number
-  totalPrice: number
-}
+import { useCart } from '@/contexts/CardContext'
 
 type Props = {
   user: {
@@ -55,26 +43,11 @@ const CartTriggerButton = ({ onClick, itemCount }: { onClick?: () => void; itemC
 export const CartButton = ({ user }: Props) => {
   const router = useRouter()
   const pathname = usePathname()
+  const { cart, refreshCart, updateQuantity, removeItem, totalItems } = useCart()
   const [isOpen, setIsOpen] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [cartData, setCartData] = useState<CartWithItems | null>(null)
   const [loading, setLoading] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
-
-  // Fetch cart items
-  const fetchCart = async () => {
-    if (!user) return
-    
-    try {
-      const response = await fetch('/api/cart')
-      if (response.ok) {
-        const data = await response.json()
-        setCartData(data)
-      }
-    } catch (error) {
-      console.error('Failed to fetch cart:', error)
-    }
-  }
 
   // Close dropdown on navigation
   useEffect(() => {
@@ -92,14 +65,12 @@ export const CartButton = ({ user }: Props) => {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Fetch cart when user logs in
+  // Refresh cart when user logs in
   useEffect(() => {
     if (user) {
-      fetchCart()
-    } else {
-      setCartData(null)
+      refreshCart()
     }
-  }, [user])
+  }, [user, refreshCart])
 
   const handleCartClick = () => {
     if (!user) {
@@ -111,56 +82,22 @@ export const CartButton = ({ user }: Props) => {
 
   const handleLoginSuccess = () => {
     setIsDialogOpen(false)
-    fetchCart()
+    refreshCart()
     setIsOpen(true)
   }
 
-  const updateQuantity = async (itemId: number, newQuantity: number) => {
-    if (!user) return
+  const handleUpdateQuantity = async (itemId: number, newQuantity: number) => {
+    if (newQuantity < 1) return
     
     setLoading(true)
-    try {
-      const response = await fetch(`/api/cart/${itemId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ quantity: newQuantity }),
-      })
-      
-      if (response.ok) {
-        await fetchCart()
-      }
-    } catch (error) {
-      console.error('Failed to update quantity:', error)
-    } finally {
-      setLoading(false)
-    }
+    await updateQuantity(itemId, newQuantity)
+    setLoading(false)
   }
 
-  const removeItem = async (itemId: number) => {
-    if (!user) return
-    
+  const handleRemoveItem = async (itemId: number) => {
     setLoading(true)
-    try {
-      const response = await fetch(`/api/cart/${itemId}`, {
-        method: 'DELETE',
-      })
-      
-      if (response.ok) {
-        await fetchCart()
-      }
-    } catch (error) {
-      console.error('Failed to remove item:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const getTotalItems = () => {
-    return cartData?.totalItems || 0
-  }
-
-  const getTotalPrice = () => {
-    return cartData?.totalPrice || 0
+    await removeItem(itemId)
+    setLoading(false)
   }
 
   // If not logged in, show button that opens login dialog
@@ -180,13 +117,11 @@ export const CartButton = ({ user }: Props) => {
   }
 
   // Logged in - show cart button with dropdown
-  const itemCount = getTotalItems()
-  const totalPrice = getTotalPrice()
-  const cartItems = cartData?.items || []
+  const cartItems = cart?.items || []
 
   return (
     <div className="relative hidden sm:block" ref={dropdownRef}>
-      <CartTriggerButton onClick={handleCartClick} itemCount={itemCount} />
+      <CartTriggerButton onClick={handleCartClick} itemCount={totalItems} />
 
       {isOpen && (
         <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
@@ -197,7 +132,7 @@ export const CartButton = ({ user }: Props) => {
               <h3 className="text-sm font-semibold text-gray-800">Your Cart</h3>
             </div>
             <span className="text-xs text-gray-500">
-              {itemCount} {itemCount === 1 ? 'item' : 'items'}
+              {totalItems} {totalItems === 1 ? 'item' : 'items'}
             </span>
           </div>
 
@@ -218,7 +153,7 @@ export const CartButton = ({ user }: Props) => {
               </div>
             ) : (
               <div className="divide-y divide-gray-100">
-                {cartItems.map((item) => (
+                {cartItems.map((item:any) => (
                   <div key={item.id} className="flex gap-3 p-3 hover:bg-gray-50 transition-colors">
                     {/* Book Cover */}
                     <div className="relative w-16 h-20 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden">
@@ -246,7 +181,7 @@ export const CartButton = ({ user }: Props) => {
                       {/* Quantity Controls */}
                       <div className="flex items-center gap-2 mt-2">
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
                           disabled={loading || item.quantity <= 1}
                           className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
                         >
@@ -256,14 +191,14 @@ export const CartButton = ({ user }: Props) => {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
                           disabled={loading || item.quantity >= item.book.stock}
                           className="w-6 h-6 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
                         >
                           +
                         </button>
                         <button
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => handleRemoveItem(item.id)}
                           disabled={loading}
                           className="ml-auto text-red-500 hover:text-red-700 transition disabled:opacity-50"
                         >
@@ -283,7 +218,7 @@ export const CartButton = ({ user }: Props) => {
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Subtotal:</span>
                 <span className="text-lg font-bold text-gray-900">
-                  NPR {totalPrice.toLocaleString()}
+                  NPR {(cart?.totalPrice || 0).toLocaleString()}
                 </span>
               </div>
               <p className="text-xs text-gray-500 text-center">
