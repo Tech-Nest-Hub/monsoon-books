@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageUpload from "../file-upload/UploadImage";
 import { MultiImageUpload } from "../file-upload/MultipleImageUpload";
-import type { Book } from "@prisma/client";
+import { Book } from "@prisma/client";
 
 
 // Types matching your Prisma schema
