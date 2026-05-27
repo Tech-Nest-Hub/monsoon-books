@@ -14,9 +14,11 @@ enum Role {
 }
 
 enum OrderStatus {
-  PENDING // just placed
-  CONFIRMED // admin confirmed
-  DELIVERED // physically delivered
+  PENDING      // just placed
+  CONFIRMED    // admin confirmed
+  PROCESSING   // payment confirmed, processing
+  SHIPPED      // shipped to customer
+  DELIVERED    // physically delivered
   CANCELLED
 }
 
@@ -24,6 +26,13 @@ enum PaymentMethod {
   CASH_ON_DELIVERY
   KHALTI
   ESEWA
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
 }
 
 enum BookStatus {
@@ -43,10 +52,11 @@ model User {
   role      Role    @default(USER)
   provider  String? // "google", "facebook", or "email"
 
-  cart      Cart? // one cart per user
+  cart      Cart?           // one cart per user
   orders    Order[]
   wishlists Wishlist[]
   reviews   Review[]
+  payments  Payment[]
 
   @@map("users")
 }
@@ -57,11 +67,11 @@ model Book {
   id            Int        @id @default(autoincrement())
   title         String
   description   String
-  coverImage    String // Cloudinary URL
+  coverImage    String     // Cloudinary URL
   author        String
   language      String     @default("Nepali")
   price         Float
-  originalPrice Float? // for discounts; null if no discount
+  originalPrice Float?      // for discounts; null if no discount
   stock         Int        @default(0)
   publisher     String?
   edition       String?
@@ -73,13 +83,12 @@ model Book {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  review Review[]
-
-  images     BookImage[]
-  category   Category    @relation(fields: [categoryId], references: [id])
-  cartItems  CartItem[]
-  orderItems OrderItem[]
-  wishlists  Wishlist[]
+  review      Review[]
+  images      BookImage[]
+  category    Category      @relation(fields: [categoryId], references: [id])
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+  wishlists   Wishlist[]
 
   @@map("books")
 }
@@ -130,36 +139,83 @@ model CartItem {
   @@map("cart_items")
 }
 
-// ───── ORDER ─────
+// ───── PAYMENT ─────
+
+model Payment {
+  id              String        @id @default(cuid())
+  transactionUuid String        @unique
+  transactionId   String?
+  amount          Float
+  productId       String
+  productName     String
+  userId          Int           // Changed from String to Int to match User.id
+  user            User          @relation(fields: [userId], references: [id])
+  status          PaymentStatus @default(PENDING)
+  paymentMethod   PaymentMethod?
+  createdAt       DateTime      @default(now())
+  completedAt     DateTime?
+  
+  order   Order?   // Optional: link to order
+  orderId Int?     // Optional: link to order
+  
+  @@index([transactionUuid])
+  @@index([userId])
+  @@index([status])
+  @@map("payments")
+}
+
+// ───── ORDER (Fixed) ─────
 
 model Order {
-  id            Int           @id @default(autoincrement())
-  user          User          @relation(fields: [userId], references: [id])
-  userId        Int
-  items         OrderItem[]
-  status        OrderStatus   @default(PENDING)
-  paymentMethod PaymentMethod @default(CASH_ON_DELIVERY)
-  total         Float
+  id              Int           @id @default(autoincrement())
+  orderNumber     String        @unique // Human readable order number (e.g., "ORD-20241201-001")
+  user            User          @relation(fields: [userId], references: [id])
+  userId          Int
+  items           OrderItem[]
+  status          OrderStatus   @default(PENDING)
+  paymentMethod   PaymentMethod @default(CASH_ON_DELIVERY)
+  paymentStatus   PaymentStatus @default(PENDING)
+  total           Float
+  subtotal        Float
+  tax             Float         @default(0)
+  shippingCost    Float         @default(0)
+  discount        Float         @default(0)
 
   // delivery info
   deliveryAddress String
   phone           String
+  email           String?
+  notes           String?       // Order notes or special instructions
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // Payment relationship
+  payment        Payment?      @relation(fields: [paymentId], references: [id])
+  paymentId      String?       @unique // One order has one payment
+  
+  // Tracking
+  trackingNumber String?
+  shippedAt      DateTime?
+  deliveredAt    DateTime?
+  
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  cancelledAt    DateTime?
+  cancelReason   String?
 
+  @@index([userId])
+  @@index([status])
+  @@index([orderNumber])
   @@map("orders")
 }
 
 model OrderItem {
   id         Int   @id @default(autoincrement())
-  order      Order @relation(fields: [orderId], references: [id])
+  order      Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId    Int
   book       Book  @relation(fields: [bookId], references: [id])
   bookId     Int
   quantity   Int
   priceAtBuy Float // snapshot of Book.price when order was placed
-
+  
   @@map("order_items")
 }
 
@@ -177,9 +233,11 @@ model Wishlist {
   @@map("wishlists")
 }
 
+// ───── REVIEW ─────
+
 model Review {
   id      Int     @id @default(autoincrement())
-  rating  Int // 1-5
+  rating  Int     // 1-5
   comment String? // optional written review
 
   user   User @relation(fields: [userId], references: [id])

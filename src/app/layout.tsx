@@ -5,8 +5,9 @@ import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Providers } from "@/contexts/providers";
+import { UserProvider } from "@/contexts/UserContext";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,11 +37,13 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <TooltipProvider>
           <Providers>
-        {children}
+            <UserProvider>
+              {children}
+            </UserProvider>
           </Providers>
         </TooltipProvider>
-          <Toaster richColors position="top-right" />
-        </body>
+        <Toaster richColors position="top-right" />
+      </body>
     </html>
   );
 }

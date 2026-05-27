@@ -42,16 +42,18 @@ export default async function BookDetailPage({ params }: { params: Promise<{ id:
       )
     }
 
-    // 2. FIX: Fetch similar books in the same category, excluding the current book
+    // 2. Fetch similar books in the same category, excluding the current book
     const similarBooks = await prisma.book.findMany({
       where: {
         categoryId: book.categoryId, 
-        id: { not: book.id }, // Avoid recommending the same book
+        id: { not: book.id },
+        isActive: true, // Only show active books
       },
-      take: 4, // Limits results to fill up your 4-column layout nicely
+      take: 4,
       include: {
         images: {
           orderBy: { order: "asc" },
+          take: 1, // Only get the first image for similar books
         },
       },
     })
@@ -73,11 +75,27 @@ export default async function BookDetailPage({ params }: { params: Promise<{ id:
       })
     }
 
+    // Convert Decimal to number if needed (Prisma returns Decimal for Float)
+    const serializedBook = {
+      ...book,
+      price: Number(book.price),
+      originalPrice: book.originalPrice ? Number(book.originalPrice) : null,
+    }
+
+    const serializedSimilarBooks = similarBooks.map(book => ({
+      ...book,
+      price: Number(book.price),
+      originalPrice: book.originalPrice ? Number(book.originalPrice) : null,
+    }))
+
     return (
       <div>
         <Navbar />
-        {/* 4. FIX: Pass the newly fetched similarBooks array here */}
-        <BookDetailClient book={book} similarBooks={similarBooks} user={userData} />
+        <BookDetailClient 
+          book={serializedBook} 
+          similarBooks={serializedSimilarBooks} 
+          user={userData} 
+        />
       </div>
     )
   } catch (error) {
