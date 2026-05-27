@@ -9,12 +9,13 @@ await prisma.book.create({
     },
   },
 });
-
+Done >>
 
 1. Admin pages first — before any customer-facing UI, you need to be able to actually put books into your database. Right now your DB is empty. Build:
 
 /admin/books/new — add a book form (this is where your ImageUpload components go)
 /admin/books — list/edit/delete books
+Also Done>>
 
 This also lets you test your schema properly with real data.
 2. Customer-facing pages after — once you have books in DB:
