@@ -150,7 +150,7 @@ export default function CartPage() {
               <div key={item.id} className="bg-white rounded-xl shadow-sm p-4 sm:p-6 hover:shadow-md transition">
                 <div className="flex gap-4 sm:gap-6">
                   {/* Book Cover */}
-                  <Link href={`/book/${item.book.id}`} className="flex-shrink-0">
+                  <Link href={`/book/${item.book.id}`} className="shrink-0">
                     <div className="relative w-20 h-28 sm:w-24 sm:h-32 bg-gray-100 rounded-lg overflow-hidden">
                       {item.book.coverImage ? (
                         <Image

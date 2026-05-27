@@ -179,7 +179,7 @@ export default function SearchClientComp() {
             <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {Array.from({ length: 10 }).map((_, index) => (
                 <div key={index} className="space-y-3 p-3 bg-white border rounded-2xl">
-                  <Skeleton className="aspect-[3/4] w-full rounded-xl bg-slate-100" />
+                  <Skeleton className="aspect-3/4 w-full rounded-xl bg-slate-100" />
                   <Skeleton className="h-4 w-3/4 bg-slate-100" />
                   <Skeleton className="h-3 w-1/2 bg-slate-100" />
                   <Skeleton className="h-6 w-1/3 bg-slate-100" />
@@ -199,7 +199,7 @@ export default function SearchClientComp() {
                   className="group relative h-full rounded-2xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 cursor-pointer overflow-hidden flex flex-col justify-between"
                 >
                   <div className="flex flex-col h-full">
-                    <div className="aspect-[3/4] bg-slate-50 relative overflow-hidden group-hover:brightness-95 transition-all duration-300">
+                    <div className="aspect-3/4 bg-slate-50 relative overflow-hidden group-hover:brightness-95 transition-all duration-300">
                       <span className="absolute top-2.5 left-2.5 z-10 bg-white/95 backdrop-blur-sm shadow-sm border border-slate-100 text-[10px] font-bold text-slate-800 px-2 py-0.5 rounded-md flex items-center gap-1">
                         <Tag className="h-2.5 w-2.5 text-red-500" />
                         {book.category?.name ?? "General"}
@@ -213,7 +213,7 @@ export default function SearchClientComp() {
                           loading="lazy"
                         />
                       ) : (
-                        <div className="flex h-full flex-col items-center justify-center gap-2 text-slate-400 bg-gradient-to-b from-slate-50 to-slate-100">
+                        <div className="flex h-full flex-col items-center justify-center gap-2 text-slate-400 bg-linear-to-brom-slate-50 to-slate-100">
                           <BookOpen className="h-8 w-8 stroke-[1.5]" />
                           <span className="text-xs font-medium">No Cover Art</span>
                         </div>
@@ -295,7 +295,7 @@ export default function SearchClientComp() {
                         className="group relative h-full rounded-2xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 cursor-pointer overflow-hidden flex flex-col justify-between"
                       >
                         <div className="flex flex-col h-full">
-                          <div className="aspect-[3/4] bg-slate-50 relative overflow-hidden group-hover:brightness-95 transition-all duration-300">
+                          <div className="aspect-3/4 bg-slate-50 relative overflow-hidden group-hover:brightness-95 transition-all duration-300">
                             <span className="absolute top-2.5 left-2.5 z-10 bg-white/95 backdrop-blur-sm shadow-sm border border-slate-100 text-[10px] font-bold text-slate-800 px-2 py-0.5 rounded-md flex items-center gap-1">
                               <Tag className="h-2.5 w-2.5 text-orange-500" />
                               {book.category?.name ?? "General"}
@@ -309,7 +309,7 @@ export default function SearchClientComp() {
                                 loading="lazy"
                               />
                             ) : (
-                              <div className="flex h-full flex-col items-center justify-center gap-2 text-slate-400 bg-gradient-to-b from-slate-50 to-slate-100">
+                              <div className="flex h-full flex-col items-center justify-center gap-2 text-slate-400 bg-linear-to-b from-slate-50 to-slate-100">
                                 <BookOpen className="h-8 w-8 stroke-[1.5]" />
                                 <span className="text-xs font-medium">No Cover Art</span>
                               </div>
@@ -354,8 +354,8 @@ export default function SearchClientComp() {
               )}
             </div>
           ) : (
-            <div className="rounded-3xl border border-slate-100 bg-gradient-to-tr from-white via-slate-50/50 to-red-50/30 p-16 text-center max-w-2xl mx-auto shadow-sm">
-              <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-tr from-red-500 to-amber-500 text-white flex items-center justify-center shadow-md shadow-red-100 mb-4">
+            <div className="rounded-3xl border border-slate-100 bg-linear-to-trrom-white via-slate-50/50 to-red-50/30 p-16 text-center max-w-2xl mx-auto shadow-sm">
+              <div className="mx-auto w-14 h-14 rounded-2xl bg-linear-to-tr from-red-500 to-amber-500 text-white flex items-center justify-center shadow-md shadow-red-100 mb-4">
                 <BookOpen className="h-7 w-7" />
               </div>
               <p className="text-xl font-bold text-slate-900">Your next story awaits</p>

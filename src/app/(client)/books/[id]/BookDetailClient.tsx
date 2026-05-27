@@ -117,7 +117,7 @@ const handleBuyNow = async () => {
           <div className="flex items-center gap-2">
             <Link href="/" className="hover:text-red-700 transition-colors">Home</Link>
             <span>/</span>
-            <span className="text-gray-600 font-medium truncate max-w-[180px] sm:max-w-none">
+            <span className="text-gray-600 font-medium truncate max-w-45 sm:max-w-none">
               {book.title}
             </span>
           </div>
@@ -142,7 +142,7 @@ const handleBuyNow = async () => {
           
           {/* Left Column: Image Media Box */}
           <div className="lg:col-span-6 space-y-4 lg:sticky lg:top-6">
-            <div className="bg-white aspect-[3/4] relative overflow-hidden flex items-center justify-center">
+            <div className="bg-white aspect-3/4 relative overflow-hidden flex items-center justify-center">
               {mainImage && !imageErrors[selectedImageIndex] ? (
                 <img
                   src={mainImage}
@@ -282,7 +282,7 @@ const handleBuyNow = async () => {
                         scroll={true}
                         className="group flex flex-col p-3 rounded-xl border border-gray-200 bg-white hover:border-gray-300 shadow-xs transition-all duration-200 text-left"
                       >
-                        <div className="aspect-[3/4] mb-3 overflow-hidden relative flex items-center justify-center bg-white rounded-xl">
+                        <div className="aspect-3/4 mb-3 overflow-hidden relative flex items-center justify-center bg-white rounded-xl">
                           {simImage ? (
                             <img 
                               src={simImage} 

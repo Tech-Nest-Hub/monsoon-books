@@ -86,7 +86,7 @@ export default function WishlistPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="animate-pulse">
-                <div className="bg-gray-200 rounded-lg aspect-[3/4] mb-3"></div>
+                <div className="bg-gray-200 rounded-lg aspect-3/4 mb-3"></div>
                 <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
                 <div className="h-3 bg-gray-200 rounded w-1/2"></div>
               </div>
@@ -135,7 +135,7 @@ export default function WishlistPage() {
           {wishlistItems.map((item) => (
             <div key={item.id} className="group bg-white rounded-lg shadow-sm hover:shadow-md transition overflow-hidden">
               {/* Book Cover */}
-              <Link href={`/book/${item.book.id}`} className="block relative aspect-[3/4] overflow-hidden bg-gray-100">
+              <Link href={`/book/${item.book.id}`} className="block relative aspect-3/4 overflow-hidden bg-gray-100">
                 {item.book.coverImage ? (
                   <Image
                     src={item.book.coverImage}
