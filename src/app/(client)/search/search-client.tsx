@@ -196,10 +196,10 @@ export default function SearchClientComp() {
                 <Card 
                   key={book.id} 
                   onClick={() => router.push(`/books/${book.id}`)}
-                  className="group relative h-full rounded-2xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 cursor-pointer overflow-hidden flex flex-col justify-between"
+                  className="p-0 group relative h-full rounded-2xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 cursor-pointer overflow-hidden flex flex-col justify-between"
                 >
-                  <div className="flex flex-col h-full">
-                    <div className="aspect-3/4 bg-slate-50 relative overflow-hidden group-hover:brightness-95 transition-all duration-300">
+                  <div className="flex flex-col h-full min-h-0">
+                    <div className="relative aspect-3/4 bg-slate-50 overflow-hidden group-hover:brightness-95 transition-all duration-300">
                       <span className="absolute top-2.5 left-2.5 z-10 bg-white/95 backdrop-blur-sm shadow-sm border border-slate-100 text-[10px] font-bold text-slate-800 px-2 py-0.5 rounded-md flex items-center gap-1">
                         <Tag className="h-2.5 w-2.5 text-red-500" />
                         {book.category?.name ?? "General"}
@@ -209,7 +209,7 @@ export default function SearchClientComp() {
                         <img 
                           src={book.coverImage} 
                           alt={book.title} 
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" 
                           loading="lazy"
                         />
                       ) : (
@@ -292,10 +292,10 @@ export default function SearchClientComp() {
                       <Card 
                         key={book.id} 
                         onClick={() => router.push(`/books/${book.id}`)}
-                        className="group relative h-full rounded-2xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 cursor-pointer overflow-hidden flex flex-col justify-between"
+                        className="p-0 group relative h-full rounded-2xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 cursor-pointer overflow-hidden flex flex-col justify-between"
                       >
-                        <div className="flex flex-col h-full">
-                          <div className="aspect-3/4 bg-slate-50 relative overflow-hidden group-hover:brightness-95 transition-all duration-300">
+                        <div className="flex flex-col h-full min-h-0">
+                          <div className="relative aspect-3/4 bg-slate-50 overflow-hidden group-hover:brightness-95 transition-all duration-300">
                             <span className="absolute top-2.5 left-2.5 z-10 bg-white/95 backdrop-blur-sm shadow-sm border border-slate-100 text-[10px] font-bold text-slate-800 px-2 py-0.5 rounded-md flex items-center gap-1">
                               <Tag className="h-2.5 w-2.5 text-orange-500" />
                               {book.category?.name ?? "General"}
@@ -305,7 +305,7 @@ export default function SearchClientComp() {
                               <img 
                                 src={book.coverImage} 
                                 alt={book.title} 
-                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                                className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" 
                                 loading="lazy"
                               />
                             ) : (
@@ -354,8 +354,8 @@ export default function SearchClientComp() {
               )}
             </div>
           ) : (
-            <div className="rounded-3xl border border-slate-100 bg-linear-to-trrom-white via-slate-50/50 to-red-50/30 p-16 text-center max-w-2xl mx-auto shadow-sm">
-              <div className="mx-auto w-14 h-14 rounded-2xl bg-linear-to-tr from-red-500 to-amber-500 text-white flex items-center justify-center shadow-md shadow-red-100 mb-4">
+            <div className="rounded-3xl border border-slate-100 bg-gradient-to-tr from-white via-slate-50/50 to-red-50/30 p-16 text-center max-w-2xl mx-auto shadow-sm">
+              <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-tr from-red-500 to-amber-500 text-white flex items-center justify-center shadow-md shadow-red-100 mb-4">
                 <BookOpen className="h-7 w-7" />
               </div>
               <p className="text-xl font-bold text-slate-900">Your next story awaits</p>

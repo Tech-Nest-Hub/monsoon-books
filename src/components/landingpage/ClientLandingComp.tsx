@@ -170,14 +170,14 @@ export function ClientLandingComp() {
                             onClick={() =>
                               handleBookClick(book.id)
                             }
-                            className="h-full min-h-64 sm:min-h-72 overflow-hidden rounded-lg sm:rounded-xl border border-red-100 bg-linear-to-br from-white to-red-50 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-red-300 hover:shadow-lg cursor-pointer"
+                            className="p-0 h-full min-h-64 sm:min-h-72 overflow-hidden rounded-lg sm:rounded-xl border border-red-100 bg-linear-to-br from-white to-red-50 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-red-300 hover:shadow-lg cursor-pointer"
                           >
-                            <div className="aspect-3/4 overflow-hidden bg-slate-100 relative">
+                            <div className="relative aspect-3/4 overflow-hidden bg-slate-100">
                               {book.coverImage ? (
                                 <img
                                   src={book.coverImage}
                                   alt={book.title}
-                                  className="h-full w-full object-cover transition-transform duration-300 hover:scale-110"
+                                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 hover:scale-110"
                                   loading="lazy"
                                 />
                               ) : (
@@ -257,15 +257,15 @@ export function ClientLandingComp() {
                       onClick={() =>
                         handleBookClick(book.id)
                       }
-                      className="overflow-hidden rounded-lg sm:rounded-xl border border-red-100 bg-linear-to-br from-white to-red-50 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-red-300 hover:shadow-lg cursor-pointer"
+                      className="p-0 overflow-hidden rounded-lg sm:rounded-xl border border-red-100 bg-linear-to-br from-white to-red-50 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-red-300 hover:shadow-lg cursor-pointer"
                     >
-                      <div className="flex h-full flex-col overflow-hidden">
-                        <div className="aspect-3/4 overflow-hidden bg-slate-100 relative">
+                      <div className="flex h-full min-h-0 flex-col overflow-hidden">
+                        <div className="relative aspect-3/4 overflow-hidden bg-slate-100">
                           {book.coverImage ? (
                             <img
                               src={book.coverImage}
                               alt={book.title}
-                              className="h-full w-full object-cover transition-transform duration-300 hover:scale-110"
+                              className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 hover:scale-110"
                               loading="lazy"
                             />
                           ) : (
