@@ -20,7 +20,6 @@ if (user) {
     where: { authId: user.id },
   })
 }
-console.log("User Data in Navbar:", userData, user)
   return (
     <NavbarWrapper>
       <Topthinbar />
