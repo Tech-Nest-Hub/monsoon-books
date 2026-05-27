@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react'
 import type { CartItem, Book } from '@prisma/client'
 
 type CartItemWithBook = CartItem & {
@@ -30,22 +30,31 @@ const CartContext = createContext<CartContextType | undefined>(undefined)
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartData | null>(null)
   const [loading, setLoading] = useState(true)
+  const isMounted = useRef(true)
+  const isFetching = useRef(false)
 
-  const refreshCart = async () => {
+  const refreshCart = useCallback(async () => {
+    // Prevent multiple simultaneous requests
+    if (isFetching.current) return
+    
+    isFetching.current = true
     try {
       const response = await fetch('/api/cart')
-      if (response.ok) {
+      if (response.ok && isMounted.current) {
         const data = await response.json()
         setCart(data)
       }
     } catch (error) {
       console.error('Failed to fetch cart:', error)
     } finally {
-      setLoading(false)
+      if (isMounted.current) {
+        setLoading(false)
+      }
+      isFetching.current = false
     }
-  }
+  }, [])
 
-  const addToCart = async (bookId: number, quantity: number): Promise<boolean> => {
+  const addToCart = useCallback(async (bookId: number, quantity: number): Promise<boolean> => {
     try {
       const response = await fetch('/api/cart', {
         method: 'POST',
@@ -62,9 +71,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       console.error('Failed to add to cart:', error)
       return false
     }
-  }
+  }, [refreshCart])
 
-  const updateQuantity = async (itemId: number, quantity: number): Promise<boolean> => {
+  const updateQuantity = useCallback(async (itemId: number, quantity: number): Promise<boolean> => {
     try {
       const response = await fetch(`/api/cart/${itemId}`, {
         method: 'PATCH',
@@ -81,9 +90,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       console.error('Failed to update quantity:', error)
       return false
     }
-  }
+  }, [refreshCart])
 
-  const removeItem = async (itemId: number): Promise<boolean> => {
+  const removeItem = useCallback(async (itemId: number): Promise<boolean> => {
     try {
       const response = await fetch(`/api/cart/${itemId}`, {
         method: 'DELETE',
@@ -98,11 +107,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       console.error('Failed to remove item:', error)
       return false
     }
-  }
+  }, [refreshCart])
 
   useEffect(() => {
+    isMounted.current = true
     refreshCart()
-  }, [])
+    
+    return () => {
+      isMounted.current = false
+    }
+  }, [refreshCart])
 
   const totalItems = cart?.totalItems || 0
   const totalPrice = cart?.totalPrice || 0

@@ -11,6 +11,7 @@ import { LoginForm } from '@/app/(client)/login/LoginDialogForm'
 import { Trash2, ShoppingBag } from 'lucide-react'
 import { useCart } from '@/contexts/CardContext'
 
+
 type Props = {
   user: {
     id?: number
@@ -31,7 +32,7 @@ const CartTriggerButton = ({ onClick, itemCount }: { onClick?: () => void; itemC
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 21h6M12 21v-6" />
       </svg>
       {itemCount > 0 && (
-        <span className="absolute -top-2 -right-2.5 bg-red-600 text-white text-[9px] font-bold rounded-full min-w-4 h-4 px-1 flex items-center justify-center leading-none">
+        <span className="absolute -top-2 -right-2.5 bg-red-600 text-white text-[9px] font-bold rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center leading-none">
           {itemCount > 99 ? '99+' : itemCount}
         </span>
       )}
@@ -43,7 +44,7 @@ const CartTriggerButton = ({ onClick, itemCount }: { onClick?: () => void; itemC
 export const CartButton = ({ user }: Props) => {
   const router = useRouter()
   const pathname = usePathname()
-  const { cart, refreshCart, updateQuantity, removeItem, totalItems } = useCart()
+  const { cart, updateQuantity, removeItem, totalItems, refreshCart } = useCart()
   const [isOpen, setIsOpen] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -65,9 +66,11 @@ export const CartButton = ({ user }: Props) => {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Refresh cart when user logs in
+  // Only refresh cart when user logs in (not on every render)
+  const hasRefreshed = useRef(false)
   useEffect(() => {
-    if (user) {
+    if (user && !hasRefreshed.current) {
+      hasRefreshed.current = true
       refreshCart()
     }
   }, [user, refreshCart])
@@ -153,10 +156,10 @@ export const CartButton = ({ user }: Props) => {
               </div>
             ) : (
               <div className="divide-y divide-gray-100">
-                {cartItems.map((item:any) => (
+                {cartItems.map((item) => (
                   <div key={item.id} className="flex gap-3 p-3 hover:bg-gray-50 transition-colors">
                     {/* Book Cover */}
-                    <div className="relative w-16 h-20 shrink-0 bg-gray-100 rounded-md overflow-hidden">
+                    <div className="relative w-16 h-20 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden">
                       {item.book.coverImage && (
                         <Image
                           src={item.book.coverImage}

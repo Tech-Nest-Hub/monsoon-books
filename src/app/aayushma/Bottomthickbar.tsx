@@ -2,8 +2,8 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AccountButton } from './AccountButton'
-import { WishlistButton } from '../(client)/wishlist/WishlistButton'
-import { CartButton } from '../(client)/cart/CartButton'
+import { WishlistButton } from '../(client)/(profilesettings)/wishlist/WishlistButton'
+import { CartButton } from '../(client)/(profilesettings)/cart/CartButton'
 
 type Props = {
   user: {

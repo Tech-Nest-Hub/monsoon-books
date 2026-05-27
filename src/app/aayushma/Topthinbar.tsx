@@ -17,7 +17,7 @@ const Topthinbar = () => {
   }, [])
 
   return (
-    <div className=" text-white text-xs mr-24 ">
+    <div className="hidden md:block text-white text-xs">
       <div className="container mx-auto px-4 sm:px-6 py-1.5">
         <div className="flex items-center justify-end gap-5">
 
@@ -84,7 +84,7 @@ const Topthinbar = () => {
                 role="listbox"
                 className="absolute right-0 mt-2 w-32 bg-white text-gray-800 rounded-lg shadow-xl z-50 overflow-hidden border border-gray-100"
               >
-                {[['🇳🇵', 'नेपाली'], ['🇬🇧', 'English'],].map(([flag, label]) => (
+                {[['🇳🇵', 'नेपाली'], ['🇬🇧', 'English']].map(([flag, label]) => (
                   <button
                     key={label}
                     role="option"
