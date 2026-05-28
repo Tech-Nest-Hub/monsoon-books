@@ -4,8 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageUpload from "../file-upload/UploadImage";
 import { MultiImageUpload } from "../file-upload/MultipleImageUpload";
-import { Book } from "@prisma/client";
-
+import type { Book } from "@prisma/client";
 
 // Types matching your Prisma schema
 interface BookImage {
@@ -18,7 +17,6 @@ interface Category {
   id: number;
   name: string;
 }
-
 
 interface BookFormProps {
   initialData?: Book & { images: BookImage[] };
@@ -35,18 +33,16 @@ export default function BookForm({ initialData, categories }: BookFormProps) {
   const [author, setAuthor] = useState(initialData?.author ?? "");
   const [language, setLanguage] = useState(initialData?.language ?? "Nepali");
   const [price, setPrice] = useState(initialData?.price?.toString() ?? "");
+  const [originalPrice, setOriginalPrice] = useState(initialData?.originalPrice?.toString() ?? "");
   const [stock, setStock] = useState(initialData?.stock?.toString() ?? "0");
   const [publisher, setPublisher] = useState(initialData?.publisher ?? "");
-  const [edition, setEdition] = useState(
-    initialData?.edition?.toString() ?? ""
-  );
-  const [categoryId, setCategoryId] = useState(
-    initialData?.categoryId?.toString() ?? ""
-  );
+  const [edition, setEdition] = useState(initialData?.edition?.toString() ?? "");
+  const [categoryId, setCategoryId] = useState(initialData?.categoryId?.toString() ?? "");
   const [coverImage, setCoverImage] = useState(initialData?.coverImage ?? "");
-  const [images, setImages] = useState<string[]>(
-    initialData?.images.map((img) => img.url) ?? []
-  );
+  const [images, setImages] = useState<string[]>(initialData?.images.map((img) => img.url) ?? []);
+  const [isTrending, setIsTrending] = useState(initialData?.isTrending ?? false);
+  const [isFeatured, setIsFeatured] = useState(initialData?.isFeatured ?? false);
+  const [status, setStatus] = useState(initialData?.status ?? "AVAILABLE");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -58,6 +54,7 @@ export default function BookForm({ initialData, categories }: BookFormProps) {
     // Client-side validation
     if (!coverImage) return setError("Please upload a cover image.");
     if (!categoryId) return setError("Please select a category.");
+    if (!price) return setError("Please enter a price.");
 
     setLoading(true);
 
@@ -68,14 +65,16 @@ export default function BookForm({ initialData, categories }: BookFormProps) {
         author,
         language,
         price,
+        originalPrice: originalPrice || null,
         stock,
-        originalPrice: price,
-        status: "AVAILABLE",
+        status,
         publisher: publisher || null,
         edition: edition || null,
         categoryId,
         coverImage,
         images,
+        isTrending,
+        isFeatured,
       };
 
       const url = isEditing ? `/api/books/${initialData.id}` : "/api/books";
@@ -103,7 +102,6 @@ export default function BookForm({ initialData, categories }: BookFormProps) {
 
   return (
     <form onSubmit={onSubmit} className="max-w-7xl mx-auto py-10 px-4 space-y-10">
-
       {/* Header */}
       <div className="space-y-1">
         <p className="text-xs font-semibold tracking-widest uppercase text-neutral-400">
@@ -210,7 +208,7 @@ export default function BookForm({ initialData, categories }: BookFormProps) {
       {/* Pricing & stock */}
       <section className="space-y-4">
         <SectionLabel>Pricing & stock</SectionLabel>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <Field label="Price (NPR) *">
             <input
               required
@@ -220,8 +218,25 @@ export default function BookForm({ initialData, categories }: BookFormProps) {
               disabled={loading}
               placeholder="e.g. 450"
               min={0}
+              step="0.01"
               className={input}
             />
+          </Field>
+
+          <Field label="Original Price (NPR)">
+            <input
+              type="number"
+              value={originalPrice}
+              onChange={(e) => setOriginalPrice(e.target.value)}
+              disabled={loading}
+              placeholder="e.g. 500"
+              min={0}
+              step="0.01"
+              className={input}
+            />
+            <p className="text-xs text-neutral-400 mt-1">
+              Leave empty if no discount
+            </p>
           </Field>
 
           <Field label="Stock *">
@@ -246,6 +261,21 @@ export default function BookForm({ initialData, categories }: BookFormProps) {
             >
               <option value="Nepali">Nepali</option>
               <option value="English">English</option>
+              <option value="Hindi">Hindi</option>
+              <option value="Sanskrit">Sanskrit</option>
+            </select>
+          </Field>
+
+          <Field label="Status">
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value as any)}
+              disabled={loading}
+              className={input}
+            >
+              <option value="AVAILABLE">Available</option>
+              <option value="OUT_OF_STOCK">Out of Stock</option>
+              <option value="DISCONTINUED">Discontinued</option>
             </select>
           </Field>
         </div>
@@ -269,6 +299,56 @@ export default function BookForm({ initialData, categories }: BookFormProps) {
             ))}
           </select>
         </Field>
+      </section>
+
+      {/* Featured & Trending Toggle */}
+      <section className="space-y-4">
+        <SectionLabel>Display Settings</SectionLabel>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="flex items-center justify-between p-4 bg-neutral-50 rounded-lg border border-neutral-200">
+            <div>
+              <FieldLabel>Trending Book</FieldLabel>
+              <p className="text-xs text-neutral-400 mt-0.5">
+                Show in trending section on homepage
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsTrending(!isTrending)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:ring-offset-2 ${
+                isTrending ? "bg-neutral-900" : "bg-neutral-300"
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  isTrending ? "translate-x-6" : "translate-x-1"
+                }`}
+              />
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between p-4 bg-neutral-50 rounded-lg border border-neutral-200">
+            <div>
+              <FieldLabel>Featured Book</FieldLabel>
+              <p className="text-xs text-neutral-400 mt-0.5">
+                Show in featured section on homepage
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsFeatured(!isFeatured)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:ring-offset-2 ${
+                isFeatured ? "bg-neutral-900" : "bg-neutral-300"
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  isFeatured ? "translate-x-6" : "translate-x-1"
+                }`}
+              />
+            </button>
+          </div>
+        </div>
       </section>
 
       {/* Error */}
@@ -299,7 +379,6 @@ export default function BookForm({ initialData, categories }: BookFormProps) {
           Cancel
         </button>
       </div>
-
     </form>
   );
 }

@@ -1,7 +1,7 @@
-
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
+// In your POST /api/books route.ts
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -16,9 +16,11 @@ export async function POST(req: NextRequest) {
       status,
       publisher,
       edition,
+      isTrending,
+      isFeatured,
       categoryId,
       coverImage,
-      images, // string[]
+      images,
     } = body;
 
     // Basic validation
@@ -43,6 +45,8 @@ export async function POST(req: NextRequest) {
         categoryId: parseInt(categoryId),
         coverImage,
         status: status || "AVAILABLE",
+        isTrending: isTrending === true || isTrending === "true",
+        isFeatured: isFeatured === true || isFeatured === "true",
         images: {
           create: (images ?? []).map((url: string, i: number) => ({
             url,
@@ -64,22 +68,36 @@ export async function GET(request: NextRequest) {
   try {
     const url = new URL(request.url)
     const query = url.searchParams.get("q")
+    const trending = url.searchParams.get("trending")
+    const featured = url.searchParams.get("featured")
 
-    const where = query
-      ? {
-          OR: [
-            { title: { contains: query, mode: "insensitive" as const } },
-            { author: { contains: query, mode: "insensitive" as const } },
-            { description: { contains: query, mode: "insensitive" as const } },
-          ],
-        }
-      : undefined
+    let where: any = {}
+
+    // Search query filter
+    if (query) {
+      where.OR = [
+        { title: { contains: query, mode: "insensitive" as const } },
+        { author: { contains: query, mode: "insensitive" as const } },
+        { description: { contains: query, mode: "insensitive" as const } },
+      ]
+    }
+
+    // Trending filter
+    if (trending === "true") {
+      where.isTrending = true
+    }
+
+    // Featured filter
+    if (featured === "true") {
+      where.isFeatured = true
+    }
 
     const books = await prisma.book.findMany({
       where,
       include: { category: true, images: { orderBy: { order: "asc" } } },
       orderBy: { createdAt: "desc" },
     });
+    
     return NextResponse.json(books);
   } catch (error) {
     console.error("[GET /api/books]", error);

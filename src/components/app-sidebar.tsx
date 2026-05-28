@@ -74,11 +74,6 @@ const navItems: NavItem[] = [
                 icon: BookOpen,
             },
             {
-                title: "Publishers",
-                url: "/dashboard/books/publishers",
-                icon: PenTool,
-            },
-            {
                 title: "Authors",
                 url: "/dashboard/books/authors",
                 icon: User,

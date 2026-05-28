@@ -33,6 +33,8 @@ export async function PATCH(
       categoryId,
       coverImage,
       images,
+      isTrending,
+      isFeatured,
     } = body
 
     // Validation
@@ -109,11 +111,8 @@ export async function PATCH(
 
         data: {
           ...(title && { title }),
-
           ...(description && { description }),
-
           ...(author && { author }),
-
           ...(language && { language }),
 
           ...(price !== undefined &&
@@ -135,7 +134,6 @@ export async function PATCH(
             publisher: publisher || null,
           }),
 
-          // FIXED EDITION
           ...(edition !== undefined && {
             edition: edition || null,
           }),
@@ -145,12 +143,21 @@ export async function PATCH(
               categoryId: parseInt(categoryId),
             }),
 
-          // FIXED COVER IMAGE
           ...(coverImage !== undefined && {
             coverImage,
           }),
 
           ...(status && { status }),
+
+          // Handle isTrending - can be boolean or string
+          ...(isTrending !== undefined && {
+            isTrending: isTrending === true || isTrending === "true",
+          }),
+
+          // Handle isFeatured - can be boolean or string
+          ...(isFeatured !== undefined && {
+            isFeatured: isFeatured === true || isFeatured === "true",
+          }),
 
           ...(images !== undefined && {
             images: {

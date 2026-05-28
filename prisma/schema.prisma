@@ -77,6 +77,8 @@ model Book {
   edition       String?
   status        BookStatus @default(AVAILABLE)
   isActive      Boolean    @default(true) // for soft deletes
+  isTrending    Boolean    @default(false) // for highlighting trending books
+  isFeatured     Boolean    @default(false) // for homepage featured section
 
   categoryId Int
 

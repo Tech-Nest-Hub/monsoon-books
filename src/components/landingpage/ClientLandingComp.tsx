@@ -11,40 +11,54 @@ type BookWithRelations = Book & {
 }
 
 export function ClientLandingComp() {
-  const [books, setBooks] = React.useState<BookWithRelations[]>([])
-  const [loading, setLoading] = React.useState(true)
+  const [trendingBooks, setTrendingBooks] = React.useState<BookWithRelations[]>([])
+  const [featuredBooks, setFeaturedBooks] = React.useState<BookWithRelations[]>([])
+  const [loadingTrending, setLoadingTrending] = React.useState(true)
+  const [loadingFeatured, setLoadingFeatured] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
 
   React.useEffect(() => {
     let active = true
 
-    const loadBooks = async () => {
+    const fetchTrendingBooks = async () => {
       try {
-        setLoading(true)
-        const response = await fetch("/api/books")
-
-        if (!response.ok) {
-          throw new Error("Unable to fetch books")
-        }
-
+        const response = await fetch("/api/books?trending=true")
+        if (!response.ok) throw new Error("Unable to fetch trending books")
         const data = await response.json()
-
         if (active) {
-          setBooks(data || [])
-          setError(null)
+          setTrendingBooks(data || [])
         }
       } catch (err) {
         if (active) {
-          setError("Failed to load books. Please refresh.")
+          setError("Failed to load trending books. Please refresh.")
         }
       } finally {
         if (active) {
-          setLoading(false)
+          setLoadingTrending(false)
         }
       }
     }
 
-    loadBooks()
+    const fetchFeaturedBooks = async () => {
+      try {
+        const response = await fetch("/api/books?featured=true")
+        if (!response.ok) throw new Error("Unable to fetch featured books")
+        const data = await response.json()
+        if (active) {
+          setFeaturedBooks(data || [])
+        }
+      } catch (err) {
+        if (active) {
+          setError("Failed to load featured books. Please refresh.")
+        }
+      } finally {
+        if (active) {
+          setLoadingFeatured(false)
+        }
+      }
+    }
+
+    Promise.all([fetchTrendingBooks(), fetchFeaturedBooks()])
 
     return () => {
       active = false
@@ -61,8 +75,8 @@ export function ClientLandingComp() {
 
   return (
     <div className="space-y-16">
-      <TopTrendingBooks books={books} loading={loading} />
-      <FeaturedBooks books={books} loading={loading} />
+      <TopTrendingBooks books={trendingBooks} loading={loadingTrending} />
+      <FeaturedBooks books={featuredBooks} loading={loadingFeatured} />
     </div>
   )
 }
