@@ -1,7 +1,7 @@
 // app/providers.tsx
 'use client'
 
-import { CartProvider } from "./CardContext"
+import { CartProvider } from "./CartContext"
 
 
 export function Providers({ children }: { children: React.ReactNode }) {

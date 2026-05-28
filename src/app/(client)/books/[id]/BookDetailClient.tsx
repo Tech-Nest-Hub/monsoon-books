@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import type { Book, BookImage, Category } from "@prisma/client"
 import { AddWishlistButton } from "@/app/(client)/(profilesettings)/wishlist/AddWishlistButton"
 import { Share2, ShoppingCart } from "lucide-react"
-import { useCart } from "@/contexts/CardContext";
+import { useCart } from "@/contexts/CartContext";
 
 // Extended types for the client component
 type BookWithRelations = Book & {

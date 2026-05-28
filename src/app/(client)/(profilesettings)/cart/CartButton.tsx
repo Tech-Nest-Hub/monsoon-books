@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog'
 import { LoginForm } from '@/app/(client)/login/LoginDialogForm'
 import { Trash2, ShoppingBag } from 'lucide-react'
-import { useCart } from '@/contexts/CardContext'
+import { useCart } from '@/contexts/CartContext'
 
 
 type Props = {
