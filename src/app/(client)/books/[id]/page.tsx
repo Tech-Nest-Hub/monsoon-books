@@ -2,7 +2,6 @@ import React from "react"
 import Link from "next/link"
 import { createClient } from "@/utils/supabase/server"
 import { prisma } from "@/lib/prisma"
-import Navbar from "@/components/navcomp/Navbar"
 import BookDetailClient from "./BookDetailClient"
 
 export const metadata = {
@@ -28,7 +27,6 @@ export default async function BookDetailPage({ params }: { params: Promise<{ id:
     if (!book) {
       return (
         <div>
-          <Navbar />
           <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
             <div className="text-center">
               <h1 className="text-2xl font-bold text-slate-900">Book not found</h1>
@@ -90,7 +88,6 @@ export default async function BookDetailPage({ params }: { params: Promise<{ id:
 
     return (
       <div>
-        <Navbar />
         <BookDetailClient 
           book={serializedBook} 
           similarBooks={serializedSimilarBooks} 
@@ -102,7 +99,6 @@ export default async function BookDetailPage({ params }: { params: Promise<{ id:
     console.error("Error loading book:", error)
     return (
       <div>
-        <Navbar />
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-slate-900">Error loading book</h1>
