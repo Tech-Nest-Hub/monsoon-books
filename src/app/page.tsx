@@ -1,7 +1,7 @@
 import { CarouselSpacing } from "@/components/landingpage/CarouselHeroSectionComp";
 import Navbar from "../components/navcomp/Navbar";
 import { ClientLandingComp } from "@/components/landingpage/ClientLandingComp";
-import { LandingFooterComp } from "@/components/landingpage/LandingFooterComp"
+import { Footer } from "@/components/landingpage/Footer"
 
 
 export default function Home() {
@@ -18,7 +18,7 @@ export default function Home() {
           <ClientLandingComp />
         </div>
       </main>
-      <LandingFooterComp />
+      <Footer />
     </>
   );
 }

@@ -4,7 +4,7 @@ import { redirect } from "next/navigation"
 import { headers } from "next/headers"
 import Navbar from "@/components/navcomp/Navbar"
 import { ProfileSidebar } from "./ProfileSidebar"
-import { LandingFooterComp } from "@/components/landingpage/LandingFooterComp"
+import { Footer } from "@/components/landingpage/Footer"
 import { prisma } from "@/lib/prisma"
 
 
@@ -57,7 +57,7 @@ export default async function ProfileLayout({
       </main>
       
       {/* Footer */}
-      <LandingFooterComp />
+      <Footer />
     </div>
   )
 }

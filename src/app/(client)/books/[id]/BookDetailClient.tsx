@@ -32,7 +32,7 @@ type BookDetailClientProps = {
 
 export default function BookDetailClient({ book, similarBooks = [], user }: BookDetailClientProps) {
   const router = useRouter()
-  const [quantity, setQuantity] = useState(1)
+const [quantity, setQuantity] = useState(1)
   const [isAddedToCart, setIsAddedToCart] = useState(false)
   const [isBuyingNow, setIsBuyingNow] = useState(false)
   const [showShareTooltip, setShowShareTooltip] = useState(false)

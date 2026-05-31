@@ -3,6 +3,7 @@ import Link from "next/link"
 import { createClient } from "@/utils/supabase/server"
 import { prisma } from "@/lib/prisma"
 import BookDetailClient from "./BookDetailClient"
+import BookReviews from "../BooksReview"
 
 export const metadata = {
   title: "Book Details",
@@ -93,6 +94,7 @@ export default async function BookDetailPage({ params }: { params: Promise<{ id:
           similarBooks={serializedSimilarBooks} 
           user={userData} 
         />
+        <BookReviews bookId={book.id} user={userData} />
       </div>
     )
   } catch (error) {

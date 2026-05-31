@@ -19,7 +19,7 @@ type Props = {
 
 // Shared trigger button UI
 const WishlistTriggerButton = ({ onClick }: { onClick?: () => void }) => (
-  <button
+  <div
     onClick={onClick}
     className="hidden sm:flex flex-col items-center gap-0.5 px-3 py-2 rounded-md hover:bg-red-50 hover:text-red-700 text-gray-600 transition-colors group"
   >
@@ -27,7 +27,7 @@ const WishlistTriggerButton = ({ onClick }: { onClick?: () => void }) => (
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
     </svg>
     <span className="text-[10px] font-medium">Wishlist</span>
-  </button>
+  </div>
 )
 
 export const WishlistButton = ({ user }: Props) => {

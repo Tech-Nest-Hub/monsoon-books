@@ -23,7 +23,7 @@ type Props = {
 
 // Cart trigger button UI
 const CartTriggerButton = ({ onClick, itemCount }: { onClick?: () => void; itemCount: number }) => (
-  <button
+  <div
     onClick={onClick}
     className="flex flex-col items-center gap-0.5 px-3 py-2 rounded-md hover:bg-red-50 hover:text-red-700 text-gray-600 transition-colors relative group"
   >
@@ -38,7 +38,7 @@ const CartTriggerButton = ({ onClick, itemCount }: { onClick?: () => void; itemC
       )}
     </span>
     <span className="text-[10px] font-medium">Cart</span>
-  </button>
+  </div>
 )
 
 export const CartButton = ({ user }: Props) => {

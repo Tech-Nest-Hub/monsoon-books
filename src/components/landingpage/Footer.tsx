@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-export function LandingFooterComp() {
+export function Footer() {
   return (
     <footer className="bg-slate-50 text-slate-600 border-t border-slate-200/60 relative overflow-hidden">
       {/* Subtle modern background gradient glow */}

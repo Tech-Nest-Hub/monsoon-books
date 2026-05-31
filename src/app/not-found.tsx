@@ -1,7 +1,7 @@
 import Link from "next/link"
 import type { Metadata } from "next"
 import Navbar from "../components/navcomp/Navbar"
-import { LandingFooterComp } from "@/components/landingpage/LandingFooterComp"
+import { Footer } from "@/components/landingpage/Footer"
 
 
 
@@ -46,7 +46,7 @@ export default function NotFound() {
                 </div>
             </main>
 
-            <LandingFooterComp />
+            <Footer />
         </>
     )
 }

@@ -1,3 +1,4 @@
+import { Footer } from "@/components/landingpage/Footer";
 import Navbar from "@/components/navcomp/Navbar";
 import type { Metadata } from "next";
 
@@ -17,5 +18,7 @@ export default function BooksLayout({
 }) {
   return <>
   <Navbar/>
-  {children}</>;
+  {children}
+  <Footer/>
+  </>;
 }
