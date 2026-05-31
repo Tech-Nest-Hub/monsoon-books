@@ -2,7 +2,7 @@
 import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import { headers } from "next/headers"
-import Navbar from "@/app/aayushma/Navbar"
+import Navbar from "@/components/navcomp/Navbar"
 import { ProfileSidebar } from "./ProfileSidebar"
 import { LandingFooterComp } from "@/components/landingpage/LandingFooterComp"
 import { prisma } from "@/lib/prisma"

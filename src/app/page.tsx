@@ -1,5 +1,5 @@
 import { CarouselSpacing } from "@/components/landingpage/CarouselHeroSectionComp";
-import Navbar from "./aayushma/Navbar";
+import Navbar from "../components/navcomp/Navbar";
 import { ClientLandingComp } from "@/components/landingpage/ClientLandingComp";
 import { LandingFooterComp } from "@/components/landingpage/LandingFooterComp"
 

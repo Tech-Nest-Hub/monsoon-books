@@ -2,8 +2,8 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AccountButton } from './AccountButton'
-import { WishlistButton } from '../(client)/(profilesettings)/wishlist/WishlistButton'
-import { CartButton } from '../(client)/(profilesettings)/cart/CartButton'
+import { WishlistButton } from '../../app/(client)/(profilesettings)/wishlist/WishlistButton'
+import { CartButton } from '../../app/(client)/(profilesettings)/cart/CartButton'
 import Image from 'next/image'
 import Link from 'next/link'
 

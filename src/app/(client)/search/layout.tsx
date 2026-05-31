@@ -1,4 +1,4 @@
-import Navbar from "@/app/aayushma/Navbar";
+import Navbar from "@/components/navcomp/Navbar";
 
 export default function SearchLayout({
   children,

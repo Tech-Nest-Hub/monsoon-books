@@ -2,7 +2,7 @@ import React from "react"
 import Link from "next/link"
 import { createClient } from "@/utils/supabase/server"
 import { prisma } from "@/lib/prisma"
-import Navbar from "@/app/aayushma/Navbar"
+import Navbar from "@/components/navcomp/Navbar"
 import BookDetailClient from "./BookDetailClient"
 
 export const metadata = {
