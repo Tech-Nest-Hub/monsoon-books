@@ -56,7 +56,7 @@ const TopCategoriesComp = () => {
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-px bg-neutral-200 border border-neutral-200 rounded-xl overflow-hidden">
           {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="bg-white p-3 space-y-2 flex flex-col items-center">
-              <Skeleton className="w-full aspect-square rounded-lg" />
+              <Skeleton className="w-full aspect-square rounded-2xl" />
               <Skeleton className="h-3 w-3/4" />
             </div>
           ))}
@@ -70,7 +70,7 @@ const TopCategoriesComp = () => {
               className="group bg-white hover:bg-neutral-50 transition-colors duration-150 p-3 flex flex-col items-center gap-2 text-center"
             >
               {/* Image */}
-              <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-neutral-100">
+              <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-neutral-100">
                 {cat.image ? (
                   <Image
                     src={cat.image}
