@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation'
 import { AccountButton } from './AccountButton'
 import { WishlistButton } from '../(client)/(profilesettings)/wishlist/WishlistButton'
 import { CartButton } from '../(client)/(profilesettings)/cart/CartButton'
+import Image from 'next/image'
+import Link from 'next/link'
 
 type Props = {
   user: {
@@ -25,8 +27,16 @@ const Bottomthickbar = ({ user }: Props) => {
 
           {/* Logo */}
           <div className="flex items-center gap-1.5 shrink-0">
+            <Link href="/" className="flex items-center gap-1.5 shrink-0">
+            <Image
+              src="/Monsoon_Books_Logo_Black_&_White.jpeg"
+              alt="Monsoon Books Logo"
+              width={40}
+              height={40}
+            />
             <span className="text-red-700 text-2xl font-extrabold tracking-tight leading-none">Monsoon</span>
             <span className="text-gray-500 text-sm font-medium leading-none mt-1">Books</span>
+            </Link>
           </div>
 
           {/* Search Bar */}

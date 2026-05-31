@@ -1,0 +1,4 @@
+User-Agent: *
+Allow: /
+ 
+Sitemap: https://monsoonbooks.com.np/sitemap.xml

@@ -22,6 +22,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Monsoon Books",
   description: "Monsoon Books is a platform for book lovers to discover, share, and discuss their favorite reads. Join our community and dive into the world of literature with us!",
+  icons: {
+    icon: "/MonsoonBooksLogoBlack&White.ico",
+  },
 };
 
 export default function RootLayout({
