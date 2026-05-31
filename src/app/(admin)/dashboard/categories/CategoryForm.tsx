@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Category } from "@prisma/client";
+import ImageUpload from "../file-upload/UploadImage";
+
 
 interface CategoryFormProps {
   initialData?: Category;
@@ -13,6 +15,7 @@ export default function CategoryForm({ initialData }: CategoryFormProps) {
   const isEditing = !!initialData;
 
   const [name, setName] = useState(initialData?.name ?? "");
+  const [image, setImage] = useState(initialData?.image ?? "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -20,15 +23,11 @@ export default function CategoryForm({ initialData }: CategoryFormProps) {
     e.preventDefault();
     setError("");
 
-    if (!name.trim()) {
-      return setError("Category name is required");
-    }
+    if (!name.trim()) return setError("Category name is required");
 
     setLoading(true);
-
     try {
-      const payload = { name: name.trim() };
-
+      const payload = { name: name.trim(), image: image || null };
       const url = isEditing ? `/api/categories/${initialData.id}` : "/api/categories";
       const method = isEditing ? "PATCH" : "POST";
 
@@ -62,15 +61,12 @@ export default function CategoryForm({ initialData }: CategoryFormProps) {
         <h1 className="text-3xl font-bold tracking-tight text-neutral-900">
           {isEditing ? initialData.name : "Add a category"}
         </h1>
-        {isEditing && (
-          <p className="text-sm text-neutral-500 mt-1">
-            Editing category ID: {initialData.id}
-          </p>
-        )}
       </div>
 
-      {/* Form Fields */}
+      {/* Fields */}
       <div className="space-y-6">
+
+        {/* Name */}
         <div className="space-y-1.5">
           <label className="block text-sm font-medium text-neutral-700">
             Category Name *
@@ -85,22 +81,41 @@ export default function CategoryForm({ initialData }: CategoryFormProps) {
             className="w-full px-3 py-2.5 text-sm border border-neutral-200 rounded-lg bg-white text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent transition disabled:opacity-50 disabled:bg-neutral-50"
           />
           <p className="text-xs text-neutral-400">
-            This name will appear in the category dropdown when adding or editing books.
+            Appears in the category dropdown when adding or editing books.
+          </p>
+        </div>
+
+        {/* Image */}
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium text-neutral-700">
+            Category Image
+          </label>
+          <ImageUpload
+            value={image}
+            onChange={(url) => setImage(url)}
+            disabled={loading}
+          />
+          <p className="text-xs text-neutral-400">
+            Optional. Shows on the categories page and browse filters.
           </p>
         </div>
 
         {/* Preview */}
         {name && (
           <div className="bg-neutral-50 rounded-lg p-4 border border-neutral-200">
-            <p className="text-xs font-semibold tracking-widest uppercase text-neutral-400 mb-2">
+            <p className="text-xs font-semibold tracking-widest uppercase text-neutral-400 mb-3">
               Preview
             </p>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-neutral-200 flex items-center justify-center">
-                <span className="text-sm">📚</span>
+              <div className="w-12 h-12 rounded-xl overflow-hidden bg-neutral-200 flex items-center justify-center shrink-0">
+                {image ? (
+                  <img src={image} alt={name} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-lg">📚</span>
+                )}
               </div>
               <div>
-                <p className="text-sm font-medium text-neutral-900">{name}</p>
+                <p className="text-sm font-semibold text-neutral-900">{name}</p>
                 <p className="text-xs text-neutral-400">Category</p>
               </div>
             </div>
@@ -126,7 +141,6 @@ export default function CategoryForm({ initialData }: CategoryFormProps) {
             ? isEditing ? "Saving..." : "Adding..."
             : isEditing ? "Save changes" : "Add category"}
         </button>
-
         <button
           type="button"
           onClick={() => router.back()}

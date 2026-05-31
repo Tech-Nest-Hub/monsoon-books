@@ -4,6 +4,7 @@ import * as React from "react"
 import { TopTrendingBooks } from "./TopTrendingBooks"
 import { FeaturedBooks } from "./FeaturedBooks"
 import type { Book, Category, BookImage } from "@prisma/client"
+import TopCategoriesComp from "./TopCategoriesComp"
 
 type BookWithRelations = Book & {
   category?: Category | null
@@ -76,6 +77,7 @@ export function ClientLandingComp() {
   return (
     <div className="space-y-16">
       <TopTrendingBooks books={trendingBooks} loading={loadingTrending} />
+      <TopCategoriesComp/>
       <FeaturedBooks books={featuredBooks} loading={loadingFeatured} />
     </div>
   )

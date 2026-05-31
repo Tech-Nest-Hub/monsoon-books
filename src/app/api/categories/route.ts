@@ -34,7 +34,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name } = body;
+    const { name, image } = body;
 
     // Validation
     if (!name || typeof name !== "string") {
@@ -66,7 +66,10 @@ export async function POST(req: NextRequest) {
 
     // Create category
     const category = await prisma.category.create({
-      data: { name: trimmedName },
+      data: { 
+        name: trimmedName,
+        image: image || null,
+      },
     });
 
     return NextResponse.json(category, { status: 201 });

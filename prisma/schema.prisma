@@ -110,6 +110,7 @@ model BookImage {
 model Category {
   id    Int    @id @default(autoincrement())
   name  String @unique // "Fiction", "Loksewa", "Academic", etc.
+  image String? @default("")// optional category image URL
   books Book[]
 
   @@map("categories")

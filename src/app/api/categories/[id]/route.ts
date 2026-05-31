@@ -70,7 +70,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
     }
 
     const body = await req.json();
-    const { name } = body;
+    const { name, image } = body;
 
     if (!name || typeof name !== "string") {
       return NextResponse.json(
@@ -116,7 +116,10 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
     // Update category
     const updatedCategory = await prisma.category.update({
       where: { id: categoryId },
-      data: { name: trimmedName },
+      data: { 
+        name: trimmedName,
+         ...(image !== undefined && { image: image || null }),
+      },
     });
 
     return NextResponse.json(updatedCategory);
