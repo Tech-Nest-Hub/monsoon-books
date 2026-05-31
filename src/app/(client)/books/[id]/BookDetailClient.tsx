@@ -7,7 +7,7 @@ import type { Book, BookImage, Category } from "@prisma/client"
 import { AddWishlistButton } from "@/app/(client)/(profilesettings)/wishlist/AddWishlistButton"
 import { Share2 } from "lucide-react"
 import { useCart } from "@/contexts/CartContext"
-import { BookImageGallery } from "../BookImageGallery";
+import { BookImageGallery } from "./BookImageGallery";
 
 
 type BookWithRelations = Book & {
