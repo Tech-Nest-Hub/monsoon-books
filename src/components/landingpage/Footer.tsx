@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 
 export function Footer() {
@@ -13,15 +14,13 @@ export function Footer() {
           {/* Brand Section */}
           <div className="space-y-5">
             <div className="flex items-center gap-2.5 group cursor-pointer">
-              <div className="w-9 h-9 bg-[#c10617] text-white rounded-xl flex items-center justify-center shadow-sm transition-transform duration-300 group-hover:scale-105">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" />
-                </svg>
+              <div className="flex items-center justify-center w-12 h-12 bg-[#c10617] rounded-full group-hover:bg-[#a00513] transition-colors duration-300">
+               <Image src="/Monsoon_Books_Logo_Black_&_White.jpeg" alt="Monsoon Books Logo" width={50} height={50} />
               </div>
               <h2 className="text-xl font-black text-slate-900 tracking-tight">
                 Monsoon <span className="text-[#c10617] font-medium">Books</span>
               </h2>
-            </div>
+              </div>
             <p className="max-w-sm text-sm leading-7 text-slate-500">
               Discover thousands of books across all genres. Fast shipping, authentic collections, and exceptional customer service.
             </p>
