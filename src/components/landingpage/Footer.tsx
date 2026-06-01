@@ -54,7 +54,7 @@ export function Footer() {
               ].map((link, i) => (
                 <li key={i}>
                   <Link href={link.href} className="text-slate-500 hover:text-slate-900 font-medium transition-colors duration-200 flex items-center gap-2 group">
-                    <span className="w-1 h-1 bg-[#c10617] rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-4px] group-hover:translate-x-0"></span>
+                    <span className="w-1 h-1 bg-[#c10617] rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-1 group-hover:translate-x-0"></span>
                     {link.label}
                   </Link>
                 </li>
@@ -69,7 +69,7 @@ export function Footer() {
               {['Help Center', 'Shipping Info', 'Returns Policy', 'Contact Us'].map((text, i) => (
                 <li key={i}>
                   <a href="#" className="text-slate-500 hover:text-slate-900 font-medium transition-colors duration-200 flex items-center gap-2 group">
-                    <span className="w-1 h-1 bg-[#c10617] rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-4px] group-hover:translate-x-0"></span>
+                    <span className="w-1 h-1 bg-[#c10617] rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-1 group-hover:translate-x-0"></span>
                     {text}
                   </a>
                 </li>

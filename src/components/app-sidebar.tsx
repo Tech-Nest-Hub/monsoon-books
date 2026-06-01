@@ -23,6 +23,8 @@ import {
     LayoutGrid,
     Tag,
     TrendingUp,
+    Package,
+    FolderBookmark,
 } from "lucide-react"
 import { useState } from "react"
 
@@ -72,6 +74,11 @@ const navItems: NavItem[] = [
                 title: "Add New Book",
                 url: "/dashboard/books/new",
                 icon: BookOpen,
+            },
+            {
+                title: "Genre",
+                url: "/genre",
+                icon: FolderBookmark,
             },
             {
                 title: "Authors",
@@ -128,9 +135,9 @@ const navItems: NavItem[] = [
         icon: FolderKanban,
     },
     {
-        title: "Tags",
-        url: "/tags",
-        icon: Hash,
+        title: "Orders",
+        url: "/dashboard/orders",
+        icon: Package,
     },
     {
         title: "Sales",
@@ -169,16 +176,16 @@ const footerItems = [
 ]
 
 // Collapsible Menu Item Component
-function CollapsibleMenuItem({ item, collapsed, isMobile, setOpenMobile }: { 
-    item: NavItem, 
-    collapsed: boolean, 
+function CollapsibleMenuItem({ item, collapsed, isMobile, setOpenMobile }: {
+    item: NavItem,
+    collapsed: boolean,
     isMobile: boolean,
-    setOpenMobile: (value: boolean) => void 
+    setOpenMobile: (value: boolean) => void
 }) {
     const [isOpen, setIsOpen] = useState(false)
     const pathname = usePathname()
     const hasSubItems = item.subItems && item.subItems.length > 0
-    
+
     const isActive = (url: string) => {
         if (url === "/") {
             return pathname === url
@@ -256,7 +263,7 @@ function CollapsibleMenuItem({ item, collapsed, isMobile, setOpenMobile }: {
                             )}
                         </div>
                     </SidebarMenuButton>
-                    
+
                     {/* Subitems */}
                     {isOpen && (
                         <div className="ml-6 mt-1 space-y-1 border-l border-border pl-3">
