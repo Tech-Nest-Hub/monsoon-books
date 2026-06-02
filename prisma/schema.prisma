@@ -49,6 +49,7 @@ model User {
   firstName String
   lastName  String
   email     String  @unique
+  image     String?  // profile picture URL
   role      Role    @default(USER)
   provider  String? // "google", "facebook", or "email"
 

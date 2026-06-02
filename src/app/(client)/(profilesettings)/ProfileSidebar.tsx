@@ -1,6 +1,6 @@
-// components/profile/ProfileSidebar.tsx
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
@@ -15,6 +15,10 @@ import {
   Heart,
   Settings,
   Package,
+  Menu,
+  X,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react"
 
 const profileNavItems = [
@@ -54,49 +58,181 @@ const profileNavItems = [
 
 export function ProfileSidebar() {
   const pathname = usePathname()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [expandedSections, setExpandedSections] = useState<string[]>(["Manage My Account", "My Orders"])
 
   const isActive = (url: string) => {
     return pathname === url || pathname?.startsWith(url + "/")
   }
 
+  const toggleSection = (sectionTitle: string) => {
+    setExpandedSections(prev =>
+      prev.includes(sectionTitle)
+        ? prev.filter(title => title !== sectionTitle)
+        : [...prev, sectionTitle]
+    )
+  }
+
+  const getActiveSectionTitle = () => {
+    for (const section of profileNavItems) {
+      for (const item of section.items) {
+        if (isActive(item.url)) {
+          return section.title
+        }
+      }
+    }
+    return "Manage My Account"
+  }
+
+  const getActiveItemTitle = () => {
+    for (const section of profileNavItems) {
+      for (const item of section.items) {
+        if (isActive(item.url)) {
+          return item.title
+        }
+      }
+    }
+    return "My Profile"
+  }
+
   return (
-    <aside className="w-full md:w-72 lg:w-80 shrink-0">
-      <div className="sticky top-20">
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-red-50 to-blue-50">
-            <h2 className="font-semibold text-gray-900">My Account</h2>
-            <p className="text-sm text-gray-500 mt-0.5">Manage your profile and orders</p>
-          </div>
-          
-          <nav className="p-4 space-y-5">
-            {profileNavItems.map((section) => (
-              <div key={section.title} className="space-y-2">
-                <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <section.icon className="h-4 w-4" />
-                  <span>{section.title}</span>
-                </div>
-                <div className="space-y-1 pl-6">
-                  {section.items.map((item) => (
-                    <Link
-                      key={item.title}
-                      href={item.url}
-                      className={cn(
-                        "flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-all duration-200",
-                        isActive(item.url)
-                          ? "bg-red-50 text-red-600 font-medium"
-                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                      )}
-                    >
-                      <item.icon className="h-3.5 w-3.5" />
-                      <span>{item.title}</span>
-                    </Link>
-                  ))}
-                </div>
+    <>
+      {/* Mobile Menu Button */}
+      <div className="md:hidden mb-4">
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="w-full flex items-center justify-between px-4 py-3 bg-white rounded-xl border border-gray-200 shadow-sm"
+        >
+          <div className="flex items-center gap-2">
+            {profileNavItems.flatMap(section => section.items).find(item => isActive(item.url))?.icon && (
+              <div className="text-[#c10617]">
+                {(() => {
+                  const Icon = profileNavItems.flatMap(section => section.items).find(item => isActive(item.url))?.icon
+                  return Icon ? <Icon className="w-5 h-5" /> : <User className="w-5 h-5" />
+                })()}
               </div>
-            ))}
-          </nav>
-        </div>
+            )}
+            <div className="text-left">
+              <p className="text-sm font-medium text-gray-900">{getActiveSectionTitle()}</p>
+              <p className="text-xs text-gray-500">{getActiveItemTitle()}</p>
+            </div>
+          </div>
+          {mobileMenuOpen ? (
+            <X className="w-5 h-5 text-gray-500" />
+          ) : (
+            <Menu className="w-5 h-5 text-gray-500" />
+          )}
+        </button>
+
+        {/* Mobile Drawer Menu */}
+        {mobileMenuOpen && (
+          <>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 bg-black/50 z-40 md:hidden"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            
+            {/* Drawer */}
+            <div className="fixed left-0 top-0 bottom-0 w-80 bg-white z-50 shadow-xl overflow-y-auto animate-in slide-in-from-left duration-300">
+              <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex justify-between items-center z-10">
+                <div>
+                  <h2 className="font-semibold text-gray-900">My Account</h2>
+                  <p className="text-sm text-gray-500">Manage your profile and orders</p>
+                </div>
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+              
+              <nav className="p-4 space-y-5">
+                {profileNavItems.map((section) => (
+                  <div key={section.title} className="space-y-2">
+                    <button
+                      onClick={() => toggleSection(section.title)}
+                      className="w-full flex items-center justify-between text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <section.icon className="h-4 w-4" />
+                        <span>{section.title}</span>
+                      </div>
+                      {expandedSections.includes(section.title) ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                    </button>
+                    
+                    {expandedSections.includes(section.title) && (
+                      <div className="space-y-1 pl-6">
+                        {section.items.map((item) => (
+                          <Link
+                            key={item.title}
+                            href={item.url}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={cn(
+                              "flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-all duration-200",
+                              isActive(item.url)
+                                ? "bg-red-50 text-red-600 font-medium"
+                                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                            )}
+                          >
+                            <item.icon className="h-3.5 w-3.5" />
+                            <span>{item.title}</span>
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </nav>
+            </div>
+          </>
+        )}
       </div>
-    </aside>
+
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:block w-full md:w-72 lg:w-80 shrink-0">
+        <div className="sticky top-20">
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-red-50 to-blue-50">
+              <h2 className="font-semibold text-gray-900">My Account</h2>
+              <p className="text-sm text-gray-500 mt-0.5">Manage your profile and orders</p>
+            </div>
+            
+            <nav className="p-4 space-y-5">
+              {profileNavItems.map((section) => (
+                <div key={section.title} className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <section.icon className="h-4 w-4" />
+                    <span>{section.title}</span>
+                  </div>
+                  <div className="space-y-1 pl-6">
+                    {section.items.map((item) => (
+                      <Link
+                        key={item.title}
+                        href={item.url}
+                        className={cn(
+                          "flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-all duration-200",
+                          isActive(item.url)
+                            ? "bg-red-50 text-red-600 font-medium"
+                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                        )}
+                      >
+                        <item.icon className="h-3.5 w-3.5" />
+                        <span>{item.title}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </nav>
+          </div>
+        </div>
+      </aside>
+    </>
   )
 }

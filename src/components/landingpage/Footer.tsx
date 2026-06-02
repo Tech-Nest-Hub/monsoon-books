@@ -8,20 +8,20 @@ export function Footer() {
     <footer className="bg-slate-50 text-slate-600 border-t border-slate-200/60 relative overflow-hidden">
       {/* Subtle modern background gradient glow */}
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-red-50/50 rounded-full blur-3xl pointer-events-none" />
-      
+
       {/* Top Section */}
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8 py-16 sm:py-20 z-10">
         <div className="grid gap-12 md:gap-8 md:grid-cols-4">
-          
+
           {/* Brand Section */}
           <div className="space-y-5">
             <div className="flex items-center gap-2.5 group cursor-pointer">
               <div className="flex items-center justify-center w-12 h-12 bg-[#c10617] rounded-full group-hover:bg-[#a00513] transition-colors duration-300">
-                <Image 
-                  src="/Monsoon_Books_Logo_Black_&_White.jpeg" 
-                  alt="Monsoon Books Logo" 
-                  width={50} 
-                  height={50} 
+                <Image
+                  src="/Monsoon_Books_Logo_Black_&_White.jpeg"
+                  alt="Monsoon Books Logo"
+                  width={50}
+                  height={50}
                   className="rounded-full"
                 />
               </div>
@@ -97,49 +97,62 @@ export function Footer() {
               <p className="text-xs text-slate-500 leading-5">Get exclusive deals and weekly updates.</p>
             </div>
             <Newsletter />
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3532.3723660116443!2d85.31561657508067!3d27.705787076183384!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb19cf2ccbc1ff:0xfd8484238331408a!2sMonsoon Books!5e0!3m2!1sen!2snp!4v1780386474391!5m2!1sen!2snp"
+              width="250"
+              height="200"
+              style={{
+                border: "0",
+              }}
+              allowFullScreen={true}
+              aria-hidden="false"
+              tabIndex={0}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>       
+             </div>
+             </div>
+
+          {/* Divider line */}
+          <div className="my-10 h-px bg-slate-200/60"></div>
+
+          {/* Bottom Section */}
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500 font-medium">
+            <div className="flex gap-6 flex-wrap justify-center sm:justify-start">
+              <CustomLink
+                href="/privacy"
+                title="Privacy Policy"
+                className="hover:text-slate-900 transition-colors"
+                underlineClassName="bg-slate-400"
+              />
+              <CustomLink
+                href="/terms"
+                title="Terms & Conditions"
+                className="hover:text-slate-900 transition-colors"
+                underlineClassName="bg-slate-400"
+              />
+              <CustomLink
+                href="/deldata"
+                title="User Data Deletion"
+                className="hover:text-slate-900 transition-colors"
+                underlineClassName="bg-slate-400"
+              />
+            </div>
+            <p className="text-center sm:text-right text-slate-400">
+              © 2026 Monsoon Books
+            </p>
           </div>
         </div>
 
-        {/* Divider line */}
-        <div className="my-10 h-px bg-slate-200/60"></div>
-
-        {/* Bottom Section */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500 font-medium">
-          <div className="flex gap-6 flex-wrap justify-center sm:justify-start">
-            <CustomLink
-              href="/privacy"
-              title="Privacy Policy"
-              className="hover:text-slate-900 transition-colors"
-              underlineClassName="bg-slate-400"
-            />
-            <CustomLink
-              href="/terms"
-              title="Terms & Conditions"
-              className="hover:text-slate-900 transition-colors"
-              underlineClassName="bg-slate-400"
-            />
-            <CustomLink
-              href="/deldata"
-              title="User Data Deletion"
-              className="hover:text-slate-900 transition-colors"
-              underlineClassName="bg-slate-400"
-            />
-          </div>
-          <p className="text-center sm:text-right text-slate-400">
-            © 2026 Monsoon Books
-          </p>
+        {/* Floating Bottom Promo Bar */}
+        <div className="bg-[#c10617] text-white py-3 px-4 text-center text-xs font-bold tracking-wider">
+          <CustomLink
+            href="/app"
+            title="FREE SHIPPING ON ORDERS ABOVE ₹500 | AUTHENTIC BOOKS ONLY ✨"
+            className="text-white hover:text-red-200 font-medium"
+            underlineClassName="bg-white"
+          />
         </div>
-      </div>
-
-      {/* Floating Bottom Promo Bar */}
-      <div className="bg-[#c10617] text-white py-3 px-4 text-center text-xs font-bold tracking-wider">
-        <CustomLink
-          href="/app"
-          title="FREE SHIPPING ON ORDERS ABOVE ₹500 | AUTHENTIC BOOKS ONLY ✨"
-          className="text-white hover:text-red-200 font-medium"
-          underlineClassName="bg-white"
-        />
-      </div>
     </footer>
   )
 }

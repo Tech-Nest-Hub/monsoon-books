@@ -22,18 +22,13 @@ type Props = {
 const MENU_ITEMS = [
   {
     label: 'My orders',
-    href: '/orders',
+    href: '/order',
     icon: BoxIcon,
   },
   {
     label: 'Wishlist',
     href: '/wishlist',
     icon: HeartIcon,
-  },
-  {
-    label: 'Reviews',
-    href: '/reviews',
-    icon: UserIcon,
   },
   {
     label: 'Settings',
@@ -111,6 +106,7 @@ export const AccountButton = ({ user }: Props) => {
 
           {/* Header */}
           <div className="flex items-center gap-3 px-4 py-3 bg-red-50 border-b border-red-100">
+            <Link href="/profile" className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-red-700 text-white text-xs font-bold flex items-center justify-center shrink-0">
               {initials}
             </div>
@@ -118,6 +114,7 @@ export const AccountButton = ({ user }: Props) => {
               <p className="text-sm font-semibold text-gray-800 truncate">{displayName}</p>
               <p className="text-[11px] text-gray-500 truncate">{user.email}</p>
             </div>
+            </Link>
           </div>
 
           {/* Menu items */}

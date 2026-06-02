@@ -10,7 +10,7 @@ import { prisma } from "@/lib/prisma"
 
 export const metadata = {
   title: "My Profile - Monsoon Books",
-  description: "Manage your account, orders, and preferences",
+  description: "Manage your account, orders, and preferences on Monsoon Books.",
 }
 
 export default async function ProfileLayout({

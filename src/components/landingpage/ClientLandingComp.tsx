@@ -23,7 +23,7 @@ export function ClientLandingComp() {
 
     const fetchTrendingBooks = async () => {
       try {
-        const response = await fetch("/api/books?trending=true")
+        const response = await fetch("/api/books")
         if (!response.ok) throw new Error("Unable to fetch trending books")
         const data = await response.json()
         if (active) {
@@ -42,7 +42,7 @@ export function ClientLandingComp() {
 
     const fetchFeaturedBooks = async () => {
       try {
-        const response = await fetch("/api/books?featured=true")
+        const response = await fetch("/api/books")
         if (!response.ok) throw new Error("Unable to fetch featured books")
         const data = await response.json()
         if (active) {
