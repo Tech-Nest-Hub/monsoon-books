@@ -1,5 +1,6 @@
+'use client'
 import Image from "next/image"
-import Link from "next/link"
+import CustomLink from "../manual-ui/CustomLink"
 
 export function Footer() {
   return (
@@ -15,21 +16,27 @@ export function Footer() {
           <div className="space-y-5">
             <div className="flex items-center gap-2.5 group cursor-pointer">
               <div className="flex items-center justify-center w-12 h-12 bg-[#c10617] rounded-full group-hover:bg-[#a00513] transition-colors duration-300">
-               <Image src="/Monsoon_Books_Logo_Black_&_White.jpeg" alt="Monsoon Books Logo" width={50} height={50} />
+                <Image 
+                  src="/Monsoon_Books_Logo_Black_&_White.jpeg" 
+                  alt="Monsoon Books Logo" 
+                  width={50} 
+                  height={50} 
+                  className="rounded-full"
+                />
               </div>
               <h2 className="text-xl font-black text-slate-900 tracking-tight">
                 Monsoon <span className="text-[#c10617] font-medium">Books</span>
               </h2>
-              </div>
+            </div>
             <p className="max-w-sm text-sm leading-7 text-slate-500">
               Discover thousands of books across all genres. Fast shipping, authentic collections, and exceptional customer service.
             </p>
             {/* Minimalist Social Icons */}
             <div className="flex gap-2.5 pt-1">
               {['facebook', 'instagram', 'twitter'].map((platform, i) => (
-                <a 
-                  key={i} 
-                  href="#" 
+                <a
+                  key={i}
+                  href="#"
                   className="w-9 h-9 bg-white hover:bg-slate-900 text-slate-400 hover:text-white rounded-xl flex items-center justify-center transition-all duration-300 shadow-sm border border-slate-200/60"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -42,21 +49,24 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Quick Links - Books, Search, Profile, Wishlist, Order */}
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-5">Explore</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-5">Quick Links</h3>
             <ul className="space-y-3 text-sm">
               {[
-                { label: 'Fiction & Novels', href: '/search?q=fiction' },
-                { label: 'Mystery & Thriller', href: '/search?q=mystery' },
-                { label: 'Study Guides', href: '/search?q=study' },
-                { label: 'Bestsellers', href: '/search?q=bestseller' }
+                { label: 'Books', href: '/books' },
+                { label: 'Search', href: '/search' },
+                { label: 'Profile', href: '/profile' },
+                { label: 'Wishlist', href: '/wishlist' },
+                { label: 'Orders', href: '/orders' }
               ].map((link, i) => (
                 <li key={i}>
-                  <Link href={link.href} className="text-slate-500 hover:text-slate-900 font-medium transition-colors duration-200 flex items-center gap-2 group">
-                    <span className="w-1 h-1 bg-[#c10617] rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-1 group-hover:translate-x-0"></span>
-                    {link.label}
-                  </Link>
+                  <CustomLink
+                    href={link.href}
+                    title={link.label}
+                    className="text-slate-500 hover:text-slate-900 font-medium transition-colors duration-200"
+                    underlineClassName="bg-[#c10617]"
+                  />
                 </li>
               ))}
             </ul>
@@ -68,10 +78,12 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               {['Help Center', 'Shipping Info', 'Returns Policy', 'Contact Us'].map((text, i) => (
                 <li key={i}>
-                  <a href="#" className="text-slate-500 hover:text-slate-900 font-medium transition-colors duration-200 flex items-center gap-2 group">
-                    <span className="w-1 h-1 bg-[#c10617] rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-1 group-hover:translate-x-0"></span>
-                    {text}
-                  </a>
+                  <CustomLink
+                    href="#"
+                    title={text}
+                    className="text-slate-500 hover:text-slate-900 font-medium transition-colors duration-200"
+                    underlineClassName="bg-[#c10617]"
+                  />
                 </li>
               ))}
             </ul>
@@ -106,19 +118,39 @@ export function Footer() {
         {/* Bottom Section */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500 font-medium">
           <div className="flex gap-6 flex-wrap justify-center sm:justify-start">
-            <a href="#" className="hover:text-slate-900 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-slate-900 transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-slate-900 transition-colors">Cookie Settings</a>
+            <CustomLink
+              href="/privacy"
+              title="Privacy Policy"
+              className="hover:text-slate-900 transition-colors"
+              underlineClassName="bg-slate-400"
+            />
+            <CustomLink
+              href="/terms"
+              title="Terms & Conditions"
+              className="hover:text-slate-900 transition-colors"
+              underlineClassName="bg-slate-400"
+            />
+            <CustomLink
+              href="/deldata"
+              title="User Data Deletion"
+              className="hover:text-slate-900 transition-colors"
+              underlineClassName="bg-slate-400"
+            />
           </div>
           <p className="text-center sm:text-right text-slate-400">
-            © 2026 Monsoon Books. Crafted with <span className="text-[#c10617]">❤</span>
+            © 2026 Monsoon Books
           </p>
         </div>
       </div>
 
-      {/* Floating Bottom Promo Bar — Clean, high-contrast block matching the navbar top band style perfectly */}
+      {/* Floating Bottom Promo Bar */}
       <div className="bg-[#c10617] text-white py-3 px-4 text-center text-xs font-bold tracking-wider">
-        FREE SHIPPING ON ORDERS ABOVE ₹500 | AUTHENTIC BOOKS ONLY ✨
+        <CustomLink
+          href="/app"
+          title="FREE SHIPPING ON ORDERS ABOVE ₹500 | AUTHENTIC BOOKS ONLY ✨"
+          className="text-white hover:text-red-200 font-medium"
+          underlineClassName="bg-white"
+        />
       </div>
     </footer>
   )

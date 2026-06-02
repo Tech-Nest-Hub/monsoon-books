@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
- 
+
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
@@ -7,6 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 1,
+      images: ['https://www.monsoonbooks.com.np/Monsoon_Books_Logo_Black_&_White.jpeg'],
     },
     {
       url: 'https://monsoonbooks.com.np/books',
@@ -18,7 +19,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: 'https://monsoonbooks.com.np/search',
       lastModified: new Date(),
       changeFrequency: 'weekly',
-      priority: 0.5,
+      priority: 0.7,
+    },
+    {
+      url: 'https://monsoonbooks.com.np/contact-us',
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
     },
   ]
 }
