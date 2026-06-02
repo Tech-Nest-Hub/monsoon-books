@@ -1,6 +1,7 @@
 'use client'
 import Image from "next/image"
 import CustomLink from "../manual-ui/CustomLink"
+import { Newsletter } from "./newsletterComp"
 
 export function Footer() {
   return (
@@ -95,20 +96,7 @@ export function Footer() {
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-1">Subscribe</h3>
               <p className="text-xs text-slate-500 leading-5">Get exclusive deals and weekly updates.</p>
             </div>
-            <div className="space-y-2">
-              <div className="flex rounded-xl overflow-hidden border border-slate-200 focus-within:ring-2 focus-within:ring-[#c10617]/20 focus-within:border-[#c10617] transition-all duration-300">
-                <input 
-                  type="email" 
-                  placeholder="your@email.com" 
-                  className="flex-1 px-3 py-2 bg-slate-50 text-slate-800 placeholder-slate-400 focus:outline-none text-xs"
-                />
-                <button className="px-4 py-2 bg-[#c10617] text-white hover:bg-[#a00513] transition-colors flex items-center justify-center">
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 5l7 7m0 0l-7 7m7-7H6" />
-                  </svg>
-                </button>
-              </div>
-            </div>
+            <Newsletter />
           </div>
         </div>
 

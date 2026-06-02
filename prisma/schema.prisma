@@ -267,3 +267,9 @@ model ReviewLike {
   @@unique([userId, reviewId])  // one vote per user per review
   @@map("review_likes")
 }
+
+model NewsletterSubscriber {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  createdAt  DateTime @default(now())
+}
