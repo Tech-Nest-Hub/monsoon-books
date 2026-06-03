@@ -1,3 +1,21 @@
+You will be redirected to your eSewa account to complete your payment:
+
+1. Login to your eSewa account using your eSewa ID and your Password
+2. Ensure your eSewa account is active and has sufficient balance
+3. Enter OTP (one time password) sent to your registered mobile number
+
+ ***Login with your eSewa mobile and PASSWORD (not MPin)***
+ 
+● You may pay in cash to our courier upon receiving your parcel at the doorstep.
+
+● Cash Payment Fee (3%), with a maximum cap of Rs. 30 applies only to Cash on Delivery payment method. There is no extra fee when using other payment methods.
+
+● Before agreeing to receive the parcel, check if your delivery status has been updated to 'Out for Delivery' on Daraz App.
+
+● Before receiving, confirm that the airway bill shows that the parcel is from Daraz.
+
+● Before you make payment to the courier, confirm your order number, sender information, and tracking number on the parcel.
+
 Thank you for your purchase!
 Rs. 206
 Your order number is 215521230436406

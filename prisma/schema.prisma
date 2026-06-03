@@ -42,18 +42,18 @@ enum BookStatus {
 }
 
 // ───── USER ─────
-
 model User {
   id        Int     @id @default(autoincrement())
-  authId    String  @unique // Supabase auth user ID
+  authId    String  @unique
   firstName String
   lastName  String
   email     String  @unique
-  image     String?  // profile picture URL
+  image     String?
   role      Role    @default(USER)
-  provider  String? // "google", "facebook", or "email"
-
-  cart      Cart?           // one cart per user
+  status    UserStatus @default(ACTIVE) // Add this field
+  provider  String?
+  
+  cart      Cart?
   orders    Order[]
   shippingAddresses ShippingAddress[]
   wishlists Wishlist[]
@@ -62,6 +62,12 @@ model User {
   payments  Payment[]
 
   @@map("users")
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BANNED
 }
 
 // ───── BOOK ─────

@@ -1,291 +1,649 @@
-'use client'
+"use client"
 
-import { useState, useEffect } from 'react'
-import { useUser } from '@/contexts/UserContext'
-import { EsewaPayment } from './EsewaPayment'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import Image from "next/image"
+import Link from "next/link"
+import {
+  MapPin, ChevronRight, CheckCircle2, Package,
+  Truck, Banknote, Smartphone, ArrowLeft,
+  Mail, Plus,
+} from "lucide-react"
+import type { CartItem, PaymentMethod, ShippingAddress } from "@prisma/client"
+import { StepBar } from "./StepBar"
+import { PaymentMethodSelector } from "./PaymentMethodSelectorComp"
+import { PaymentInfoPanel } from "./PaymentInfoPanel"
 
-interface CartItem {
-  id: number
-  bookId: number
-  quantity: number
-  priceAtAdd: number
+type CartItemWithBook = CartItem & {
   book: {
     id: number
     title: string
+    author: string
+    coverImage: string
     price: number
-    coverImage?: string
-    author?: string
   }
 }
 
+type CompletedOrder = {
+  id: number
+  orderNumber: string
+  total: number
+  subtotal: number
+  tax: number
+  shippingCost: number
+  discount: number
+  paymentMethod: string
+  email?: string
+  items: {
+    quantity: number
+    book: { title: string; coverImage: string }
+  }[]
+}
+
+// Address Dialog Component
+function AddressDialog({ 
+  open, 
+  onOpenChange, 
+  onSaved 
+}: { 
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onSaved: (address: ShippingAddress) => void
+}) {
+  const [formData, setFormData] = useState({
+    fullName: "",
+    phone: "",
+    street: "",
+    city: "",
+    district: "",
+    postalCode: "",
+    label: "Home",
+    isDefault: false,
+  })
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      const response = await fetch("/api/user/addresses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
+      const data = await response.json()
+      if (response.ok) {
+        onSaved(data.address)
+        onOpenChange(false)
+      }
+    } catch (error) {
+      console.error("Failed to save address:", error)
+    }
+  }
+
+  if (!open) return null
+
+  return (
+    <>
+      <div className="fixed inset-0 bg-black/50 z-50" onClick={() => onOpenChange(false)} />
+      <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-xl shadow-xl z-50 p-6 max-h-[90vh] overflow-y-auto">
+        <h2 className="text-xl font-semibold text-neutral-900 mb-4">Add New Address</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="text"
+            placeholder="Full Name"
+            value={formData.fullName}
+            onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+            className="w-full px-4 py-2 border border-neutral-200 rounded-lg"
+            required
+          />
+          <input
+            type="tel"
+            placeholder="Phone Number"
+            value={formData.phone}
+            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            className="w-full px-4 py-2 border border-neutral-200 rounded-lg"
+            required
+          />
+          <input
+            type="text"
+            placeholder="Street Address"
+            value={formData.street}
+            onChange={(e) => setFormData({ ...formData, street: e.target.value })}
+            className="w-full px-4 py-2 border border-neutral-200 rounded-lg"
+            required
+          />
+          <input
+            type="text"
+            placeholder="City"
+            value={formData.city}
+            onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+            className="w-full px-4 py-2 border border-neutral-200 rounded-lg"
+            required
+          />
+          <input
+            type="text"
+            placeholder="District"
+            value={formData.district}
+            onChange={(e) => setFormData({ ...formData, district: e.target.value })}
+            className="w-full px-4 py-2 border border-neutral-200 rounded-lg"
+            required
+          />
+          <input
+            type="text"
+            placeholder="Postal Code (Optional)"
+            value={formData.postalCode}
+            onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
+            className="w-full px-4 py-2 border border-neutral-200 rounded-lg"
+          />
+          <div className="flex gap-4">
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                value="Home"
+                checked={formData.label === "Home"}
+                onChange={() => setFormData({ ...formData, label: "Home" })}
+              />
+              Home
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                value="Work"
+                checked={formData.label === "Work"}
+                onChange={() => setFormData({ ...formData, label: "Work" })}
+              />
+              Work
+            </label>
+          </div>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={formData.isDefault}
+              onChange={(e) => setFormData({ ...formData, isDefault: e.target.checked })}
+            />
+            Set as default address
+          </label>
+          <div className="flex gap-3 justify-end pt-4">
+            <button
+              type="button"
+              onClick={() => onOpenChange(false)}
+              className="px-4 py-2 border border-neutral-200 rounded-lg"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-neutral-900 text-white rounded-lg"
+            >
+              Save Address
+            </button>
+          </div>
+        </form>
+      </div>
+    </>
+  )
+}
+
 export default function CheckoutPage() {
-  const { user, isLoading: userLoading } = useUser()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [cartItems, setCartItems] = useState<CartItem[]>([])
-  const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set())
+  const selectedItemIds = searchParams.get("selectedItems")
+
+  const [step, setStep] = useState<1 | 2 | 3>(1)
+  const [cartItems, setCartItems] = useState<CartItemWithBook[]>([])
+  const [checkoutItems, setCheckoutItems] = useState<CartItemWithBook[]>([])
+  const [addresses, setAddresses] = useState<ShippingAddress[]>([])
+  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null)
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("CASH_ON_DELIVERY")
+  const [notes, setNotes] = useState("")
   const [loading, setLoading] = useState(true)
-  const [paymentMethod, setPaymentMethod] = useState<'CASH_ON_DELIVERY' | 'ESEWA'>('CASH_ON_DELIVERY')
-  const [deliveryAddress, setDeliveryAddress] = useState('')
-  const [phone, setPhone] = useState('')
-  const [notes, setNotes] = useState('')
+  const [placing, setPlacing] = useState(false)
+  const [error, setError] = useState("")
+  const [completedOrder, setCompletedOrder] = useState<CompletedOrder | null>(null)
+  const [addressDialogOpen, setAddressDialogOpen] = useState(false)
+  const [userEmail, setUserEmail] = useState("")
 
-  // Get selected items from URL
-  const selectedItemIds = searchParams.get('selectedItems')
-
-  // Fetch cart items and filter selected ones
+  // Load cart + addresses + user
   useEffect(() => {
-    const fetchCart = async () => {
+    const load = async () => {
       try {
-        const response = await fetch('/api/cart')
-        const data = await response.json()
-        if (data.items) {
-          setCartItems(data.items)
-          
-          // Parse selected items from URL
-          if (selectedItemIds) {
-            const ids = selectedItemIds.split(',').map(id => parseInt(id))
-            setSelectedItems(new Set(ids))
-          } else {
-            // If no selection, select all
-            setSelectedItems(new Set(data.items.map((item: CartItem) => item.id)))
-          }
+        const [cartRes, addrRes, userRes] = await Promise.all([
+          fetch("/api/cart"),
+          fetch("/api/user/addresses"),
+          fetch("/api/user/profile"),
+        ])
+        const [cartData, addrData, userData] = await Promise.all([
+          cartRes.json(), addrRes.json(), userRes.json(),
+        ])
+
+        if (cartData.items) {
+          setCartItems(cartData.items)
+          const ids = selectedItemIds
+            ? new Set(selectedItemIds.split(",").map(Number))
+            : new Set(cartData.items.map((i: CartItemWithBook) => i.id))
+          setCheckoutItems(cartData.items.filter((i: CartItemWithBook) => ids.has(i.id)))
         }
-      } catch (error) {
-        console.error('Error fetching cart:', error)
+
+        if (Array.isArray(addrData)) {
+          setAddresses(addrData)
+          const def = addrData.find((a: ShippingAddress) => a.isDefault)
+          if (def) setSelectedAddressId(def.id)
+        }
+
+        if (userData.user?.email) setUserEmail(userData.user.email)
       } finally {
         setLoading(false)
       }
     }
+    load()
+  }, [selectedItemIds])
 
-    if (user) {
-      fetchCart()
-    }
-  }, [user, selectedItemIds])
+  const selectedAddress = addresses.find((a) => a.id === selectedAddressId)
 
-  // Filter only selected items for checkout
-  const checkoutItems = cartItems.filter(item => selectedItems.has(item.id))
-  
-  const subtotal = checkoutItems.reduce((sum, item) => sum + (item.priceAtAdd * item.quantity), 0)
+  // Pricing
+  const subtotal = checkoutItems.reduce((s, i) => s + i.priceAtAdd * i.quantity, 0)
+  const shippingCost = subtotal >= 1000 ? 0 : 100
   const tax = 0
-  const shippingCost = subtotal > 1000 ? 0 : 100
   const discount = 0
-  const total = subtotal + tax + shippingCost - discount
+  const total = subtotal + shippingCost + tax - discount
 
-  const handleCODOrder = async () => {
-    if (!deliveryAddress || !phone) {
-      alert('Please fill in delivery address and phone number')
-      return
-    }
-
+  // Place COD order
+  const handlePlaceOrder = async () => {
+    if (!selectedAddressId) { setError("Please select a delivery address"); return }
+    setError("")
+    setPlacing(true)
     try {
-      const response = await fetch('/api/orders/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/checkout/cashondelivery", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: checkoutItems.map(item => ({
-            bookId: item.bookId,
-            quantity: item.quantity,
-            priceAtBuy: item.priceAtAdd
+          items: checkoutItems.map((i) => ({
+            bookId: i.bookId,
+            quantity: i.quantity,
+            priceAtBuy: i.priceAtAdd,
           })),
-          paymentMethod,
-          deliveryAddress,
-          phone,
+          addressId: selectedAddressId,
           notes,
           tax,
           shippingCost,
           discount,
         }),
       })
-
-      const data = await response.json()
-      
-      if (data.success) {
-        // Clear selected items from cart
-        await fetch('/api/cart/clear-selected', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ itemIds: checkoutItems.map(item => item.id) }),
-        })
-        
-        router.push(`/payment/success?order=${data.order.orderNumber}`)
-      } else {
-        alert('Failed to create order')
-      }
-    } catch (error) {
-      console.error('Order creation error:', error)
-      alert('Failed to create order')
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? "Failed to place order")
+      setCompletedOrder({ ...data.order, email: userEmail })
+      setStep(3)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong")
+    } finally {
+      setPlacing(false)
     }
   }
 
-  if (userLoading || loading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">Loading...</div>
+        <div className="text-sm text-neutral-400">Loading checkout...</div>
       </div>
     )
   }
 
-  if (!user) {
-    router.push('/login')
-    return null
+  if (checkoutItems.length === 0 && step !== 3) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-center space-y-4">
+        <div>
+          <p className="text-neutral-500 font-medium">No items selected for checkout</p>
+          <Link href="/cart" className="mt-3 inline-block text-sm text-neutral-900 underline underline-offset-4">
+            Go to Cart
+          </Link>
+        </div>
+      </div>
+    )
   }
 
-  if (checkoutItems.length === 0 && !loading) {
+  // STEP 3: SUCCESS
+  if (step === 3 && completedOrder) {
+    const estimatedDate = new Date()
+    estimatedDate.setDate(estimatedDate.getDate() + 5)
+    const estDateStr = estimatedDate.toLocaleDateString("en-NP", { day: "numeric", month: "short" })
+
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-500">No items selected for checkout</p>
-          <button
-            onClick={() => router.push('/cart')}
-            className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg"
+      <div className="min-h-screen bg-neutral-50 py-12 px-4">
+        <div className="max-w-lg mx-auto space-y-6">
+          {/* Success banner */}
+          <div className="bg-white border border-neutral-200 rounded-2xl p-8 text-center space-y-3">
+            <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+              <CheckCircle2 className="w-8 h-8 text-green-600" />
+            </div>
+            <h1 className="text-xl font-bold text-neutral-900">Thank you for your purchase!</h1>
+            <p className="text-3xl font-bold text-neutral-900">NPR {completedOrder.total.toLocaleString()}</p>
+            <p className="text-sm text-neutral-500">
+              Your order number is{" "}
+              <span className="font-bold text-neutral-800">{completedOrder.orderNumber}</span>
+            </p>
+            {completedOrder.paymentMethod === "CASH_ON_DELIVERY" && (
+              <p className="text-sm text-neutral-600 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2.5">
+                💵 Please have <span className="font-semibold">NPR {completedOrder.total.toLocaleString()}</span> ready on delivery day.
+              </p>
+            )}
+          </div>
+
+          {/* Delivery estimate */}
+          <div className="bg-white border border-neutral-200 rounded-2xl p-5 flex items-center gap-4">
+            <div className="w-10 h-10 bg-neutral-100 rounded-xl flex items-center justify-center shrink-0">
+              <Truck className="w-5 h-5 text-neutral-600" />
+            </div>
+            <div>
+              <p className="text-xs text-neutral-400 font-medium uppercase tracking-wider">Estimated Delivery</p>
+              <p className="text-sm font-bold text-neutral-900">Get by {estDateStr}</p>
+              <p className="text-xs text-neutral-400 mt-0.5">
+                To track delivery: My Account → My Orders
+              </p>
+            </div>
+          </div>
+
+          {/* Email confirmation */}
+          {completedOrder.email && (
+            <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
+              <Mail className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+              <p className="text-xs text-blue-700">
+                We've sent a confirmation email to{" "}
+                <span className="font-semibold">{completedOrder.email}</span> with your order details.
+              </p>
+            </div>
+          )}
+
+          {/* Order summary */}
+          <div className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-neutral-100 bg-neutral-50/50">
+              <p className="text-sm font-semibold text-neutral-800">Order Summary</p>
+            </div>
+
+            <div className="px-5 py-3 space-y-3">
+              {completedOrder.items.map((item, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="relative w-10 h-13 rounded-lg overflow-hidden bg-neutral-100 shrink-0 border border-neutral-200">
+                    <Image src={item.book.coverImage} alt={item.book.title} fill className="object-cover" sizes="40px" />
+                  </div>
+                  <p className="text-xs text-neutral-700 flex-1 line-clamp-2">{item.book.title}</p>
+                  <p className="text-xs text-neutral-500 shrink-0">×{item.quantity}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="px-5 py-4 border-t border-neutral-100 space-y-2">
+              <div className="flex justify-between text-sm text-neutral-600">
+                <span>Subtotal ({completedOrder.items.reduce((s, i) => s + i.quantity, 0)} items)</span>
+                <span>NPR {completedOrder.subtotal.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-sm text-neutral-600">
+                <span>Shipping Fee</span>
+                <span>{completedOrder.shippingCost === 0 ? "Free" : `NPR ${completedOrder.shippingCost}`}</span>
+              </div>
+              {completedOrder.discount > 0 && (
+                <div className="flex justify-between text-sm text-green-600">
+                  <span>Promotion</span>
+                  <span>− NPR {completedOrder.discount}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-sm font-bold text-neutral-900 pt-2 border-t border-neutral-100">
+                <span>Payment Amount</span>
+                <span>NPR {completedOrder.total.toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+
+          <Link
+            href="/order"
+            className="flex items-center justify-center gap-2 w-full py-3 bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-700 transition"
           >
-            Go to Cart
-          </button>
+            <Package className="w-4 h-4" />
+            View Order
+          </Link>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6">Checkout</h1>
-        
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Left Column - Delivery Info */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h2 className="font-semibold mb-4">Delivery Information</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Delivery Address *</label>
-                  <textarea
-                    value={deliveryAddress}
-                    onChange={(e) => setDeliveryAddress(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-red-500 focus:border-red-500"
-                    rows={3}
-                    placeholder="Street address, city, postal code"
-                    required
-                  />
+    <div className="min-h-screen bg-neutral-50 py-8 px-4">
+      <div className="max-w-5xl mx-auto">
+
+        {/* Step bar */}
+        <StepBar step={step} />
+
+        {/* STEP 1: REVIEW ORDER */}
+        {step === 1 && (
+          <div className="grid lg:grid-cols-[1fr_380px] gap-6">
+
+            {/* Left */}
+            <div className="space-y-4">
+
+              {/* Address section */}
+              <div className="bg-white border border-neutral-200 rounded-2xl p-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-neutral-400" />
+                    <h2 className="text-sm font-semibold text-neutral-800">Delivery Address</h2>
+                  </div>
+                  <button
+                    onClick={() => setAddressDialogOpen(true)}
+                    className="flex items-center gap-1.5 text-xs font-medium text-neutral-500 hover:text-neutral-900 transition-colors"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    Add new
+                  </button>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Phone Number *</label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-red-500 focus:border-red-500"
-                    placeholder="98XXXXXXXX"
-                    required
-                  />
+
+                {addresses.length === 0 ? (
+                  <button
+                    onClick={() => setAddressDialogOpen(true)}
+                    className="w-full border-2 border-dashed border-neutral-200 rounded-xl py-6 text-sm text-neutral-400 hover:border-neutral-300 transition"
+                  >
+                    + Add a delivery address
+                  </button>
+                ) : (
+                  <div className="space-y-2">
+                    {addresses.map((addr) => (
+                      <label
+                        key={addr.id}
+                        className={`flex gap-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
+                          selectedAddressId === addr.id
+                            ? "border-neutral-900 bg-neutral-50"
+                            : "border-neutral-200 hover:border-neutral-300"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="address"
+                          value={addr.id}
+                          checked={selectedAddressId === addr.id}
+                          onChange={() => setSelectedAddressId(addr.id)}
+                          className="mt-0.5 accent-neutral-900"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-semibold text-neutral-900">{addr.fullName}</p>
+                            <span className="text-[10px] font-bold text-neutral-400 uppercase">{addr.label}</span>
+                            {addr.isDefault && (
+                              <span className="text-[10px] font-bold text-white bg-neutral-900 px-1.5 py-0.5 rounded-full">Default</span>
+                            )}
+                          </div>
+                          <p className="text-xs text-neutral-600 mt-0.5">
+                            {addr.street}, {addr.city}, {addr.district}
+                            {addr.postalCode && ` - ${addr.postalCode}`}
+                          </p>
+                          <p className="text-xs text-neutral-400">{addr.phone}</p>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Items */}
+              <div className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
+                <div className="px-5 py-3.5 border-b border-neutral-100 bg-neutral-50/50">
+                  <h2 className="text-sm font-semibold text-neutral-800">
+                    {checkoutItems.length} {checkoutItems.length === 1 ? "Item" : "Items"}
+                  </h2>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Order Notes (Optional)</label>
-                  <textarea
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-red-500 focus:border-red-500"
-                    rows={2}
-                    placeholder="Special delivery instructions"
-                  />
+                <div className="divide-y divide-neutral-100">
+                  {checkoutItems.map((item) => (
+                    <div key={item.id} className="flex gap-4 px-5 py-4">
+                      <div className="relative w-14 h-[74px] rounded-lg overflow-hidden bg-neutral-100 border border-neutral-200 shrink-0">
+                        <Image src={item.book.coverImage} alt={item.book.title} fill className="object-cover" sizes="56px" />
+                      </div>
+                      <div className="flex-1 min-w-0 space-y-0.5">
+                        <p className="text-sm font-semibold text-neutral-800 line-clamp-2">{item.book.title}</p>
+                        <p className="text-xs text-neutral-400">{item.book.author}</p>
+                        <div className="flex items-center justify-between pt-1">
+                          <p className="text-xs text-neutral-500">Qty: {item.quantity}</p>
+                          <p className="text-sm font-bold text-neutral-900">
+                            NPR {(item.priceAtAdd * item.quantity).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
+              </div>
+
+              {/* Notes */}
+              <div className="bg-white border border-neutral-200 rounded-2xl p-5 space-y-2">
+                <label className="text-xs font-medium text-neutral-700">Order Notes (Optional)</label>
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows={2}
+                  placeholder="Special delivery instructions..."
+                  className="w-full px-3 py-2.5 text-sm border border-neutral-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-neutral-900 transition"
+                />
               </div>
             </div>
 
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h2 className="font-semibold mb-4">Payment Method</h2>
-              <div className="space-y-3">
-                <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
-                  <input
-                    type="radio"
-                    value="CASH_ON_DELIVERY"
-                    checked={paymentMethod === 'CASH_ON_DELIVERY'}
-                    onChange={(e) => setPaymentMethod(e.target.value as any)}
-                  />
-                  <span>Cash on Delivery</span>
-                </label>
-                
-                <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
-                  <input
-                    type="radio"
-                    value="ESEWA"
-                    checked={paymentMethod === 'ESEWA'}
-                    onChange={(e) => setPaymentMethod(e.target.value as any)}
-                  />
-                  <span>Pay with eSewa</span>
-                </label>
+            {/* Right — order summary */}
+            <div className="space-y-4">
+              <div className="bg-white border border-neutral-200 rounded-2xl p-5 space-y-4 sticky top-6">
+                <h2 className="text-sm font-semibold text-neutral-800">Order Summary</h2>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm text-neutral-600">
+                    <span>Subtotal ({checkoutItems.reduce((s, i) => s + i.quantity, 0)} items)</span>
+                    <span>NPR {subtotal.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-neutral-600">
+                    <span>Shipping</span>
+                    <span className={shippingCost === 0 ? "text-green-600 font-medium" : ""}>
+                      {shippingCost === 0 ? "Free" : `NPR ${shippingCost}`}
+                    </span>
+                  </div>
+                  {shippingCost === 0 && (
+                    <p className="text-xs text-green-600">🎉 Free shipping on orders over NPR 1,000</p>
+                  )}
+                  {discount > 0 && (
+                    <div className="flex justify-between text-sm text-green-600">
+                      <span>Discount</span>
+                      <span>− NPR {discount}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-base font-bold text-neutral-900 pt-3 border-t border-neutral-100">
+                    <span>Total</span>
+                    <span>NPR {total.toLocaleString()}</span>
+                  </div>
+                </div>
+
+                {error && (
+                  <p className="text-xs text-red-500 bg-red-50 border border-red-200 rounded-lg px-3 py-2.5">
+                    {error}
+                  </p>
+                )}
+
+                <button
+                  onClick={() => {
+                    if (!selectedAddressId) { setError("Please select a delivery address"); return }
+                    setError("")
+                    setStep(2)
+                  }}
+                  className="w-full py-3 bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-700 transition flex items-center justify-center gap-2"
+                >
+                  Continue to Payment
+                  <ChevronRight className="w-4 h-4" />
+                </button>
               </div>
             </div>
           </div>
+        )}
 
-          {/* Right Column - Order Summary */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6 h-fit sticky top-20">
-            <h2 className="font-semibold mb-4">Order Summary</h2>
-            
-            <div className="space-y-3 max-h-96 overflow-y-auto mb-4">
-              {checkoutItems.map((item) => (
-                <div key={item.id} className="flex justify-between text-sm">
-                  <div>
-                    <span className="font-medium">{item.book.title}</span>
-                    <span className="text-gray-500 ml-2">x{item.quantity}</span>
-                  </div>
-                  <span>रू {(item.priceAtAdd * item.quantity).toLocaleString()}</span>
-                </div>
-              ))}
-            </div>
-            
-            <div className="border-t pt-4 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>Subtotal ({checkoutItems.reduce((sum, item) => sum + item.quantity, 0)} items)</span>
-                <span>रू {subtotal.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span>Shipping</span>
-                <span>{shippingCost === 0 ? 'Free' : `रू ${shippingCost}`}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span>Tax</span>
-                <span>रू {tax}</span>
-              </div>
-              {discount > 0 && (
-                <div className="flex justify-between text-sm text-green-600">
-                  <span>Discount</span>
-                  <span>-रू {discount}</span>
-                </div>
-              )}
-              <div className="border-t pt-2 mt-2">
-                <div className="flex justify-between font-semibold text-lg">
-                  <span>Total</span>
-                  <span>रू {total.toLocaleString()}</span>
-                </div>
-              </div>
+        {/* STEP 2: PAYMENT METHOD */}
+        {step === 2 && (
+          <div className="max-w-2xl mx-auto space-y-5">
+            <button
+              onClick={() => setStep(1)}
+              className="flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-900 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back
+            </button>
+
+            <PaymentMethodSelector 
+              paymentMethod={paymentMethod}
+              onChange={setPaymentMethod}
+            />
+
+            <PaymentInfoPanel paymentMethod={paymentMethod} />
+
+            {/* Order total reminder */}
+            <div className="bg-white border border-neutral-200 rounded-2xl p-5 flex items-center justify-between">
+              <span className="text-sm text-neutral-600">Total to pay</span>
+              <span className="text-lg font-bold text-neutral-900">NPR {total.toLocaleString()}</span>
             </div>
 
-            {paymentMethod === 'ESEWA' && (
-              <div className="mt-6">
-                <EsewaPayment
-                  amount={total}
-                  productId="order-payment"
-                  productName="Book Order"
-                  onSuccess={() => console.log('Payment initiated')}
-                  onFailure={(error: any) => alert(error)}
-                />
-              </div>
+            {error && (
+              <p className="text-xs text-red-500 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+                {error}
+              </p>
             )}
 
-            {paymentMethod === 'CASH_ON_DELIVERY' && (
+            {/* Place order / pay */}
+            {paymentMethod === "CASH_ON_DELIVERY" && (
               <button
-                onClick={handleCODOrder}
-                className="w-full mt-6 bg-gray-800 hover:bg-gray-900 text-white font-semibold py-3 rounded-xl transition-colors"
+                onClick={handlePlaceOrder}
+                disabled={placing}
+                className="w-full py-3.5 bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                Place Order (COD)
+                <Banknote className="w-4 h-4" />
+                {placing ? "Placing order..." : "Place Order (Cash on Delivery)"}
+              </button>
+            )}
+
+            {(paymentMethod === "ESEWA" || paymentMethod === "KHALTI") && (
+              <button
+                disabled
+                className="w-full py-3.5 bg-neutral-400 text-white text-sm font-semibold rounded-xl cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                <Smartphone className="w-4 h-4" />
+                {paymentMethod === "ESEWA" ? "Pay with eSewa" : "Pay with Khalti"} — Coming soon
               </button>
             )}
           </div>
-        </div>
+        )}
+
       </div>
+
+      {/* Address dialog */}
+      <AddressDialog
+        open={addressDialogOpen}
+        onOpenChange={setAddressDialogOpen}
+        onSaved={(addr) => {
+          setAddresses((prev) => {
+            const exists = prev.find((a) => a.id === addr.id)
+            let updated = exists ? prev.map((a) => a.id === addr.id ? addr : a) : [addr, ...prev]
+            if (addr.isDefault) updated = updated.map((a) => ({ ...a, isDefault: a.id === addr.id }))
+            return updated
+          })
+          setSelectedAddressId(addr.id)
+        }}
+      />
     </div>
   )
 }
