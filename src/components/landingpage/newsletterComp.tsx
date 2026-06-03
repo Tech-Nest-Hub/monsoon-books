@@ -78,7 +78,7 @@ export function Newsletter({
 
   return (
     <div className={`space-y-2 ${className}`}>
-      <div className="flex rounded-xl overflow-hidden border border-slate-200 focus-within:ring-2 focus-within:ring-[#c10617]/20 focus-within:border-[#c10617] transition-all duration-300">
+      <div className="flex rounded-xl overflow-hidden border border-slate-200 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all duration-300">
         <input
           type="email"
           value={email}
@@ -91,7 +91,7 @@ export function Newsletter({
         <button
           onClick={subscribe}
           disabled={isLoading}
-          className={`px-4 py-2 bg-[#c10617] text-white hover:bg-[#a00513] transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed ${buttonClassName}`}
+          className={`px-4 py-2 bg-primary text-white hover:bg-[#a00513] transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed ${buttonClassName}`}
         >
           {isLoading ? (
             <svg className="w-3.5 h-3.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,7 +107,7 @@ export function Newsletter({
       </div>
       {message && (
         <p className={`text-xs ${
-          status === "success" ? "text-green-600" : "text-red-600"
+          status === "success" ? "text-green-600" : "text-primary"
         }`}>
           {message}
         </p>

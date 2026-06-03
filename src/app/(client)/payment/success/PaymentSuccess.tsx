@@ -53,7 +53,7 @@ export default function PaymentSuccessPage() {
         <div className="space-y-3">
           <Link
             href="/profile/orders"
-            className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+            className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary text-white font-semibold py-3 px-4 rounded-lg transition-colors"
           >
             <Package className="w-5 h-5" />
             View My Orders

@@ -141,7 +141,7 @@ export default function AddressBook() {
               <div className={`shrink-0 w-9 h-9 rounded-lg flex items-center justify-center ${
                 addr.label === "OFFICE"
                   ? "bg-blue-50 text-blue-600"
-                  : "bg-red-50 text-red-500"
+                  : "bg-purple-50 text-primary"
               }`}>
                 {addr.label === "OFFICE"
                   ? <Briefcase className="w-4 h-4" />
@@ -184,7 +184,7 @@ export default function AddressBook() {
               <button
                 onClick={() => handleDelete(addr.id)}
                 disabled={deletingId === addr.id}
-                className="flex items-center gap-1 text-xs text-neutral-400 hover:text-red-500 transition-colors disabled:opacity-50"
+                className="flex items-center gap-1 text-xs text-neutral-400 hover:text-primary transition-colors disabled:opacity-50"
               >
                 <Trash2 className="w-3 h-3" />
                 Delete

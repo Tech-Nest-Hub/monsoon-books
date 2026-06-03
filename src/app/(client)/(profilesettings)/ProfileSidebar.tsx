@@ -105,7 +105,7 @@ export function ProfileSidebar() {
         >
           <div className="flex items-center gap-2">
             {profileNavItems.flatMap(section => section.items).find(item => isActive(item.url))?.icon && (
-              <div className="text-[#c10617]">
+              <div className="text-primary">
                 {(() => {
                   const Icon = profileNavItems.flatMap(section => section.items).find(item => isActive(item.url))?.icon
                   return Icon ? <Icon className="w-5 h-5" /> : <User className="w-5 h-5" />
@@ -176,7 +176,7 @@ export function ProfileSidebar() {
                             className={cn(
                               "flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-all duration-200",
                               isActive(item.url)
-                                ? "bg-red-50 text-red-600 font-medium"
+                                ? "bg-purple-50 text-primary font-medium"
                                 : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                             )}
                           >
@@ -198,7 +198,7 @@ export function ProfileSidebar() {
       <aside className="hidden md:block w-full md:w-72 lg:w-80 shrink-0">
         <div className="sticky top-20">
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-red-50 to-blue-50">
+            <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-blue-50">
               <h2 className="font-semibold text-gray-900">My Account</h2>
               <p className="text-sm text-gray-500 mt-0.5">Manage your profile and orders</p>
             </div>
@@ -218,7 +218,7 @@ export function ProfileSidebar() {
                         className={cn(
                           "flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-all duration-200",
                           isActive(item.url)
-                            ? "bg-red-50 text-red-600 font-medium"
+                            ? "bg-purple-50 text-primary font-medium"
                             : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                         )}
                       >

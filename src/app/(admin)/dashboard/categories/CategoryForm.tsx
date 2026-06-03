@@ -125,7 +125,7 @@ export default function CategoryForm({ initialData }: CategoryFormProps) {
 
       {/* Error */}
       {error && (
-        <p className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+        <p className="text-sm text-primary bg-purple-50 border border-red-200 rounded-lg px-4 py-3">
           {error}
         </p>
       )}

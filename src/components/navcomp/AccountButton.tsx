@@ -41,7 +41,7 @@ const MENU_ITEMS = [
 const TriggerButton1 = ({ onClick }: { onClick?: () => void }) => (
   <div
     onClick={onClick}
-    className="flex flex-col items-center gap-0.5 px-3 py-2 rounded-md hover:bg-red-50 hover:text-red-700 text-gray-600 transition-colors group"
+    className="flex flex-col items-center gap-0.5 px-3 py-2 rounded-md hover:bg-purple-50 hover:text-primary text-gray-600 transition-colors group"
   >
     <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -97,6 +97,8 @@ export const AccountButton = ({ user }: Props) => {
     router.push(href)
   }
 
+
+
   return (
     <div className="relative hidden sm:block" ref={dropdownRef}>
       <TriggerButton1 onClick={() => setIsOpen((v) => !v)} />
@@ -105,9 +107,9 @@ export const AccountButton = ({ user }: Props) => {
         <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
 
           {/* Header */}
-          <div className="flex items-center gap-3 px-4 py-3 bg-red-50 border-b border-red-100">
+          <div className="flex items-center gap-3 px-4 py-3 bg-purple-50 border-b border-red-100">
             <Link href="/profile" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-red-700 text-white text-xs font-bold flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0">
               {initials}
             </div>
             <div className="min-w-0">
@@ -125,7 +127,7 @@ export const AccountButton = ({ user }: Props) => {
                 <button
                   key={item.label}
                   onClick={() => handleNavigation(item.href)}
-                  className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition-colors"
+                  className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-primary transition-colors"
                 >
                   <Icon className="w-4 h-4 text-gray-400 shrink-0" />
                   <span>{item.label}</span>
@@ -139,7 +141,7 @@ export const AccountButton = ({ user }: Props) => {
             <form action={signOut}>
               <button
                 type="submit"
-                className="w-full bg-red-700 hover:bg-red-800 text-white text-sm font-semibold py-2 rounded-lg transition-colors"
+                className="w-full bg-primary hover:bg-red-800 text-white text-sm font-semibold py-2 rounded-lg transition-colors"
               >
                 Sign out
               </button>

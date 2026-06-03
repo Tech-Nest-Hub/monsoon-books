@@ -158,10 +158,10 @@ export default function AdminCategoriesPage() {
                   <button
                     onClick={() => handleDelete(category.id)}
                     disabled={deletingId === category.id}
-                    className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center hover:bg-red-50 transition disabled:opacity-50"
+                    className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center hover:bg-purple-50 transition disabled:opacity-50"
                     title="Delete"
                   >
-                    <Trash2 className="w-3.5 h-3.5 text-red-500" />
+                    <Trash2 className="w-3.5 h-3.5 text-primary" />
                   </button>
                 </div>
               </div>

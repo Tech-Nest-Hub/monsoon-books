@@ -76,8 +76,8 @@ export function TopTrendingBooks({ books, loading = false }: TopTrendingBooksPro
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-1.5 mb-1">
-            <Flame className="w-4 h-4 text-red-500" />
-            <span className="text-xs font-bold tracking-widest uppercase text-red-500">
+            <Flame className="w-4 h-4 text-primary" />
+            <span className="text-xs font-bold tracking-widest uppercase text-primary">
               Trending
             </span>
           </div>
@@ -140,7 +140,7 @@ export function TopTrendingBooks({ books, loading = false }: TopTrendingBooksPro
                       {/* Badges */}
                       <div className="absolute top-2 left-2 flex flex-col gap-1">
                         {discount && (
-                          <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                          <span className="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                             -{discount}%
                           </span>
                         )}
@@ -155,7 +155,7 @@ export function TopTrendingBooks({ books, loading = false }: TopTrendingBooksPro
                     {/* Info */}
                     <div className="space-y-0.5 px-0.5">
                       {book.category && (
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-red-500">
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-primary">
                           {book.category.name}
                         </p>
                       )}

@@ -71,8 +71,8 @@ export function AddWishlistButton({ bookId, userId }: Props) {
       disabled={loading}
       className={`p-3 rounded-full transition-all duration-300 ${
         isInWishlist
-          ? 'bg-red-500 text-white hover:bg-red-600'
-          : 'bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-500'
+          ? 'bg-primary text-white hover:bg-primary'
+          : 'bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-primary'
       } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
       <Heart className={`w-5 h-5 ${isInWishlist ? 'fill-current' : ''}`} />

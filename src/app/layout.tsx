@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Providers } from "@/contexts/providers";
 import { UserProvider } from "@/contexts/UserContext";
+import { ThemeProvider } from "@/lib/theme-provider";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -36,8 +37,15 @@ export default function RootLayout({
     <html
       lang="en"
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
+         <ThemeProvider
+            attribute="class"
+            enableSystem
+            disableTransitionOnChange
+          >
+
         <TooltipProvider>
           <Providers>
             <UserProvider>
@@ -45,6 +53,7 @@ export default function RootLayout({
             </UserProvider>
           </Providers>
         </TooltipProvider>
+          </ThemeProvider>
         <Toaster richColors position="top-right" />
       </body>
     </html>

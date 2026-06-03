@@ -8,6 +8,7 @@ import {
   Globe,
   Trash2,
 } from "lucide-react"
+import { useTheme } from "next-themes"
 
 const SettingsPage = () => {
   const router = useRouter()
@@ -15,6 +16,7 @@ const SettingsPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [saved, setSaved] = useState(false)
+   const { setTheme } = useTheme();
   
   const [formData, setFormData] = useState({
     // Notification settings
@@ -35,6 +37,7 @@ const SettingsPage = () => {
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+   
     const { name, value, type } = e.target
     const checked = (e.target as HTMLInputElement).checked
     
@@ -78,7 +81,7 @@ const SettingsPage = () => {
             onClick={() => setActiveTab("notifications")}
             className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
               activeTab === "notifications"
-                ? "border-[#c10617] text-[#c10617]"
+                ? "border-primary text-primary"
                 : "border-transparent text-slate-600 hover:text-slate-900"
             }`}
           >
@@ -89,7 +92,7 @@ const SettingsPage = () => {
             onClick={() => setActiveTab("appearance")}
             className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
               activeTab === "appearance"
-                ? "border-[#c10617] text-[#c10617]"
+                ? "border-primary text-primary"
                 : "border-transparent text-slate-600 hover:text-slate-900"
             }`}
           >
@@ -100,7 +103,7 @@ const SettingsPage = () => {
             onClick={() => setActiveTab("language")}
             className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
               activeTab === "language"
-                ? "border-[#c10617] text-[#c10617]"
+                ? "border-primary text-primary"
                 : "border-transparent text-slate-600 hover:text-slate-900"
             }`}
           >
@@ -134,7 +137,7 @@ const SettingsPage = () => {
                         onChange={handleChange}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#c10617]"></div>
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                     </label>
                   </div>
                   
@@ -151,7 +154,7 @@ const SettingsPage = () => {
                         onChange={handleChange}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#c10617]"></div>
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                     </label>
                   </div>
                   
@@ -168,7 +171,7 @@ const SettingsPage = () => {
                         onChange={handleChange}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#c10617]"></div>
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                     </label>
                   </div>
                 </div>
@@ -192,11 +195,11 @@ const SettingsPage = () => {
                       name="theme"
                       value={formData.theme}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c10617]"
+                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
-                      <option value="light">Light</option>
-                      <option value="dark">Dark</option>
-                      <option value="system">System</option>
+                      <option value="light" onClick={()=> setTheme("light")}>Light</option>
+                      <option value="dark" onClick={()=> setTheme("dark")}>Dark</option>
+                      <option value="system" onClick={()=> setTheme("system")}>System</option>
                     </select>
                   </div>
                   
@@ -213,7 +216,7 @@ const SettingsPage = () => {
                         onChange={handleChange}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#c10617]"></div>
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                     </label>
                   </div>
                 </div>
@@ -237,7 +240,7 @@ const SettingsPage = () => {
                       name="language"
                       value={formData.language}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c10617]"
+                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       <option>English</option>
                       <option>Nepali</option>
@@ -253,7 +256,7 @@ const SettingsPage = () => {
                       name="timezone"
                       value={formData.timezone}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c10617]"
+                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       <option>Asia/Kathmandu</option>
                       <option>Asia/Kolkata</option>
@@ -269,7 +272,7 @@ const SettingsPage = () => {
                       name="currency"
                       value={formData.currency}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c10617]"
+                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       <option>NPR - Nepalese Rupee</option>
                       <option>USD - US Dollar</option>
@@ -303,7 +306,7 @@ const SettingsPage = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="px-6 py-2 bg-[#c10617] text-white rounded-lg hover:bg-[#a00513] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-[#a00513] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   {isLoading ? (
                     <>
@@ -325,8 +328,8 @@ const SettingsPage = () => {
         {/* Delete Account Section */}
         <div className="mt-8 bg-white rounded-xl shadow-sm border border-red-200 p-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-red-50 rounded-lg">
-              <Trash2 className="w-5 h-5 text-red-600" />
+            <div className="p-2 bg-purple-50 rounded-lg">
+              <Trash2 className="w-5 h-5 text-primary" />
             </div>
             <div>
               <h3 className="font-semibold text-slate-900">Delete Account</h3>
@@ -336,7 +339,7 @@ const SettingsPage = () => {
           <button
             type="button"
             onClick={() => setShowDeleteModal(true)}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary transition-colors text-sm font-medium"
           >
             Delete My Account
           </button>
@@ -360,7 +363,7 @@ const SettingsPage = () => {
                 </button>
                 <button
                   onClick={handleDeleteAccount}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary transition-colors"
                 >
                   Yes, Delete My Account
                 </button>

@@ -167,7 +167,7 @@ export default function CartPage() {
             <p className="text-gray-600 mb-6">Looks like you haven't added any items to your cart yet.</p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition"
+              className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary transition"
             >
               <ArrowLeft className="w-4 h-4" />
               Continue Shopping
@@ -183,7 +183,7 @@ export default function CartPage() {
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-gray-600 hover:text-red-600 transition mb-4">
+          <Link href="/" className="inline-flex items-center gap-2 text-gray-600 hover:text-primary transition mb-4">
             <ArrowLeft className="w-4 h-4" />
             Continue Shopping
           </Link>
@@ -201,7 +201,7 @@ export default function CartPage() {
                   type="checkbox"
                   checked={isAllSelected ?? false}
                   onChange={toggleSelectAll}
-                  className="w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500"
+                  className="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary"
                 />
                 <span className="text-sm font-medium text-gray-700">
                   Select All ({cart.items.length} items)
@@ -221,7 +221,7 @@ export default function CartPage() {
                       type="checkbox"
                       checked={selectedItems.has(item.id)}
                       onChange={() => toggleSelectItem(item.id)}
-                      className="w-4 h-4 text-red-600 rounded border-gray-300 focus:ring-red-500 mt-1"
+                      className="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary mt-1"
                     />
                   </div>
 
@@ -249,14 +249,14 @@ export default function CartPage() {
                     <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
                       <div>
                         <Link href={`/book/${item.book.id}`}>
-                          <h3 className="text-base sm:text-lg font-semibold text-gray-900 hover:text-red-600 transition line-clamp-1">
+                          <h3 className="text-base sm:text-lg font-semibold text-gray-900 hover:text-primary transition line-clamp-1">
                             {item.book.title}
                           </h3>
                         </Link>
                         <p className="text-sm text-gray-600 mt-0.5">{item.book.author}</p>
                         <p className="text-xs text-gray-400 mt-1">In stock: {item.book.stock} items</p>
                       </div>
-                      <p className="text-lg font-bold text-red-600">
+                      <p className="text-lg font-bold text-primary">
                         NPR {(item.priceAtAdd * item.quantity).toLocaleString()}
                       </p>
                     </div>
@@ -285,7 +285,7 @@ export default function CartPage() {
                       <button
                         onClick={() => removeItem(item.id)}
                         disabled={removingId === item.id}
-                        className="text-red-500 hover:text-red-700 transition disabled:opacity-50 flex items-center gap-1 text-sm"
+                        className="text-primary hover:text-primary transition disabled:opacity-50 flex items-center gap-1 text-sm"
                       >
                         <Trash2 className="w-4 h-4" />
                         Remove
@@ -315,7 +315,7 @@ export default function CartPage() {
 
               <div className="flex justify-between pt-4 pb-6">
                 <span className="text-lg font-bold text-gray-900">Total</span>
-                <span className="text-2xl font-bold text-red-600">
+                <span className="text-2xl font-bold text-primary">
                   NPR {getSelectedTotal().toLocaleString()}
                 </span>
               </div>
@@ -325,7 +325,7 @@ export default function CartPage() {
                 disabled={selectedItems.size === 0}
                 className={`w-full py-3 rounded-lg transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 ${
                   selectedItems.size > 0
-                    ? 'bg-red-600 hover:bg-red-700 text-white'
+                    ? 'bg-primary hover:bg-primary text-white'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >

@@ -122,7 +122,7 @@ export function AddressDialog({ open, onOpenChange, initialData, onSaved }: Addr
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-neutral-700">
-                Full Name <span className="text-red-500">*</span>
+                Full Name <span className="text-primary">*</span>
               </label>
               <input
                 value={fullName}
@@ -133,7 +133,7 @@ export function AddressDialog({ open, onOpenChange, initialData, onSaved }: Addr
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-neutral-700">
-                District <span className="text-red-500">*</span>
+                District <span className="text-primary">*</span>
               </label>
               <select
                 value={district}
@@ -152,7 +152,7 @@ export function AddressDialog({ open, onOpenChange, initialData, onSaved }: Addr
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-neutral-700">
-                Phone Number <span className="text-red-500">*</span>
+                Phone Number <span className="text-primary">*</span>
               </label>
               <input
                 value={phone}
@@ -164,7 +164,7 @@ export function AddressDialog({ open, onOpenChange, initialData, onSaved }: Addr
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-neutral-700">
-                City <span className="text-red-500">*</span>
+                City <span className="text-primary">*</span>
               </label>
               <input
                 value={city}
@@ -179,7 +179,7 @@ export function AddressDialog({ open, onOpenChange, initialData, onSaved }: Addr
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-neutral-700">
-                Building / House No / Street <span className="text-red-500">*</span>
+                Building / House No / Street <span className="text-primary">*</span>
               </label>
               <input
                 value={street}
@@ -212,7 +212,7 @@ export function AddressDialog({ open, onOpenChange, initialData, onSaved }: Addr
                 onClick={() => setLabel("HOME")}
                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 text-sm font-semibold transition-all ${
                   label === "HOME"
-                    ? "border-red-500 text-red-600 bg-red-50"
+                    ? "border-primary text-primary bg-purple-50"
                     : "border-neutral-200 text-neutral-500 hover:border-neutral-300"
                 }`}
               >
@@ -247,7 +247,7 @@ export function AddressDialog({ open, onOpenChange, initialData, onSaved }: Addr
 
           {/* Error */}
           {error && (
-            <p className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+            <p className="text-sm text-primary bg-purple-50 border border-red-200 rounded-lg px-4 py-3">
               {error}
             </p>
           )}

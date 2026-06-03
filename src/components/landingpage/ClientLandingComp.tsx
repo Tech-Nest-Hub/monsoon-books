@@ -68,7 +68,7 @@ export function ClientLandingComp() {
 
   if (error) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+      <div className="rounded-lg border border-red-200 bg-purple-50 p-4 text-sm text-primary">
         {error}
       </div>
     )

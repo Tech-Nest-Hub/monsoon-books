@@ -81,7 +81,7 @@ const [quantity, setQuantity] = useState(1)
         {/* Breadcrumb + actions */}
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between text-xs tracking-wider uppercase text-gray-400">
           <div className="flex items-center gap-2">
-            <Link href="/" className="hover:text-red-700 transition-colors">Home</Link>
+            <Link href="/" className="hover:text-primary transition-colors">Home</Link>
             <span>/</span>
             <span className="text-gray-600 font-medium truncate max-w-45 sm:max-w-none">
               {book.title}
@@ -90,7 +90,7 @@ const [quantity, setQuantity] = useState(1)
           <div className="flex items-center gap-4">
             {user?.id && <AddWishlistButton bookId={book.id} userId={user.id} />}
             <div className="relative">
-              <button onClick={handleShare} className="hover:text-red-700 transition-colors" title="Share">
+              <button onClick={handleShare} className="hover:text-primary transition-colors" title="Share">
                 <Share2 className="w-4 h-4" />
               </button>
               {showShareTooltip && (
@@ -194,7 +194,7 @@ const [quantity, setQuantity] = useState(1)
                 <button
                   onClick={handleBuyNow}
                   disabled={isBuyingNow}
-                  className="w-full py-3 px-6 rounded-full text-xs font-medium tracking-wider bg-red-700 text-white hover:bg-red-800 transition-all disabled:opacity-50"
+                  className="w-full py-3 px-6 rounded-full text-xs font-medium tracking-wider bg-primary text-white hover:bg-red-800 transition-all disabled:opacity-50"
                 >
                   {isBuyingNow ? "Processing..." : "Buy it now"}
                 </button>
@@ -252,7 +252,7 @@ const [quantity, setQuantity] = useState(1)
                             </span>
                           )}
                         </div>
-                        <p className="font-semibold text-black text-xs line-clamp-2 leading-snug group-hover:text-red-700 transition-colors">
+                        <p className="font-semibold text-black text-xs line-clamp-2 leading-snug group-hover:text-primary transition-colors">
                           {simBook.title}
                         </p>
                         <p className="text-[10px] text-gray-400 mt-0.5">by {simBook.author}</p>

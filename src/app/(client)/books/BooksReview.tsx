@@ -164,7 +164,7 @@ function LikeButton({
         title={!userId ? "Log in to vote" : undefined}
         className={`flex items-center gap-1.5 text-xs transition-colors disabled:cursor-not-allowed ${
           myVote?.isLike === false
-            ? "text-red-500 font-semibold"
+            ? "text-primary font-semibold"
             : "text-neutral-400 hover:text-neutral-600"
         }`}
       >
@@ -305,7 +305,7 @@ export default function BookReviews({ bookId, user }: BookReviewsProps) {
         <div className="border border-neutral-200 rounded-xl overflow-hidden bg-white">
           <div className="px-4 pt-4 pb-2 flex items-center gap-3">
             <StarInput value={rating} onChange={setRating} />
-            {ratingError && <span className="text-xs text-red-500">{ratingError}</span>}
+            {ratingError && <span className="text-xs text-primary">{ratingError}</span>}
           </div>
           <EditorContent editor={editor} />
           <div className="flex items-center justify-between px-3 py-2 border-t border-neutral-100 bg-neutral-50">
@@ -334,7 +334,7 @@ export default function BookReviews({ bookId, user }: BookReviewsProps) {
               </button>
             </div>
             <div className="flex items-center gap-3">
-              <span className={`text-xs tabular-nums ${charCount >= MAX_CHARS ? "text-red-500" : "text-neutral-400"}`}>
+              <span className={`text-xs tabular-nums ${charCount >= MAX_CHARS ? "text-primary" : "text-neutral-400"}`}>
                 {charCount}/{MAX_CHARS}
               </span>
               <button

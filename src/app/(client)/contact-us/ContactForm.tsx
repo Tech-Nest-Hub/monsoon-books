@@ -120,7 +120,7 @@ export function ContactForm() {
             required
             value={formData.name}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c10617] focus:border-transparent transition-all"
+            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
             placeholder="John Doe"
           />
         </div>
@@ -136,7 +136,7 @@ export function ContactForm() {
             required
             value={formData.email}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c10617] focus:border-transparent transition-all"
+            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
             placeholder="john@example.com"
           />
         </div>
@@ -152,7 +152,7 @@ export function ContactForm() {
           required
           value={formData.subject}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c10617] focus:border-transparent transition-all"
+          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
         >
           <option value="">Select a subject</option>
           <option value="General Inquiry">General Inquiry</option>
@@ -175,7 +175,7 @@ export function ContactForm() {
           rows={6}
           value={formData.message}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c10617] focus:border-transparent transition-all resize-none"
+          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
           placeholder="Tell us how we can help..."
         />
       </div>
@@ -191,7 +191,7 @@ export function ContactForm() {
 
       {message && (
         <div className={`p-4 rounded-lg ${
-          status === "success" ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800"
+          status === "success" ? "bg-green-50 text-green-800" : "bg-purple-50 text-red-800"
         }`}>
           {message}
         </div>
@@ -200,7 +200,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full bg-[#c10617] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#a00513] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full bg-primary text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#a00513] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {isLoading ? (
           <>

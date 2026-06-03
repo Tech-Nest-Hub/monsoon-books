@@ -88,7 +88,7 @@ export function NotificationBell() {
       case "WARNING":
         return "bg-yellow-100 text-yellow-700 border-yellow-200"
       case "ERROR":
-        return "bg-red-100 text-red-700 border-red-200"
+        return "bg-red-100 text-primary border-red-200"
       default:
         return "bg-gray-100 text-gray-700 border-gray-200"
     }
@@ -102,7 +102,7 @@ export function NotificationBell() {
       >
         <Bell className="w-5 h-5 text-gray-600" />
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+          <span className="absolute top-1 right-1 w-4 h-4 bg-primary text-white text-xs rounded-full flex items-center justify-center">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}

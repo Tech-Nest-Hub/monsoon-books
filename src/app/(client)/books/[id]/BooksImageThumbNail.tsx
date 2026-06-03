@@ -27,7 +27,7 @@ export function BookImageThumbnails({
           className={`
             relative w-16 h-20 rounded-lg overflow-hidden border-2 transition-all duration-150
             ${selectedIndex === idx
-              ? "border-red-600 opacity-100"
+              ? "border-primary opacity-100"
               : "border-transparent opacity-55 hover:opacity-100 hover:border-gray-300"
             }
           `}

@@ -6,12 +6,14 @@ import { WishlistButton } from '../../app/(client)/(profilesettings)/wishlist/Wi
 import { CartButton } from '../../app/(client)/(profilesettings)/cart/CartButton'
 import Image from 'next/image'
 import Link from 'next/link'
+import { UserCog } from 'lucide-react'
 
 type Props = {
   user: {
     firstName: string | null
     lastName: string | null
     email: string
+    role?: string
   } | null
 }
 
@@ -19,6 +21,8 @@ const Bottomthickbar = ({ user }: Props) => {
   const [searchQuery, setSearchQuery] = useState('')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const router = useRouter()
+
+  const isAdmin = user?.role === "ADMIN"
 
   return (
     <div className="bg-white border-b border-gray-200">
@@ -28,19 +32,45 @@ const Bottomthickbar = ({ user }: Props) => {
           {/* Logo */}
           <div className="flex items-center gap-1.5 shrink-0">
             <Link href="/" className="flex items-center gap-1.5 shrink-0">
-            <Image
-              src="/Monsoon_Books_Logo_Black_&_White.jpeg"
-              alt="Monsoon Books Logo"
-              width={40}
-              height={40}
-            />
-            <span className="text-red-700 text-2xl font-extrabold tracking-tight leading-none">Monsoon</span>
-            <span className="text-gray-500 text-sm font-medium leading-none mt-1">Books</span>
+              <Image
+                src="/LOGO_MONSOON-01.png"
+                alt="Monsoon Books Logo"
+                width={70}
+                height={70}
+              />
+              <span className="text-primary text-2xl font-extrabold tracking-tight leading-none">
+                <span className="text-primary">
+                  M
+                </span>
+                <span className="text-secondary">
+                  o
+                </span>
+                <span className="text-primary">
+                  ns
+                </span>
+                <span className="text-secondary">
+                  oo
+                </span>
+                <span className="text-primary">
+                  n
+                </span>
+              </span>
+              <span className="text-xl font-bold leading-none mt-1">
+                
+                <span className="text-primary">
+                  B
+                </span><span className="text-secondary">
+                  oo
+                </span>
+                <span className="text-primary">
+                  ks
+                </span>
+              </span>
             </Link>
           </div>
 
           {/* Search Bar */}
-          <div className="flex-1 hidden sm:flex items-center border-2 border-red-700 rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-red-200 transition-shadow">
+          <div className="flex-1 hidden sm:flex items-center border-2 border-primary/70 rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-primary/20 transition-shadow">
             <input
               type="text"
               placeholder="Search books, authors, ISBN…"
@@ -51,7 +81,7 @@ const Bottomthickbar = ({ user }: Props) => {
             />
             <button
               onClick={() => router.push(`/search?q=${encodeURIComponent(searchQuery)}`)}
-              className="bg-red-700 hover:bg-red-800 text-white px-5 py-2.5 text-sm font-semibold flex items-center gap-2 transition-colors shrink-0"
+              className="bg-primary/90  hover:bg-primary text-white px-5 py-2.5 text-sm font-semibold flex items-center gap-2 transition-colors shrink-0"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -62,6 +92,16 @@ const Bottomthickbar = ({ user }: Props) => {
 
           {/* Right Actions */}
           <div className="flex items-center gap-1 ml-auto lg:ml-0">
+            {isAdmin && (
+              <><Link
+                href="/admin"
+                className="hidden sm:flex flex-col items-center gap-0.5 px-3 py-2 rounded-md hover:bg-purple-50 hover:text-primary text-gray-600 transition-colors group"
+              >
+                <UserCog className="w-5 h-5 inline-block mr-1" />
+              </Link>
+                <span className="text-primary select-none">|</span>
+              </>
+            )}
 
             {/* Wishlist */}
             <WishlistButton user={user} />
@@ -91,7 +131,7 @@ const Bottomthickbar = ({ user }: Props) => {
 
         {/* Mobile Search */}
         {isMobileMenuOpen && (
-          <div className="sm:hidden mt-3 flex items-center border-2 border-red-700 rounded-md overflow-hidden">
+          <div className="sm:hidden mt-3 flex items-center border-2 border-primary/70 rounded-md overflow-hidden">
             <input
               type="text"
               placeholder="Search books, authors…"
@@ -99,7 +139,7 @@ const Bottomthickbar = ({ user }: Props) => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="flex-1 px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 outline-none"
             />
-            <button className="bg-red-700 text-white px-4 py-2.5" onClick={() => router.push(`/search?q=${encodeURIComponent(searchQuery)}`)}>
+            <button className="bg-primary/90  hover:bg-primary text-white px-4 py-2.5" onClick={() => router.push(`/search?q=${encodeURIComponent(searchQuery)}`)}>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>

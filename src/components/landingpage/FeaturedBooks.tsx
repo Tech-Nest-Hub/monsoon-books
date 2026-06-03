@@ -103,7 +103,7 @@ export function FeaturedBooks({ books, loading = false }: FeaturedBooksProps) {
                 {/* Badges */}
                 <div className="absolute top-2 left-2 flex flex-col gap-1">
                   {discount && (
-                    <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                    <span className="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                       -{discount}%
                     </span>
                   )}

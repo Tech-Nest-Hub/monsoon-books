@@ -114,7 +114,7 @@ export default function CustomersPage() {
       case "inactive":
         return "bg-yellow-100 text-yellow-700"
       case "banned":
-        return "bg-red-100 text-red-700"
+        return "bg-red-100 text-primary"
       default:
         return "bg-gray-100 text-gray-700"
     }
@@ -143,7 +143,7 @@ export default function CustomersPage() {
       case "PROCESSING":
         return "text-yellow-600"
       case "CANCELLED":
-        return "text-red-600"
+        return "text-primary"
       default:
         return "text-gray-500"
     }
@@ -189,7 +189,7 @@ export default function CustomersPage() {
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="flex items-center justify-center h-96">
-            <Loader2 className="w-8 h-8 animate-spin text-red-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         </div>
       </div>
@@ -271,7 +271,7 @@ export default function CustomersPage() {
                   setSearchTerm(e.target.value)
                   setCurrentPage(1)
                 }}
-                className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div className="flex gap-3">
@@ -281,7 +281,7 @@ export default function CustomersPage() {
                   setStatusFilter(e.target.value)
                   setCurrentPage(1)
                 }}
-                className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="all">All Status</option>
                 <option value="active">Active</option>
@@ -321,7 +321,7 @@ export default function CustomersPage() {
                             className="rounded-full object-cover"
                           />
                         ) : (
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white font-semibold text-sm">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary flex items-center justify-center text-white font-semibold text-sm">
                             {getInitials(customer.name)}
                           </div>
                         )}
@@ -416,7 +416,7 @@ export default function CustomersPage() {
                             <button
                               onClick={() => handleUpdateStatus(customer.id, "banned")}
                               disabled={updatingStatus === customer.id}
-                              className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 disabled:opacity-50"
+                              className="w-full text-left px-4 py-2 text-sm text-primary hover:bg-purple-50 flex items-center gap-2 disabled:opacity-50"
                             >
                               <Ban className="w-4 h-4" />
                               Ban Customer
@@ -463,7 +463,7 @@ export default function CustomersPage() {
                         onClick={() => setCurrentPage(pageNum)}
                         className={`px-3 py-1 rounded-lg transition-colors ${
                           currentPage === pageNum
-                            ? "bg-red-600 text-white"
+                            ? "bg-primary text-white"
                             : "border border-gray-200 hover:bg-gray-50"
                         }`}
                       >
@@ -514,7 +514,7 @@ export default function CustomersPage() {
                     className="rounded-full object-cover"
                   />
                 ) : (
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white text-2xl font-bold">
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary flex items-center justify-center text-white text-2xl font-bold">
                     {getInitials(selectedCustomer.name)}
                   </div>
                 )}
@@ -603,7 +603,7 @@ export default function CustomersPage() {
                     handleUpdateStatus(selectedCustomer.id, "banned")
                     setShowDetailsModal(false)
                   }}
-                  className="px-4 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition"
+                  className="px-4 py-2 border border-red-200 text-primary rounded-lg hover:bg-purple-50 transition"
                 >
                   Ban
                 </button>

@@ -17,45 +17,44 @@ const Topthinbar = () => {
   }, [])
 
   return (
-    <div className="hidden md:block text-white text-xs">
-      <div className="container mx-auto px-4 sm:px-6 py-1.5">
+    <div className="hidden md:block text-white text-xs bg-primary">
+      <div className="container mx-auto px-4 sm:px-6 py-1.5 rounded-b-lg">
         <div className="flex items-center justify-end gap-5">
-
           <CustomLink
             href="/coming-soon"
             title="Save more on app"
-            className="text-white hover:text-red-200 font-medium"
+            className="text-white hover:text-purple-100 font-medium"
             underlineClassName="bg-white"
           />
 
-          <span className="text-red-500 select-none">|</span>
+          <span className="text-white select-none">|</span>
 
           <CustomLink
             href="/coming-soon"
             title="Become a seller"
-            className="text-white hover:text-red-200 font-medium"
+            className="text-white hover:text-purple-100 font-medium"
             underlineClassName="bg-white"
           />
 
-          <span className="text-red-500 select-none">|</span>
+          <span className="text-white select-none">|</span>
 
           <CustomLink
             href="/contact-us"
             title="Help & support"
-            className="text-white hover:text-red-200"
+            className="text-white hover:text-purple-100"
             underlineClassName="bg-white"
           />
 
-          <span className="text-red-500 select-none">|</span>
+          <span className="text-white select-none">|</span>
 
           <CustomLink
             href="/order"
             title="Track order"
-            className="text-white hover:text-red-200"
+            className="text-white hover:text-purple-100"
             underlineClassName="bg-white"
           />
 
-          <span className="text-red-500 select-none">|</span>
+          <span className="text-white select-none">|</span>
 
           {/* Language Switcher */}
           <div className="relative" ref={langRef}>
@@ -70,7 +69,7 @@ const Topthinbar = () => {
               </svg>
               भाषा
               <svg
-                className={`w-3 h-3 transition-transform duration-200 ${isLangOpen ? 'rotate-180' : ''}`}
+                className={`w-3 h-3 transition-transform duration-100 ${isLangOpen ? 'rotate-180' : ''}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -89,7 +88,7 @@ const Topthinbar = () => {
                     key={label}
                     role="option"
                     onClick={() => setIsLangOpen(false)}
-                    className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-red-50 hover:text-red-700 text-sm transition-colors"
+                    className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-secondary/10 hover:text-secondary text-sm transition-colors"
                   >
                     <span>{flag}</span>
                     <span>{label}</span>
@@ -98,7 +97,6 @@ const Topthinbar = () => {
               </div>
             )}
           </div>
-
         </div>
       </div>
     </div>

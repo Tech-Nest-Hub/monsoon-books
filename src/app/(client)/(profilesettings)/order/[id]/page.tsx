@@ -65,7 +65,7 @@ const STATUS_STYLES: Record<string, string> = {
   PROCESSING: "bg-purple-50 text-purple-700 border-purple-200",
   SHIPPED:    "bg-indigo-50 text-indigo-700 border-indigo-200",
   DELIVERED:  "bg-green-50 text-green-700 border-green-200",
-  CANCELLED:  "bg-red-50 text-red-700 border-red-200",
+  CANCELLED:  "bg-purple-50 text-primary border-red-200",
 }
 
 const STATUS_LABEL: Record<string, string> = {
@@ -221,9 +221,9 @@ export default function OrderDetailPage() {
 
       {/* Cancelled reason */}
       {isCancelled && order.cancelReason && (
-        <div className="border border-red-200 bg-red-50 rounded-xl px-5 py-4">
-          <p className="text-xs font-semibold text-red-600 uppercase tracking-wider mb-1">Cancellation Reason</p>
-          <p className="text-sm text-red-700">{order.cancelReason}</p>
+        <div className="border border-red-200 bg-purple-50 rounded-xl px-5 py-4">
+          <p className="text-xs font-semibold text-primary uppercase tracking-wider mb-1">Cancellation Reason</p>
+          <p className="text-sm text-primary">{order.cancelReason}</p>
           {order.cancelledAt && (
             <p className="text-xs text-red-400 mt-1">Cancelled on {formatDate(order.cancelledAt)}</p>
           )}
@@ -345,7 +345,7 @@ export default function OrderDetailPage() {
               <span className="text-neutral-500">Payment Status</span>
               <span className={`font-medium ${
                 order.paymentStatus === "COMPLETED" ? "text-green-600"
-                : order.paymentStatus === "FAILED" ? "text-red-500"
+                : order.paymentStatus === "FAILED" ? "text-primary"
                 : "text-amber-600"
               }`}>
                 {order.paymentStatus}

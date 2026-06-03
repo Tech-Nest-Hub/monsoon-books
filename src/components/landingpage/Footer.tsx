@@ -2,12 +2,13 @@
 import Image from "next/image"
 import CustomLink from "../manual-ui/CustomLink"
 import { Newsletter } from "./newsletterComp"
+import Link from "next/link"
 
 export function Footer() {
   return (
     <footer className="bg-slate-50 text-slate-600 border-t border-slate-200/60 relative overflow-hidden">
       {/* Subtle modern background gradient glow */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-red-50/50 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-50/50 rounded-full blur-3xl pointer-events-none" />
 
       {/* Top Section */}
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8 py-16 sm:py-20 z-10">
@@ -15,20 +16,44 @@ export function Footer() {
 
           {/* Brand Section */}
           <div className="space-y-5">
-            <div className="flex items-center gap-2.5 group cursor-pointer">
-              <div className="flex items-center justify-center w-12 h-12 bg-[#c10617] rounded-full group-hover:bg-[#a00513] transition-colors duration-300">
-                <Image
-                  src="/Monsoon_Books_Logo_Black_&_White.jpeg"
-                  alt="Monsoon Books Logo"
-                  width={50}
-                  height={50}
-                  className="rounded-full"
-                />
-              </div>
-              <h2 className="text-xl font-black text-slate-900 tracking-tight">
-                Monsoon <span className="text-[#c10617] font-medium">Books</span>
-              </h2>
-            </div>
+             <div className="flex items-center gap-1.5 shrink-0">
+            <Link href="/" className="flex items-center gap-1.5 shrink-0">
+              <Image
+                src="/LOGO_MONSOON-01.png"
+                alt="Monsoon Books Logo"
+                width={70}
+                height={70}
+              />
+              <span className="text-primary text-2xl font-extrabold tracking-tight leading-none">
+                <span className="text-primary">
+                  M
+                </span>
+                <span className="text-secondary">
+                  o
+                </span>
+                <span className="text-primary">
+                  ns
+                </span>
+                <span className="text-secondary">
+                  oo
+                </span>
+                <span className="text-primary">
+                  n
+                </span>
+              </span>
+              <span className="text-xl font-bold leading-none mt-1">
+                
+                <span className="text-primary">
+                  B
+                </span><span className="text-secondary">
+                  oo
+                </span>
+                <span className="text-primary">
+                  ks
+                </span>
+              </span>
+            </Link>
+          </div>
             <p className="max-w-sm text-sm leading-7 text-slate-500">
               Discover thousands of books across all genres. Fast shipping, authentic collections, and exceptional customer service.
             </p>
@@ -66,7 +91,7 @@ export function Footer() {
                     href={link.href}
                     title={link.label}
                     className="text-slate-500 hover:text-slate-900 font-medium transition-colors duration-200"
-                    underlineClassName="bg-[#c10617]"
+                    underlineClassName="bg-primary"
                   />
                 </li>
               ))}
@@ -83,7 +108,7 @@ export function Footer() {
                     href={item.href}
                     title={item.label}
                     className="text-slate-500 hover:text-slate-900 font-medium transition-colors duration-200"
-                    underlineClassName="bg-[#c10617]"
+                    underlineClassName="bg-primary"
                   />
                 </li>
               ))}
@@ -145,7 +170,7 @@ export function Footer() {
         </div>
 
         {/* Floating Bottom Promo Bar */}
-        <div className="bg-[#c10617] text-white py-3 px-4 text-center text-xs font-bold tracking-wider">
+        <div className="bg-[#27316f] text-white py-3 px-4 text-center text-xs font-bold tracking-wider">
           <CustomLink
             href="/app"
             title="FREE SHIPPING ON ORDERS ABOVE ₹500 | AUTHENTIC BOOKS ONLY ✨"

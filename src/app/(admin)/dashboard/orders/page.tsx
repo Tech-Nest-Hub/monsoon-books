@@ -41,7 +41,7 @@ const STATUS_STYLES: Record<string, string> = {
   PROCESSING: "bg-purple-50 text-purple-700 border-purple-200",
   SHIPPED:    "bg-indigo-50 text-indigo-700 border-indigo-200",
   DELIVERED:  "bg-green-50 text-green-700 border-green-200",
-  CANCELLED:  "bg-red-50 text-red-700 border-red-200",
+  CANCELLED:  "bg-purple-50 text-primary border-red-200",
 }
 
 const ALL_STATUSES = ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"]

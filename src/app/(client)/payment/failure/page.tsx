@@ -10,7 +10,7 @@ export default function PaymentFailurePage() {
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
         <div className="mb-6">
           <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto">
-            <XCircle className="w-12 h-12 text-red-600" />
+            <XCircle className="w-12 h-12 text-primary" />
           </div>
         </div>
         
@@ -37,7 +37,7 @@ export default function PaymentFailurePage() {
         <div className="space-y-3">
           <button
             onClick={() => window.history.back()}
-            className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+            className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary text-white font-semibold py-3 px-4 rounded-lg transition-colors"
           >
             <RefreshCw className="w-5 h-5" />
             Try Again

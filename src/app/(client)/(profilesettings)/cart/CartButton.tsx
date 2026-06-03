@@ -25,14 +25,14 @@ type Props = {
 const CartTriggerButton = ({ onClick, itemCount }: { onClick?: () => void; itemCount: number }) => (
   <div
     onClick={onClick}
-    className="flex flex-col items-center gap-0.5 px-3 py-2 rounded-md hover:bg-red-50 hover:text-red-700 text-gray-600 transition-colors relative group"
+    className="flex flex-col items-center gap-0.5 px-3 py-2 rounded-md hover:bg-purple-50 hover:text-primary text-gray-600 transition-colors relative group"
   >
     <span className="relative">
       <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 21h6M12 21v-6" />
       </svg>
       {itemCount > 0 && (
-        <span className="absolute -top-2 -right-2.5 bg-red-600 text-white text-[9px] font-bold rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center leading-none">
+        <span className="absolute -top-2 -right-2.5 bg-primary text-white text-[9px] font-bold rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center leading-none">
           {itemCount > 99 ? '99+' : itemCount}
         </span>
       )}
@@ -129,9 +129,9 @@ export const CartButton = ({ user }: Props) => {
       {isOpen && (
         <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-red-50 border-b border-red-100">
+          <div className="flex items-center justify-between px-4 py-3 bg-purple-50 border-b border-red-100">
             <div className="flex items-center gap-2">
-              <ShoppingBag className="w-4 h-4 text-red-700" />
+              <ShoppingBag className="w-4 h-4 text-primary" />
               <h3 className="text-sm font-semibold text-gray-800">Your Cart</h3>
             </div>
             <span className="text-xs text-gray-500">
@@ -149,7 +149,7 @@ export const CartButton = ({ user }: Props) => {
                 <p className="text-sm text-gray-500 font-medium">Your cart is empty</p>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="mt-3 text-xs text-red-600 hover:text-red-700 font-medium"
+                  className="mt-3 text-xs text-primary hover:text-primary font-medium"
                 >
                   Continue shopping
                 </button>
@@ -177,7 +177,7 @@ export const CartButton = ({ user }: Props) => {
                         {item.book.title}
                       </h4>
                       <p className="text-xs text-gray-500 truncate">{item.book.author}</p>
-                      <p className="text-sm font-bold text-red-700 mt-1">
+                      <p className="text-sm font-bold text-primary mt-1">
                         NPR {(item.priceAtAdd || item.book.price).toLocaleString()}
                       </p>
 
@@ -203,7 +203,7 @@ export const CartButton = ({ user }: Props) => {
                         <button
                           onClick={() => handleRemoveItem(item.id)}
                           disabled={loading}
-                          className="ml-auto text-red-500 hover:text-red-700 transition disabled:opacity-50"
+                          className="ml-auto text-primary hover:text-primary transition disabled:opacity-50"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -232,7 +232,7 @@ export const CartButton = ({ user }: Props) => {
                   setIsOpen(false)
                   router.push('/checkout')
                 }}
-                className="w-full bg-red-700 hover:bg-red-800 text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
+                className="w-full bg-primary hover:bg-red-800 text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
               >
                 Proceed to Checkout
               </button>

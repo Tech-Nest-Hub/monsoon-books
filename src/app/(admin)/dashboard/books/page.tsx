@@ -167,16 +167,16 @@ export default function AdminBooksPage() {
                     <button
                       onClick={() => handleDelete(book.id)}
                       disabled={deletingId === book.id}
-                      className="w-9 h-9 rounded-full bg-white flex items-center justify-center hover:bg-red-50 transition disabled:opacity-50"
+                      className="w-9 h-9 rounded-full bg-white flex items-center justify-center hover:bg-purple-50 transition disabled:opacity-50"
                       title="Delete"
                     >
-                      <Trash2 className="w-4 h-4 text-red-500" />
+                      <Trash2 className="w-4 h-4 text-primary" />
                     </button>
                   </div>
 
                   {/* Stock badge */}
                   {book.stock === 0 && (
-                    <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                    <div className="absolute top-2 left-2 bg-primary text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
                       Out of stock
                     </div>
                   )}

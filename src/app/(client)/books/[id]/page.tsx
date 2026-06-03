@@ -32,7 +32,7 @@ export default async function BookDetailPage({ params }: { params: Promise<{ id:
             <div className="text-center">
               <h1 className="text-2xl font-bold text-slate-900">Book not found</h1>
               <p className="mt-2 text-slate-600">This book could not be found.</p>
-              <Link href="/" className="mt-4 inline-block text-red-600 hover:text-red-700 underline">
+              <Link href="/" className="mt-4 inline-block text-primary hover:text-primary underline">
                 Return to Home
               </Link>
             </div>
@@ -105,7 +105,7 @@ export default async function BookDetailPage({ params }: { params: Promise<{ id:
           <div className="text-center">
             <h1 className="text-2xl font-bold text-slate-900">Error loading book</h1>
             <p className="mt-2 text-slate-600">Failed to load book details. Please try again later.</p>
-            <Link href="/" className="mt-4 inline-block text-red-600 hover:text-red-700 underline">
+            <Link href="/" className="mt-4 inline-block text-primary hover:text-primary underline">
               Return to Home
             </Link>
           </div>

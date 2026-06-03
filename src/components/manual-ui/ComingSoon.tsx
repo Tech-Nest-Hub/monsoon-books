@@ -19,7 +19,7 @@ export default function ComingSoon() {
 
             <main className="flex min-h-[70vh] items-center justify-center px-4 py-20">
                 <div className="text-center">
-                    <p className="text-4xl font-bold text-red-600 justify-center items-center"><ComingSoon503/></p>
+                    <p className="text-4xl font-bold text-primary justify-center items-center"><ComingSoon503/></p>
 
                     <h1 className="mt-4 text-3xl font-bold text-slate-900">
                         Coming Soon
@@ -32,7 +32,7 @@ export default function ComingSoon() {
                     <div className="mt-8 flex items-center justify-center gap-4">
                         <Link
                             href="/"
-                            className="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700"
+                            className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-primary"
                         >
                             Go Home
                         </Link>

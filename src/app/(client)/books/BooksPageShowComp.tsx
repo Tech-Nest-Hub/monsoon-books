@@ -346,7 +346,7 @@ export default function BooksPageShowComp({ initialBooks, categories }: BooksPag
                           </span>
                         )}
                         {discount && (
-                          <span className="text-sm font-semibold text-red-500">
+                          <span className="text-sm font-semibold text-primary">
                             -{discount}%
                           </span>
                         )}
@@ -355,7 +355,7 @@ export default function BooksPageShowComp({ initialBooks, categories }: BooksPag
                         <p className="text-xs text-amber-600 mt-1">Only {book.stock} left!</p>
                       )}
                       {isOutOfStock && (
-                        <p className="text-xs text-red-600 mt-1">Out of stock</p>
+                        <p className="text-xs text-primary mt-1">Out of stock</p>
                       )}
                     </div>
                   </div>
@@ -386,7 +386,7 @@ export default function BooksPageShowComp({ initialBooks, categories }: BooksPag
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-300" />
                     <div className="absolute top-2 left-2 flex flex-col gap-1">
                       {discount && (
-                        <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        <span className="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                           -{discount}%
                         </span>
                       )}

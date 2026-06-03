@@ -58,7 +58,7 @@ interface NavItem {
 const navItems: NavItem[] = [
     {
         title: "Home",
-        url: "/",
+        url: "/dashboard",
         icon: Home,
     },
     {

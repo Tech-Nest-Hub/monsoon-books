@@ -112,7 +112,7 @@ export default function CustomerDetailPage() {
       case "inactive":
         return "bg-yellow-100 text-yellow-700"
       case "banned":
-        return "bg-red-100 text-red-700"
+        return "bg-red-100 text-primary"
       default:
         return "bg-gray-100 text-gray-700"
     }
@@ -141,7 +141,7 @@ export default function CustomerDetailPage() {
       case "PROCESSING":
         return "text-yellow-600 bg-yellow-50"
       case "CANCELLED":
-        return "text-red-600 bg-red-50"
+        return "text-primary bg-purple-50"
       default:
         return "text-gray-600 bg-gray-50"
     }
@@ -194,7 +194,7 @@ export default function CustomerDetailPage() {
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex items-center justify-center h-96">
-            <Loader2 className="w-8 h-8 animate-spin text-red-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         </div>
       </div>
@@ -251,7 +251,7 @@ export default function CustomerDetailPage() {
                     className="rounded-full mx-auto object-cover"
                   />
                 ) : (
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white text-3xl font-bold mx-auto">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-primary flex items-center justify-center text-white text-3xl font-bold mx-auto">
                     {getInitials(customer.name)}
                   </div>
                 )}
@@ -304,7 +304,7 @@ export default function CustomerDetailPage() {
                 <button
                   onClick={() => setShowBanConfirm(true)}
                   disabled={updatingStatus || customer.status === "banned"}
-                  className="flex-1 px-3 py-2 border border-red-200 text-red-600 rounded-lg text-sm hover:bg-red-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-3 py-2 border border-red-200 text-primary rounded-lg text-sm hover:bg-purple-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Ban
                 </button>
@@ -371,7 +371,7 @@ export default function CustomerDetailPage() {
                         <div>
                           <Link
                             href={`/admin/orders/${order.id}`}
-                            className="font-semibold text-gray-900 hover:text-red-600 transition"
+                            className="font-semibold text-gray-900 hover:text-primary transition"
                           >
                             {order.orderNumber}
                           </Link>
@@ -403,7 +403,7 @@ export default function CustomerDetailPage() {
                 <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-xl">
                   <Link
                     href={`/admin/orders?customerId=${customer.id}`}
-                    className="text-sm text-red-600 hover:text-red-700 font-medium flex items-center justify-center gap-1"
+                    className="text-sm text-primary hover:text-primary font-medium flex items-center justify-center gap-1"
                   >
                     View all {customer.stats.totalOrders} orders
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -424,14 +424,14 @@ export default function CustomerDetailPage() {
           <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-xl shadow-xl z-50 p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                <Ban className="w-5 h-5 text-red-600" />
+                <Ban className="w-5 h-5 text-primary" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900">Ban Customer?</h3>
             </div>
             <p className="text-gray-600 mb-2">
               Are you sure you want to ban <strong>{customer.name}</strong>?
             </p>
-            <p className="text-sm text-red-600 mb-6">
+            <p className="text-sm text-primary mb-6">
               This will prevent them from placing new orders and accessing their account.
             </p>
             <div className="flex gap-3 justify-end">
@@ -444,7 +444,7 @@ export default function CustomerDetailPage() {
               <button
                 onClick={() => handleUpdateStatus("banned")}
                 disabled={updatingStatus}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+                className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary transition disabled:opacity-50"
               >
                 {updatingStatus ? "Banning..." : "Yes, Ban Customer"}
               </button>

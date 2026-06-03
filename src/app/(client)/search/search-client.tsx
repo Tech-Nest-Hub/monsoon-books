@@ -62,7 +62,7 @@ function BookCard({ book, onClick }: { book: Book; onClick: () => void }) {
         {/* Badges */}
         <div className="absolute top-2 left-2 flex flex-col gap-1">
           {discount && (
-            <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+            <span className="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
               -{discount}%
             </span>
           )}
@@ -77,7 +77,7 @@ function BookCard({ book, onClick }: { book: Book; onClick: () => void }) {
       {/* Info */}
       <div className="space-y-0.5 px-0.5">
         {book.category && (
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-red-500">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-primary">
             {book.category.name}
           </p>
         )}
@@ -242,7 +242,7 @@ export default function SearchClientComp() {
             ))}
           </div>
         ) : error ? (
-          <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center text-sm font-medium text-red-600 max-w-md mx-auto">
+          <div className="rounded-xl border border-red-200 bg-purple-50 p-6 text-center text-sm font-medium text-primary max-w-md mx-auto">
             ⚠️ {error}
           </div>
         ) : processedBooks.length > 0 ? (

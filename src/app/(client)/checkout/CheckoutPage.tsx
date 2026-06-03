@@ -553,7 +553,7 @@ export default function CheckoutPage() {
                 </div>
 
                 {error && (
-                  <p className="text-xs text-red-500 bg-red-50 border border-red-200 rounded-lg px-3 py-2.5">
+                  <p className="text-xs text-primary bg-purple-50 border border-red-200 rounded-lg px-3 py-2.5">
                     {error}
                   </p>
                 )}
@@ -599,7 +599,7 @@ export default function CheckoutPage() {
             </div>
 
             {error && (
-              <p className="text-xs text-red-500 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+              <p className="text-xs text-primary bg-purple-50 border border-red-200 rounded-lg px-4 py-3">
                 {error}
               </p>
             )}

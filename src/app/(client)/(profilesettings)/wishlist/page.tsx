@@ -103,13 +103,13 @@ export default function WishlistPage() {
         <div className="container mx-auto px-4">
           <div className="text-center py-16">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-red-100 rounded-full mb-4">
-              <Heart className="w-10 h-10 text-red-500" />
+              <Heart className="w-10 h-10 text-primary" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Your wishlist is empty</h1>
             <p className="text-gray-600 mb-6">Save your favorite books here</p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition"
+              className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary transition"
             >
               Browse Books
             </Link>
@@ -154,23 +154,23 @@ export default function WishlistPage() {
                 <button
                   onClick={() => removeFromWishlist(item.bookId)}
                   disabled={removingId === item.bookId}
-                  className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:bg-red-50 transition disabled:opacity-50"
+                  className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:bg-purple-50 transition disabled:opacity-50"
                 >
-                  <Trash2 className="w-4 h-4 text-red-500" />
+                  <Trash2 className="w-4 h-4 text-primary" />
                 </button>
               </Link>
 
               {/* Book Info */}
               <div className="p-4">
                 <Link href={`/book/${item.book.id}`}>
-                  <h3 className="font-semibold text-gray-900 mb-1 line-clamp-1 hover:text-red-600 transition">
+                  <h3 className="font-semibold text-gray-900 mb-1 line-clamp-1 hover:text-primary transition">
                     {item.book.title}
                   </h3>
                 </Link>
                 <p className="text-sm text-gray-600 mb-2">{item.book.author}</p>
                 
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-lg font-bold text-red-600">
+                  <span className="text-lg font-bold text-primary">
                     NPR {item.book.price.toString()}
                   </span>
                   <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
@@ -184,7 +184,7 @@ export default function WishlistPage() {
                   disabled={item.book.stock === 0}
                   className={`w-full py-2 rounded-lg transition flex items-center justify-center gap-2 ${
                     item.book.stock > 0
-                      ? 'bg-red-600 hover:bg-red-700 text-white'
+                      ? 'bg-primary hover:bg-primary text-white'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   }`}
                 >
