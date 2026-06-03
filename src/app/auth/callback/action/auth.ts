@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server"
 import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import { headers } from "next/headers"
+import { createNotification } from "@/lib/notifications"
 
 export async function signInWithGoogle() {
   const supabase = await createClient()
@@ -51,10 +52,10 @@ export async function signInWithEmail(email: string, password: string) {
 
   if (!error) {
     return {
-      success : true,
-      redirect : "/"
+      success: true,
+      redirect: "/"
     }
-}
+  }
 }
 
 export async function signUpWithEmail(email: string, password: string) {
@@ -63,9 +64,9 @@ export async function signUpWithEmail(email: string, password: string) {
   const { data, error } = await supabase.auth.signUp({ email, password })
   if (error) return { error: error.message }
 
- if (!error) {
-  redirect("/")
-}
+  if (!error) {
+    redirect("/")
+  }
 }
 
 export async function signOut() {

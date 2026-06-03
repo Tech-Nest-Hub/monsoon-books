@@ -1,3 +1,4 @@
+import { createNotification } from "@/lib/notifications"
 import { prisma } from "@/lib/prisma"
 import { createClient } from "@/utils/supabase/server"
 import { NextRequest, NextResponse } from "next/server"
@@ -105,7 +106,12 @@ export async function POST(req: NextRequest) {
         },
       })
     }
-
+    await createNotification({
+      title: "New Order Received!",
+      message: `Order #${order.orderNumber} for NPR ${order.total} has been placed by ${dbUser.firstName} ${dbUser.lastName}.`,
+      type: "ORDER",
+      // userId: null // sends to all admins
+    })
     return NextResponse.json({ success: true, order }, { status: 201 })
   } catch (error) {
     console.error("[POST /api/checkout/cashondelivery]", error)

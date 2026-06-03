@@ -6,6 +6,7 @@ import { useIsMobile } from "@/hooks/use-mobile"
 import { DashboardBreadcrumb } from "./DashboardBreadcrumb"
 import { Bell, HomeIcon } from "lucide-react"
 import Link from "next/link"
+import { NotificationBell } from "@/components/manual-ui/NotificationsBell"
 
 export default function DashboardLayoutClient({
   children,
@@ -30,9 +31,7 @@ export default function DashboardLayoutClient({
                 <Link href="/" className="rounded-md p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900">
                   <HomeIcon className="h-5 w-5" />
                 </Link>
-                <Link href="/" className="rounded-md p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900">
-                  <Bell className="h-5 w-5" />
-                </Link>
+               <NotificationBell/>
               </div>
             </div>
           </div>

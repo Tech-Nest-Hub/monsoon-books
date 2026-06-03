@@ -60,6 +60,7 @@ model User {
   reviews   Review[]
   reviewLikes ReviewLike[]
   payments  Payment[]
+  notifications Notification[]
 
   @@map("users")
 }
@@ -299,4 +300,29 @@ model ShippingAddress {
   createdAt  DateTime @default(now())
 
   @@map("shipping_addresses")
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  title     String
+  message   String
+  type      NotificationType @default(INFO)
+  isRead    Boolean  @default(false)
+  userId    Int?     // null = broadcast to all admins
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+  ORDER
+  CUSTOMER
+  PAYMENT
 }
