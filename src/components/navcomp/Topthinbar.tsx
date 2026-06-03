@@ -22,7 +22,7 @@ const Topthinbar = () => {
         <div className="flex items-center justify-end gap-5">
 
           <CustomLink
-            href="/app"
+            href="/coming-soon"
             title="Save more on app"
             className="text-white hover:text-red-200 font-medium"
             underlineClassName="bg-white"
@@ -31,7 +31,7 @@ const Topthinbar = () => {
           <span className="text-red-500 select-none">|</span>
 
           <CustomLink
-            href="/sell"
+            href="/coming-soon"
             title="Become a seller"
             className="text-white hover:text-red-200 font-medium"
             underlineClassName="bg-white"
@@ -40,7 +40,7 @@ const Topthinbar = () => {
           <span className="text-red-500 select-none">|</span>
 
           <CustomLink
-            href="/help"
+            href="/contact-us"
             title="Help & support"
             className="text-white hover:text-red-200"
             underlineClassName="bg-white"
@@ -49,7 +49,7 @@ const Topthinbar = () => {
           <span className="text-red-500 select-none">|</span>
 
           <CustomLink
-            href="/track"
+            href="/order"
             title="Track order"
             className="text-white hover:text-red-200"
             underlineClassName="bg-white"

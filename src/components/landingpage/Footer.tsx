@@ -77,11 +77,11 @@ export function Footer() {
           <div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-5">Support</h3>
             <ul className="space-y-3 text-sm">
-              {['Help Center', 'Shipping Info', 'Returns Policy', 'Contact Us'].map((text, i) => (
+              {[{ label: 'Help Center', href: '/help' }, { label: 'Shipping Info', href: '/shipping' }, { label: 'Returns Policy', href: '/returns' }, { label: 'Contact Us', href: '/contact-us' }].map((item, i) => (
                 <li key={i}>
                   <CustomLink
-                    href="#"
-                    title={text}
+                    href={item.href}
+                    title={item.label}
                     className="text-slate-500 hover:text-slate-900 font-medium transition-colors duration-200"
                     underlineClassName="bg-[#c10617]"
                   />

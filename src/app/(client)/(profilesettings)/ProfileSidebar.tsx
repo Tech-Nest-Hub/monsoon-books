@@ -35,7 +35,7 @@ const profileNavItems = [
     title: "My Orders",
     icon: ShoppingBag,
     items: [
-      { title: "My Orders", url: "/profile/orders", icon: Package },
+      { title: "My Orders", url: "/order", icon: Package },
       { title: "My Returns", url: "/profile/returns", icon: RefreshCw },
       { title: "My Cancellations", url: "/profile/cancellations", icon: XCircle },
     ],
@@ -44,7 +44,7 @@ const profileNavItems = [
     title: "My Reviews",
     icon: Star,
     items: [
-      { title: "My Reviews", url: "/profile/reviews", icon: Star },
+      { title: "My Reviews", url: "/reviews", icon: Star },
     ],
   },
   {
