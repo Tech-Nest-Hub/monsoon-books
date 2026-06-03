@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient()
@@ -23,8 +23,8 @@ export async function GET(
     if (currentUser?.role !== "ADMIN") {
       return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 })
     }
-
-    const customerId = parseInt(params.id)
+    const { id } = await params
+    const customerId = parseInt(id)
 
     // Fetch customer with orders and address
     const customer = await prisma.user.findUnique({
