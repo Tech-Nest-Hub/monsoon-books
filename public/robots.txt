@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+Allow: /books
+Allow: /books/*
+Allow: /search
+Allow: /contact-us
+
+# Block all admin and private routes
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /profile
+Disallow: /profile/*
+Disallow: /cart
+Disallow: /checkout
+Disallow: /checkout/*
+Disallow: /payment
+Disallow: /payment/*
+Disallow: /api
+Disallow: /api/*
+Disallow: /login
+Disallow: /signup
+
+Sitemap: https://monsoonbooks.com.np/sitemap.xml
