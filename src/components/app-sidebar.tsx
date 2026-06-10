@@ -187,7 +187,7 @@ function CollapsibleMenuItem({ item, collapsed, isMobile, setOpenMobile }: {
     const hasSubItems = item.subItems && item.subItems.length > 0
 
     const isActive = (url: string) => {
-        if (url === "/") {
+        if (url === "/dashboard") {
             return pathname === url
         }
         return pathname.startsWith(url)
