@@ -15,37 +15,45 @@ export async function GET(request: Request) {
       const { data: { user } } = await supabase.auth.getUser()
 
       if (user) {
-        // Upsert into your Prisma User table
-         const dbUser =  await prisma.user.upsert({
-          where: { authId: user.id },
-          update: {
-            email: user.email!,
-            // Update name if changed on provider side
-            firstName: user.user_metadata?.given_name 
-              ?? user.user_metadata?.full_name?.split(" ")[0] 
-              ?? "",
-            lastName: user.user_metadata?.family_name 
-              ?? user.user_metadata?.full_name?.split(" ").slice(1).join(" ") 
-              ?? "",
-          },
-          create: {
-            authId: user.id,
-            email: user.email!,
-            firstName: user.user_metadata?.given_name 
-              ?? user.user_metadata?.full_name?.split(" ")[0] 
-              ?? "",
-            lastName: user.user_metadata?.family_name 
-              ?? user.user_metadata?.full_name?.split(" ").slice(1).join(" ") 
-              ?? "",
-            provider: user.app_metadata?.provider ?? "email",
-          },
-        })
-        if (dbUser?.role === "ADMIN") {
+        try {
+          console.log("Attempting upsert for:", user.id, user.email)
+
+          const dbUser = await prisma.user.upsert({
+            where: { authId: user.id },
+            update: {
+              email: user.email!,
+              firstName: user.user_metadata?.given_name
+                ?? user.user_metadata?.full_name?.split(" ")[0]
+                ?? "",
+              lastName: user.user_metadata?.family_name
+                ?? user.user_metadata?.full_name?.split(" ").slice(1).join(" ")
+                ?? "",
+            },
+            create: {
+              authId: user.id,
+              email: user.email!,
+              firstName: user.user_metadata?.given_name
+                ?? user.user_metadata?.full_name?.split(" ")[0]
+                ?? "",
+              lastName: user.user_metadata?.family_name
+                ?? user.user_metadata?.full_name?.split(" ").slice(1).join(" ")
+                ?? "",
+              provider: user.app_metadata?.provider ?? "email",
+            },
+          })
+
+          console.log("Upsert success:", dbUser.id, dbUser.role)
+
+          if (dbUser?.role === "ADMIN") {
             return NextResponse.redirect(`${origin}/dashboard`)
-        } else {
-            return NextResponse.redirect(`${origin}/`) // Redirect to homepage or user dashboard
+          } else {
+            return NextResponse.redirect(`${origin}/`)
+          }
+        } catch (error) {
+          console.error("Prisma upsert failed:", error)
+          return NextResponse.redirect(`${origin}/auth/error`)
         }
-    }
+      }
     }
   }
 
