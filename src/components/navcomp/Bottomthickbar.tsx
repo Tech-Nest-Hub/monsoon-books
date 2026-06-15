@@ -94,7 +94,7 @@ const Bottomthickbar = ({ user }: Props) => {
           <div className="flex items-center gap-1 ml-auto lg:ml-0">
             {isAdmin && (
               <><Link
-                href="/admin"
+                href="/dashboard"
                 className="hidden sm:flex flex-col items-center gap-0.5 px-3 py-2 rounded-md hover:bg-purple-50 hover:text-primary text-gray-600 transition-colors group"
               >
                 <UserCog className="w-5 h-5 inline-block mr-1" />

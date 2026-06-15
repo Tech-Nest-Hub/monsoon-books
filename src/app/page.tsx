@@ -2,6 +2,7 @@ import { CarouselSpacing } from "@/components/landingpage/CarouselHeroSectionCom
 import Navbar from "../components/navcomp/Navbar";
 import { ClientLandingComp } from "@/components/landingpage/ClientLandingComp";
 import { Footer } from "@/components/landingpage/Footer"
+import CustomFAQPage from "@/app/(client)/help/CustomFAQsPlace";
 
 
 export default function Home() {
@@ -17,6 +18,7 @@ export default function Home() {
           </section>
           <ClientLandingComp />
         </div>
+        <CustomFAQPage />
       </main>
       <Footer />
     </>
