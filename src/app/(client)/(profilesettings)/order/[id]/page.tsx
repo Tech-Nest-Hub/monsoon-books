@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, Package, MapPin, CreditCard, Clock } from "lucide-react"
+import { bookUrl } from "@/lib/slugUrl"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -240,7 +241,7 @@ export default function OrderDetailPage() {
         <div className="divide-y divide-neutral-100">
           {order.items.map((item) => (
             <div key={item.id} className="flex gap-4 px-5 py-4">
-              <Link href={`/books/${item.book.id}`} className="shrink-0">
+              <Link href={bookUrl(item.book.title, item.book.id)} className="shrink-0">
                 <div className="relative w-14 h-[74px] rounded-lg overflow-hidden bg-neutral-100 border border-neutral-200 hover:opacity-80 transition-opacity">
                   <Image
                     src={item.book.coverImage}
@@ -252,7 +253,7 @@ export default function OrderDetailPage() {
                 </div>
               </Link>
               <div className="flex-1 min-w-0 space-y-0.5">
-                <Link href={`/books/${item.book.id}`}>
+                <Link href={bookUrl(item.book.title, item.book.id)}>
                   <p className="text-sm font-semibold text-neutral-800 line-clamp-2 hover:text-neutral-600 transition-colors">
                     {item.book.title}
                   </p>

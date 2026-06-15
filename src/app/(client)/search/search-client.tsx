@@ -12,6 +12,7 @@ import {
   Search,
   Home,
 } from "lucide-react"
+import { bookUrl } from "@/lib/slugUrl"
 
 type Book = {
   id: number
@@ -251,7 +252,7 @@ export default function SearchClientComp() {
               <BookCard
                 key={book.id}
                 book={book}
-                onClick={() => router.push(`/books/${book.id}`)}
+                onClick={() => router.push(bookUrl(book.title, book.id))}
               />
             ))}
           </div>
@@ -294,7 +295,7 @@ export default function SearchClientComp() {
                     <BookCard
                       key={book.id}
                       book={book}
-                      onClick={() => router.push(`/books/${book.id}`)}
+                      onClick={() => router.push(bookUrl(book.title, book.id))}
                     />
                   ))}
                 </div>

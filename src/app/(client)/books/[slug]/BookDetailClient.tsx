@@ -8,6 +8,7 @@ import { AddWishlistButton } from "@/app/(client)/(profilesettings)/wishlist/Add
 import { Share2 } from "lucide-react"
 import { useCart } from "@/contexts/CartContext"
 import { BookImageGallery } from "./BookImageGallery";
+import { bookUrl } from "@/lib/slugUrl";
 
 
 type BookWithRelations = Book & {
@@ -231,7 +232,7 @@ const [quantity, setQuantity] = useState(1)
                         : 0
                     return (
                       <Link
-                        href={`/books/${simBook.id}`}
+                        href={bookUrl(simBook.title, simBook.id)}
                         key={simBook.id}
                         scroll={true}
                         className="group flex flex-col p-3 rounded-xl border border-gray-200 bg-white hover:border-gray-300 transition-all duration-200"

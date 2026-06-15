@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/carousel"
 import type { Book, Category, BookImage } from "@prisma/client"
 import { Button } from "../ui/button"
+import { bookUrl } from "@/lib/slugUrl"
 
 type BookWithRelations = Book & {
   category?: Category | null
@@ -115,7 +116,7 @@ export function TopTrendingBooks({ books, loading = false }: TopTrendingBooksPro
                   className="pl-3 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5"
                 >
                   <div
-                    onClick={() => router.push(`/books/${book.id}`)}
+                    onClick={() => router.push(bookUrl(book.title, book.id))}
                     className="group cursor-pointer space-y-2"
                   >
                     {/* Image */}

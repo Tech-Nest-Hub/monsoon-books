@@ -1,14 +1,17 @@
 import { prisma } from "@/lib/prisma"
+import { slugify } from "@/lib/slugUrl"
 import type { MetadataRoute } from "next"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const books = await prisma.book.findMany({
     where: { isActive: true },
-    select: { id: true, updatedAt: true },
+    select: { id: true, updatedAt: true, title: true },
   })
 
+  // In sitemap.ts
+
   const bookUrls = books.map((book) => ({
-    url: `https://monsoonbooks.com.np/books/${book.id}`,
+    url: `https://monsoonbooks.com.np/books/${slugify(book.title, book.id)}`,
     lastModified: book.updatedAt,
     changeFrequency: "weekly" as const,
     priority: 0.9,

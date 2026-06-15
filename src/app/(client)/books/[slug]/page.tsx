@@ -4,19 +4,40 @@ import { createClient } from "@/utils/supabase/server"
 import { prisma } from "@/lib/prisma"
 import BookDetailClient from "./BookDetailClient"
 import BookReviews from "../BooksReview"
+import { extractIdFromSlug } from "@/lib/slugUrl"
 
-export const metadata = {
-  title: "Book Details",
-  description: "View detailed information about a book",
+export async function generateMetadata({ 
+  params 
+}: { 
+  params: Promise<{ slug: string }> 
+}) {
+  const { slug } = await params
+  const book = await prisma.book.findUnique({
+    where: { id: extractIdFromSlug(slug) },
+    select: { title: true, description: true, author: true, coverImage: true }
+  })
+
+  if (!book) return { title: "Book not found" }
+
+  return {
+    title: `${book.title} by ${book.author} | Monsoon Books`,
+    description: book.description.slice(0, 160),
+    openGraph: {
+      title: book.title,
+      description: book.description.slice(0, 160),
+      images: [book.coverImage],
+    },
+  }
 }
 
-export default async function BookDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id: bookId } = await params
+export default async function BookDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+ const { slug } = await params
+  const bookId = extractIdFromSlug(slug)
 
   try {
     // 1. Fetch the main book details
     const book = await prisma.book.findUnique({
-      where: { id: parseInt(bookId) },
+      where: { id: bookId },
       include: {
         category: true,
         images: {

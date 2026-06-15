@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { Search, Filter, X, Grid3x3, List, TrendingUp, ChevronDown } from "lucide-react"
 import type { Book, Category, BookImage } from "@prisma/client"
+import { bookUrl } from "@/lib/slugUrl"
 
 type BookWithRelations = Book & {
   category?: Category | null
@@ -309,7 +310,7 @@ export default function BooksPageShowComp({ initialBooks, categories }: BooksPag
                 return (
                   <div
                     key={book.id}
-                    onClick={() => router.push(`/books/${book.id}`)}
+                    onClick={() => router.push(bookUrl(book.title, book.id))}
                     className="group cursor-pointer bg-white rounded-xl border border-neutral-200 p-4 hover:shadow-lg transition-all flex gap-4"
                   >
                     <div className="relative w-24 h-32 flex-shrink-0 rounded-lg overflow-hidden bg-neutral-100">
@@ -366,7 +367,7 @@ export default function BooksPageShowComp({ initialBooks, categories }: BooksPag
               return (
                 <div
                   key={book.id}
-                  onClick={() => router.push(`/books/${book.id}`)}
+                  onClick={() => router.push(bookUrl(book.title, book.id))}
                   className="group cursor-pointer space-y-2"
                 >
                   <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-neutral-100">

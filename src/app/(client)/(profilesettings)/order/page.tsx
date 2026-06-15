@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Package, ChevronRight, Clock } from "lucide-react"
+import { bookUrl } from "@/lib/slugUrl"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -213,7 +214,7 @@ export default function OrdersPage() {
               {/* Book covers strip */}
               <div className="flex gap-2.5 flex-wrap">
                 {order.items.slice(0, 5).map((item) => (
-                  <Link key={item.id} href={`/books/${item.book.id}`}>
+                  <Link key={item.id} href={bookUrl(item.book.title, item.book.id)}>
                     <div className="relative w-12 h-16 rounded-lg overflow-hidden bg-neutral-100 border border-neutral-200 hover:opacity-80 transition-opacity">
                       <Image
                         src={item.book.coverImage}

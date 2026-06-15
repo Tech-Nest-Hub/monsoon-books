@@ -6,6 +6,7 @@ import Image from "next/image"
 import { TrendingUp } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { Book, Category, BookImage } from "@prisma/client"
+import { bookUrl } from "@/lib/slugUrl"
 
 type BookWithRelations = Book & {
   category?: Category | null
@@ -78,7 +79,7 @@ export function FeaturedBooks({ books, loading = false }: FeaturedBooksProps) {
           return (
             <div
               key={book.id}
-              onClick={() => router.push(`/books/${book.id}`)}
+              onClick={() => router.push(bookUrl(book.title, book.id))}
               className="group cursor-pointer space-y-2"
             >
               {/* Image */}
