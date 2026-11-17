@@ -1,102 +1,54 @@
-'use client'
-import React, { useState, useRef, useEffect } from 'react'
-import CustomLink from '@/components/manual-ui/CustomLink'
+"use client"
+
+import React from "react"
+import CustomLink from "@/components/manual-ui/CustomLink"
 
 const Topthinbar = () => {
-  const [isLangOpen, setIsLangOpen] = useState(false)
-  const langRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (langRef.current && !langRef.current.contains(e.target as Node)) {
-        setIsLangOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
   return (
-    <div className="hidden md:block text-white text-xs bg-primary">
-      <div className="container mx-auto px-4 sm:px-6 py-1.5 rounded-b-lg">
-        <div className="flex items-center justify-end gap-5">
-          <CustomLink
-            href="/coming-soon"
-            title="Save more on app"
-            className="text-white hover:text-purple-100 font-medium"
-            underlineClassName="bg-white"
-          />
+    <div className="hidden md:block bg-primary text-white text-xs">
+      <div className="container mx-auto px-4 sm:px-6 py-1.5">
+        <div className="flex items-center justify-between">
 
-          <span className="text-white select-none">|</span>
+          {/* Left side */}
+          <div className="flex items-center gap-5">
+            <span className="whitespace-nowrap">
+              SUPPORT: +977 98-51000689
+            </span>
 
-          <CustomLink
-            href="/coming-soon"
-            title="Become a seller"
-            className="text-white hover:text-purple-100 font-medium"
-            underlineClassName="bg-white"
-          />
+            <span className="text-white/60">|</span>
 
-          <span className="text-white select-none">|</span>
-
-          <CustomLink
-            href="/contact-us"
-            title="Help & support"
-            className="text-white hover:text-purple-100"
-            underlineClassName="bg-white"
-          />
-
-          <span className="text-white select-none">|</span>
-
-          <CustomLink
-            href="/order"
-            title="Track order"
-            className="text-white hover:text-purple-100"
-            underlineClassName="bg-white"
-          />
-
-          <span className="text-white select-none">|</span>
-
-          {/* Language Switcher */}
-          <div className="relative" ref={langRef}>
-            <button
-              onClick={() => setIsLangOpen(!isLangOpen)}
-              aria-expanded={isLangOpen}
-              aria-haspopup="listbox"
-              className="flex items-center hover:cursor-pointer gap-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full px-3 py-0.5 transition-colors"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-              </svg>
-              भाषा
-              <svg
-                className={`w-3 h-3 transition-transform duration-100 ${isLangOpen ? 'rotate-180' : ''}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            {isLangOpen && (
-              <div
-                role="listbox"
-                className="absolute right-0 mt-2 w-32 bg-white text-gray-800 rounded-lg shadow-xl z-50 overflow-hidden border border-gray-100"
-              >
-                {[['🇳🇵', 'नेपाली'], ['🇬🇧', 'English']].map(([flag, label]) => (
-                  <button
-                    key={label}
-                    role="option"
-                    onClick={() => setIsLangOpen(false)}
-                    className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-secondary/10 hover:text-secondary text-sm transition-colors"
-                  >
-                    <span>{flag}</span>
-                    <span>{label}</span>
-                  </button>
-                ))}
-              </div>
-            )}
+            <span className="whitespace-nowrap">
+              FREE SHIPPING ON ORDERS ABOVE RS. 1000
+            </span>
           </div>
+
+          {/* Right side */}
+          <div className="flex items-center gap-5">
+
+            <CustomLink
+              href="/faq"
+              title="FAQ"
+              className="text-white hover:text-purple-100 font-medium"
+              underlineClassName="bg-white"
+            />
+
+            <span className="text-white/60">|</span>
+
+            <span className="whitespace-nowrap">
+              AUTHENTIC BOOKS ONLY
+            </span>
+
+            <span className="text-white/60">|</span>
+
+            <CustomLink
+              href="/coming-soon"
+              title="SAVE MORE ON APP"
+              className="text-white hover:text-purple-100 font-medium"
+              underlineClassName="bg-white"
+            />
+
+          </div>
+
         </div>
       </div>
     </div>
